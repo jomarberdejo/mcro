@@ -44,7 +44,7 @@ const data = {
     },
     {
       title: "Death Certificate",
-      url: "/death-certificate",
+      url: "/admin/pdf",
       icon: Cross,
     },
     {
