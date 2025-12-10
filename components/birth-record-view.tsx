@@ -5,7 +5,17 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft, Download, Edit2, Trash2, FileText } from "lucide-react";
 import { BirthRecord } from "@/types";
 import { getFullName } from "@/utils";
-import { Document, Page, Text, View, StyleSheet, PDFViewer, PDFDownloadLink, Font, Image} from "@react-pdf/renderer";
+import {
+  Document,
+  Page,
+  Text,
+  View,
+  StyleSheet,
+  PDFViewer,
+  PDFDownloadLink,
+  Font,
+  Image,
+} from "@react-pdf/renderer";
 
 interface BirthRecordViewProps {
   record: BirthRecord;
@@ -16,36 +26,36 @@ interface BirthRecordViewProps {
 
 // Register fonts
 Font.register({
-  family: 'Times-Roman',
-  src: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Regular.ttf'
+  family: "Times-Roman",
+  src: "https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Regular.ttf",
 });
 
 // PDF Styles matching the official document
 const styles = StyleSheet.create({
   page: {
     padding: 40,
-    fontFamily: 'Times-Roman',
+    fontFamily: "Times-Roman",
     fontSize: 10,
   },
   headerRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
     marginBottom: 15,
     paddingBottom: 10,
-    borderBottom: '1px solid #000',
+    borderBottom: "1px solid #000",
   },
   leftColumn: {
-    alignItems: 'center',
+    alignItems: "center",
   },
 
   centerColumn: {
     flexShrink: 0,
-    width: '50%',
+    width: "50%",
   },
   rightColumn: {
-    width: '30%',
-    alignItems: 'flex-end',
+    width: "30%",
+    alignItems: "flex-end",
   },
   lapuLapuImage: {
     width: 80,
@@ -54,9 +64,9 @@ const styles = StyleSheet.create({
   },
   formNumber: {
     fontSize: 9,
-    color: '#666',
+    color: "#666",
     marginBottom: 1,
-    fontStyle: 'italic',
+    fontStyle: "italic",
   },
   headerTitle: {
     fontSize: 10,
@@ -64,26 +74,26 @@ const styles = StyleSheet.create({
   },
   headerTitleBold: {
     fontSize: 11,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 1,
-    fontStyle: 'italic',
+    fontStyle: "italic",
   },
   headerTitleLarge: {
     fontSize: 13,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     letterSpacing: 1,
   },
   logoContainer: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: 8,
-    alignItems: 'center',
+    alignItems: "center",
   },
   logo: {
     width: 60,
     height: 60,
   },
   dateRight: {
-    textAlign: 'right',
+    textAlign: "right",
     fontSize: 10,
     marginTop: 10,
     marginBottom: 20,
@@ -96,7 +106,7 @@ const styles = StyleSheet.create({
   bodyText: {
     fontSize: 10,
     lineHeight: 1.5,
-    textAlign: 'justify',
+    textAlign: "justify",
     marginBottom: 15,
   },
   bookReference: {
@@ -105,27 +115,27 @@ const styles = StyleSheet.create({
   },
   // Field rows - label and value on same line
   fieldRow: {
-    flexDirection: 'row',
+    flexDirection: "row",
     marginBottom: 6,
-    alignItems: 'flex-start',
+    alignItems: "flex-start",
   },
   fieldLabel: {
-    width: '35%',
+    width: "35%",
     fontSize: 10,
-    color: '#333',
+    color: "#333",
   },
   fieldColon: {
-    width: '5%',
+    width: "5%",
     fontSize: 10,
   },
   fieldValue: {
-    width: '60%',
+    width: "60%",
     fontSize: 10,
   },
   fieldValueBold: {
-    width: '60%',
+    width: "60%",
     fontSize: 10,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     textTransform: "uppercase",
   },
   // Remarks section
@@ -135,14 +145,14 @@ const styles = StyleSheet.create({
   },
   remarksTitle: {
     fontSize: 11,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 10,
-    color: '#666',
+    color: "#666",
   },
   remarksText: {
     fontSize: 10,
     lineHeight: 1.5,
-    textAlign: 'justify',
+    textAlign: "justify",
     marginBottom: 10,
     textTransform: "uppercase",
   },
@@ -152,29 +162,35 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   // Signature section
-  
+  signatureRightContainer: {
+    alignItems: "center",
+    marginLeft: "auto",
+  },
+  signatureLeftContainer: {
+    alignItems: "center",
+    marginRight: "auto",
+  },
   signatureRight: {
     flexDirection: "column",
     justifyContent: "flex-end",
-    marginLeft: 'auto',
-    alignItems: 'center',
+    alignItems: "center",
   },
   signatureLeft: {
     flexDirection: "column",
     justifyContent: "flex-start",
-    marginRight: 'auto',
-    alignItems: 'center',
+    marginRight: "auto",
+    alignItems: "center",
   },
   signatureImage: {
     width: 120,
     height: 40,
     marginBottom: -15,
-    objectFit: 'contain',
+    objectFit: "contain",
   },
 
   signatureName: {
     fontSize: 11,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   signatureTitle: {
     fontSize: 9,
@@ -186,11 +202,11 @@ const styles = StyleSheet.create({
   },
 
   noteContainer: {
-    display: 'flex',
-    flexDirection: 'row',
+    display: "flex",
+    flexDirection: "row",
     gap: 2,
     marginTop: 30,
-    alignItems: 'center',
+    alignItems: "center",
   },
   noteHighlight: {
     fontWeight: 700,
@@ -198,7 +214,7 @@ const styles = StyleSheet.create({
 
   noteText: {
     fontSize: 9,
-  }
+  },
 });
 
 // PDF Document Component
@@ -226,10 +242,7 @@ const BirthCertificatePDF: React.FC<{ record: BirthRecord }> = ({ record }) => {
         <View style={styles.headerRow}>
           {/* Left: Lapu-Lapu Image (Blurry/Watermark) */}
           <View style={styles.leftColumn}>
-            <Image
-              src="/datu-gara.png"
-              style={styles.lapuLapuImage}
-            />
+            <Image src="/datu-gara.png" style={styles.lapuLapuImage} />
           </View>
 
           {/* Center: Text Information */}
@@ -239,7 +252,9 @@ const BirthCertificatePDF: React.FC<{ record: BirthRecord }> = ({ record }) => {
             <Text style={styles.headerTitle}>Republic of the Philippines</Text>
             <Text style={styles.headerTitle}>Province of Leyte</Text>
             <Text style={styles.headerTitleBold}>Municipality of Carigara</Text>
-            <Text style={styles.headerTitleLarge}>OFFICE OF THE MUNICIPAL CIVIL REGISTRAR</Text>
+            <Text style={styles.headerTitleLarge}>
+              OFFICE OF THE MUNICIPAL CIVIL REGISTRAR
+            </Text>
           </View>
 
           {/* Right: Three Logos in a Row */}
@@ -260,7 +275,10 @@ const BirthCertificatePDF: React.FC<{ record: BirthRecord }> = ({ record }) => {
 
         {/* Body text */}
         <Text style={styles.bodyText}>
-          We certify that among others, the following facts of birth appear in our Registry of Births on page <Text style={{ fontWeight: 'bold' }}>97</Text> of Book No. <Text style={{ fontWeight: 'bold' }}>7:</Text>
+          We certify that among others, the following facts of birth appear in
+          our Registry of Births on page{" "}
+          <Text style={{ fontWeight: "bold" }}>97</Text> of Book No.{" "}
+          <Text style={{ fontWeight: "bold" }}>7:</Text>
         </Text>
 
         {/* Fields - Label : Value format */}
@@ -327,13 +345,17 @@ const BirthCertificatePDF: React.FC<{ record: BirthRecord }> = ({ record }) => {
         <View style={styles.fieldRow}>
           <Text style={styles.fieldLabel}>Date of Marriage of Parents</Text>
           <Text style={styles.fieldColon}>:</Text>
-          <Text style={styles.fieldValue}>{record.dateOfMarriage || "No Column"}</Text>
+          <Text style={styles.fieldValue}>
+            {record.dateOfMarriage || "No Column"}
+          </Text>
         </View>
 
         <View style={styles.fieldRow}>
           <Text style={styles.fieldLabel}>Place of Marriage of Parents</Text>
           <Text style={styles.fieldColon}>:</Text>
-          <Text style={styles.fieldValue}>{record.placeOfMarriage || "No Column"}</Text>
+          <Text style={styles.fieldValue}>
+            {record.placeOfMarriage || "No Column"}
+          </Text>
         </View>
 
         {/* Remarks */}
@@ -345,10 +367,16 @@ const BirthCertificatePDF: React.FC<{ record: BirthRecord }> = ({ record }) => {
           ) : (
             <>
               <Text style={styles.remarksText}>
-                PURSUANT TO THE DECISION RENDERED BY MCR DARRYL U. MONTEALEGRE DATED JUNE 27, 2025 AND AFFIRMED BY CRG UNDER OCRG NUMBER 25-2820504 DATED SEPTEMBER 24, 2025 THE CHILD'S MIDDLE NAME IS HEREBY CORRECTED FROM "M" TO "MORANO".
+                PURSUANT TO THE DECISION RENDERED BY MCR DARRYL U. MONTEALEGRE
+                DATED JUNE 27, 2025 AND AFFIRMED BY CRG UNDER OCRG NUMBER
+                25-2820504 DATED SEPTEMBER 24, 2025 THE CHILD'S MIDDLE NAME IS
+                HEREBY CORRECTED FROM "M" TO "MORANO".
               </Text>
               <Text style={styles.remarksText}>
-                PURSUANT TO THE DECISION RENDERED BY MCR DARRYL U. MONTEALEGRE DATED JULY 14, 2025 AND AFFIRMED BY CRG UNDER OCRG NUMBER 25-2820504 DATED SEPTEMBER 24, 2025 THE CHILD'S DATE OF BIRTH IS HEREBY CORRECTED FROM "JUNE 27, 1956" TO "JULY 3, 1956".
+                PURSUANT TO THE DECISION RENDERED BY MCR DARRYL U. MONTEALEGRE
+                DATED JULY 14, 2025 AND AFFIRMED BY CRG UNDER OCRG NUMBER
+                25-2820504 DATED SEPTEMBER 24, 2025 THE CHILD'S DATE OF BIRTH IS
+                HEREBY CORRECTED FROM "JUNE 27, 1956" TO "JULY 3, 1956".
               </Text>
             </>
           )}
@@ -360,43 +388,37 @@ const BirthCertificatePDF: React.FC<{ record: BirthRecord }> = ({ record }) => {
         </Text>
 
         {/* Right Signature with Image */}
-        <View style={styles.signatureRight}>
+        <View style={styles.signatureRightContainer}>
           {record.signatureImage && (
-            <Image 
-              src={record.signatureImage} 
-              style={styles.signatureImage}
-            />
+            <Image src={record.signatureImage} style={styles.signatureImage} />
           )}
-          <View>
-            <Text style={styles.signatureName}>{record.registrarName || "DARRYL U. MONTEALEGRE, MM"}</Text>
+          <View style={styles.signatureRight}>
+            <Text style={styles.signatureName}>
+              {record.registrarName || "DARRYL U. MONTEALEGRE, MM"}
+            </Text>
             <Text style={styles.signatureTitle}>Municipal Civil Registrar</Text>
           </View>
         </View>
 
-        {/* Left Signature - Verified by */}
         <View>
           <Text style={styles.verifiedLabel}>Verified by:</Text>
         </View>
 
-        <View style={styles.signatureLeft}>
+        <View style={styles.signatureLeftContainer}>
           {record.signatureImage && (
-            <Image 
-              src={record.signatureImage} 
-              style={styles.signatureImage}
-            />
+            <Image src={record.signatureImage} style={styles.signatureImage} />
           )}
-          <View>
+          <View style={styles.signatureLeft}>
             <Text style={styles.signatureName}>DARRYL U. MONTEALEGRE, MM</Text>
             <Text style={styles.signatureTitle}>Municipal Civil Registrar</Text>
           </View>
         </View>
 
         <View style={styles.noteContainer}>
-          <Text style={styles.noteHighlight}>
-            Note:
-          </Text>
+          <Text style={styles.noteHighlight}>Note:</Text>
           <Text style={styles.noteText}>
-            A mark, erasure or alteration of any entry invalidates this certification.
+            A mark, erasure or alteration of any entry invalidates this
+            certification.
           </Text>
         </View>
       </Page>
@@ -440,17 +462,17 @@ export const BirthRecordView: React.FC<BirthRecordViewProps> = ({
             <Trash2 className="w-4 h-4 mr-2" /> Delete
           </Button>
 
-          <Button
-            variant="outline"
-            onClick={() => setShowPDF(!showPDF)}
-          >
+          <Button variant="outline" onClick={() => setShowPDF(!showPDF)}>
             <FileText className="w-4 h-4 mr-2" />
             {showPDF ? "Hide" : "Show"} Preview
           </Button>
         </div>
 
         {showPDF && (
-          <div className="bg-white shadow-lg rounded-lg overflow-hidden" style={{ height: '800px' }}>
+          <div
+            className="bg-white shadow-lg rounded-lg overflow-hidden"
+            style={{ height: "800px" }}
+          >
             <PDFViewer width="100%" height="100%">
               <BirthCertificatePDF record={record} />
             </PDFViewer>

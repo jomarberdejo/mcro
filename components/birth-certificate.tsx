@@ -61,7 +61,7 @@ export const BirthCertificate: React.FC<BirthCertificateProps> = ({ record }) =>
       <div className="h-full flex flex-col">
         {/* Header Section */}
         <div className="flex items-start justify-between mb-6">
-          <div className="w-16 flex-shrink-0">
+          <div className="w-16 shrink-0">
             <div className="w-full h-16 bg-gray-200 flex items-center justify-center text-gray-400 text-xs">
               Left Logo
             </div>
@@ -79,7 +79,7 @@ export const BirthCertificate: React.FC<BirthCertificateProps> = ({ record }) =>
             </div>
           </div>
 
-          <div className="flex items-start gap-2 flex-shrink-0">
+          <div className="flex items-start gap-2 shrink-0">
             <div className="w-14 h-14 bg-gray-200 flex items-center justify-center text-gray-400 text-xs">
               Center Logo
             </div>
