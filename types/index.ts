@@ -1,6 +1,8 @@
 // types.ts
 export type PageMode = "list" | "form" | "view";
 
+// types/index.ts or wherever your BirthRecord type is defined
+
 export interface BirthRecord {
   id: string;
   createdAt: string;
@@ -26,6 +28,7 @@ export interface BirthRecord {
   placeOfMarriage: string;
   remarks: string;
   registrarName: string;
+  signatureImage: string; // Base64 encoded image string
 }
 
 export interface FilterState {
@@ -39,6 +42,9 @@ export interface FilterState {
 }
 
 export const PREFIX = "birth_record:";
+
+
+// Update your emptyRecord function
 
 export const emptyRecord = (): BirthRecord => ({
   id: "",
@@ -65,4 +71,5 @@ export const emptyRecord = (): BirthRecord => ({
   placeOfMarriage: "",
   remarks: "",
   registrarName: "DARRYL U. MONTEALEGRE, MM",
+  signatureImage: "", // Add this line
 });

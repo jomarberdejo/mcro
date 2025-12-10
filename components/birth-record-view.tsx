@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft, Download, Edit2, Trash2, FileText } from "lucide-react";
 import { BirthRecord } from "@/types";
 import { getFullName } from "@/utils";
-import { Document, Page, Text, View, StyleSheet, PDFViewer, PDFDownloadLink, Font, Image } from "@react-pdf/renderer";
+import { Document, Page, Text, View, StyleSheet, PDFViewer, PDFDownloadLink, Font, Image} from "@react-pdf/renderer";
 
 interface BirthRecordViewProps {
   record: BirthRecord;
@@ -145,19 +145,15 @@ const styles = StyleSheet.create({
     textAlign: 'justify',
     marginBottom: 10,
     textTransform: "uppercase",
-
   },
   // Footer
   footerText: {
     fontSize: 10,
-    marginBottom: 30,
+    marginBottom: 10,
   },
   // Signature section
-  signatureSection: {
-    marginTop: 10,
-  },
+  
   signatureRight: {
-    marginBottom: 10,
     flexDirection: "column",
     justifyContent: "flex-end",
     marginLeft: 'auto',
@@ -169,10 +165,16 @@ const styles = StyleSheet.create({
     marginRight: 'auto',
     alignItems: 'center',
   },
+  signatureImage: {
+    width: 120,
+    height: 40,
+    marginBottom: -15,
+    objectFit: 'contain',
+  },
+
   signatureName: {
     fontSize: 11,
     fontWeight: 'bold',
-    marginTop: 5,
   },
   signatureTitle: {
     fontSize: 9,
@@ -181,7 +183,6 @@ const styles = StyleSheet.create({
   verifiedLabel: {
     fontSize: 10,
     marginTop: 5,
-    marginBottom: 10,
   },
 
   noteContainer: {
@@ -358,10 +359,18 @@ const BirthCertificatePDF: React.FC<{ record: BirthRecord }> = ({ record }) => {
           This certification is issued to PSA – OCRG for filing in the archives.
         </Text>
 
-        {/* Right Signature */}
+        {/* Right Signature with Image */}
         <View style={styles.signatureRight}>
-          <Text style={styles.signatureName}>{record.registrarName || "DARRYL U. MONTEALEGRE, MM"}</Text>
-          <Text style={styles.signatureTitle}>Municipal Civil Registrar</Text>
+          {record.signatureImage && (
+            <Image 
+              src={record.signatureImage} 
+              style={styles.signatureImage}
+            />
+          )}
+          <View>
+            <Text style={styles.signatureName}>{record.registrarName || "DARRYL U. MONTEALEGRE, MM"}</Text>
+            <Text style={styles.signatureTitle}>Municipal Civil Registrar</Text>
+          </View>
         </View>
 
         {/* Left Signature - Verified by */}
@@ -370,8 +379,16 @@ const BirthCertificatePDF: React.FC<{ record: BirthRecord }> = ({ record }) => {
         </View>
 
         <View style={styles.signatureLeft}>
-          <Text style={styles.signatureName}>DARRYL U. MONTEALEGRE, MM</Text>
-          <Text style={styles.signatureTitle}>Municipal Civil Registrar</Text>
+          {record.signatureImage && (
+            <Image 
+              src={record.signatureImage} 
+              style={styles.signatureImage}
+            />
+          )}
+          <View>
+            <Text style={styles.signatureName}>DARRYL U. MONTEALEGRE, MM</Text>
+            <Text style={styles.signatureTitle}>Municipal Civil Registrar</Text>
+          </View>
         </View>
 
         <View style={styles.noteContainer}>

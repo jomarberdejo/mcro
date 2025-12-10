@@ -1,5 +1,7 @@
 // BirthRecordForm.tsx
-import React from "react";
+"use client";
+
+import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -12,8 +14,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Upload, X } from "lucide-react";
 import { BirthRecord } from "@/types";
+import Image from "next/image";
 
 type OnChangeHandler = (
   name: keyof BirthRecord
@@ -41,6 +44,49 @@ export const BirthRecordForm: React.FC<BirthRecordFormProps> = ({
   onCancel,
   onChange,
 }) => {
+  const [signaturePreview, setSignaturePreview] = useState<string | null>(
+    formData.signatureImage || null
+  );
+
+  const handleSignatureUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith("image/")) {
+      alert("Please upload an image file");
+      return;
+    }
+
+    // Validate file size (max 2MB)
+    if (file.size > 2 * 1024 * 1024) {
+      alert("Image size should be less than 2MB");
+      return;
+    }
+
+    try {
+      // Convert to base64
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64String = reader.result as string;
+        setSignaturePreview(base64String);
+        onChange("signatureImage")(base64String);
+      };
+      reader.readAsDataURL(file);
+    } catch (error) {
+      console.error("Error uploading signature:", error);
+      alert("Failed to upload signature");
+    }
+  };
+
+  const removeSignature = () => {
+    setSignaturePreview(null);
+    onChange("signatureImage")("");
+    // Reset file input
+    const fileInput = document.getElementById("signatureUpload") as HTMLInputElement;
+    if (fileInput) fileInput.value = "";
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 p-8">
       <div className="max-w-5xl mx-auto">
@@ -338,6 +384,65 @@ export const BirthRecordForm: React.FC<BirthRecordFormProps> = ({
                       value={formData.registrarName}
                       onChange={(e) => onChange("registrarName")(e)}
                     />
+                  </div>
+
+                  {/* Signature Upload Section */}
+                  <div>
+                    <Label className="mb-2 block" htmlFor="signatureUpload">
+                      Registrar Signature (Optional)
+                    </Label>
+                    <div className="space-y-3">
+                      {!signaturePreview ? (
+                        <div className="flex items-center gap-3">
+                          <Input
+                            id="signatureUpload"
+                            type="file"
+                            accept="image/*"
+                            onChange={handleSignatureUpload}
+                            className="hidden"
+                          />
+                          <Button
+                            type="button"
+                            variant="outline"
+                            onClick={() =>
+                              document.getElementById("signatureUpload")?.click()
+                            }
+                            className="flex items-center gap-2"
+                          >
+                            <Upload className="w-4 h-4" />
+                            Upload Signature
+                          </Button>
+                          <span className="text-sm text-gray-500">
+                            PNG, JPG up to 2MB
+                          </span>
+                        </div>
+                      ) : (
+                        <div className="border rounded-lg p-4 bg-gray-50">
+                          <div className="flex items-start justify-between mb-2">
+                            <Label className="text-sm font-medium">
+                              Signature Preview
+                            </Label>
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              onClick={removeSignature}
+                              className="h-8 w-8 p-0"
+                            >
+                              <X className="w-4 h-4" />
+                            </Button>
+                          </div>
+                          <div className="relative w-full max-w-xs h-24 bg-white border rounded flex items-center justify-center">
+                            <Image
+                              src={signaturePreview}
+                              alt="Signature preview"
+                              fill
+                              className="object-contain p-2"
+                            />
+                          </div>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
