@@ -1,5 +1,5 @@
 // components/birth-certificate.tsx
-import { BirthRecord } from "@/app/admin/(pages)/livebirth/page";
+import { BirthRecord } from "@/types";
 import React from "react";
 
 interface BirthCertificateProps {
