@@ -144,7 +144,6 @@ const CivilRegistrySystem: React.FC = () => {
     );
   }
 
-  // Render view page
   if (page === "view" && selectedRecord) {
     return (
       <BirthRecordView

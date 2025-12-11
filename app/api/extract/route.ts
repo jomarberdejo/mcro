@@ -1,24 +1,30 @@
 import { NextResponse } from "next/server";
-import OpenAI from "openai";
-
-const client = new OpenAI({
-  apiKey: process.env.NEXT_PUBLIC_API_KEY,
-});
 
 export async function POST(req: Request) {
   try {
     const { base64Image } = await req.json();
 
-    // Use chat completions API which is more stable
-    const response = await client.chat.completions.create({
-      model: "gpt-4o-mini",
-      messages: [
-        {
-          role: "user",
-          content: [
+    const response = await fetch(
+      "https://openrouter.ai/api/v1/chat/completions",
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${process.env.NEXT_PUBLIC_API_KEY}`,
+          "X-Title": "Birth Certificate Extractor", // optional
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: "gpt-4o-mini", // same model name but OpenRouter version
+          response_format: { type: "json_object" },
+          temperature: 0.1,
+          max_tokens: 1500,
+          messages: [
             {
-              type: "text",
-              text: `You are an expert at extracting data from birth certificates. Extract ALL information from this birth certificate image.
+              role: "user",
+              content: [
+                {
+                  type: "text",
+                  text: `You are an expert at extracting data from birth certificates. Extract ALL information from this birth certificate image.
 
 CRITICAL INSTRUCTIONS FOR REMARKS SECTION:
 1. Look for a section titled "REMARKS" (all caps, possibly with space after it)
@@ -59,37 +65,32 @@ ADDITIONAL RULES:
 5. Format dates as "Month Day, Year" (e.g., "January 15, 2024")
 6. Leave fields as "" if not found
 7. Return ONLY the JSON object, no additional text`,
-            },
-            {
-              type: "image_url",
-              image_url: {
-                url: `data:image/jpeg;base64,${base64Image}`,
-                detail: "high"
-              },
+                },
+                {
+                  type: "image_url",
+                  image_url: {
+                    url: `data:image/jpeg;base64,${base64Image}`,
+                    detail: "high",
+                  },
+                },
+              ],
             },
           ],
-        },
-      ],
-      temperature: 0.1,
-      max_tokens: 1500, // Increased for more text extraction
-      response_format: { type: "json_object" },
-    });
+        }),
+      }
+    );
 
-    // Extract the output text
-    const outputText = response.choices[0]?.message?.content || "";
+    const data = await response.json();
+    const outputText = data?.choices?.[0]?.message?.content || "";
 
-    // Parse the JSON response
     let extractedData;
     try {
       const jsonMatch = outputText.match(/\{[\s\S]*\}/);
-      if (jsonMatch) {
-        extractedData = JSON.parse(jsonMatch[0]);
-      } else {
-        extractedData = JSON.parse(outputText);
-      }
+      extractedData = jsonMatch
+        ? JSON.parse(jsonMatch[0])
+        : JSON.parse(outputText);
     } catch (error) {
       console.error("Failed to parse JSON:", outputText);
-      // Return empty JSON structure if parsing fails
       extractedData = {
         registryNo: "",
         dateOfRegistration: "",
@@ -109,20 +110,17 @@ ADDITIONAL RULES:
         fatherCitizenship: "",
         dateOfMarriage: "",
         placeOfMarriage: "",
-        remarks: ""
+        remarks: "",
       };
     }
-
-    // Debug: Log what was extracted
-    console.log("Extracted remarks:", extractedData.remarks);
 
     return NextResponse.json(extractedData);
   } catch (err: any) {
     console.error("Error in extraction:", err.message);
     return NextResponse.json(
-      { 
+      {
         error: "Failed to extract data from image",
-        details: err.message 
+        details: err.message,
       },
       { status: 500 }
     );
