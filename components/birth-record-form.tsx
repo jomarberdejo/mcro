@@ -1,4 +1,3 @@
-// BirthRecordForm.tsx
 "use client";
 
 import React, { useState } from "react";
@@ -50,7 +49,9 @@ export const BirthRecordForm: React.FC<BirthRecordFormProps> = ({
   const [documentPreview, setDocumentPreview] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
 
-  const handleSignatureUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSignatureUpload = async (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -81,11 +82,15 @@ export const BirthRecordForm: React.FC<BirthRecordFormProps> = ({
   const removeSignature = () => {
     setSignaturePreview(null);
     onChange("signatureImage")("");
-    const fileInput = document.getElementById("signatureUpload") as HTMLInputElement;
+    const fileInput = document.getElementById(
+      "signatureUpload"
+    ) as HTMLInputElement;
     if (fileInput) fileInput.value = "";
   };
 
-  const handleDocumentUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleDocumentUpload = async (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -118,41 +123,54 @@ export const BirthRecordForm: React.FC<BirthRecordFormProps> = ({
     }
   };
 
- const extractDataFromImage = async (base64Image: string) => {
-  try {
-    const response = await fetch("/api/extract", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        base64Image: base64Image.split(",")[1],
-      }),
-    });
+  const extractDataFromImage = async (base64Image: string) => {
+    try {
+      const response = await fetch("/api/extract", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          base64Image: base64Image.split(",")[1],
+        }),
+      });
 
-    if (!response.ok) {
-      throw new Error("Failed to extract data");
-    }
-
-    const extractedData = await response.json();
-
-    // Populate form fields
-    Object.keys(extractedData).forEach((key) => {
-      if (extractedData[key] !== undefined && key !== 'isTwin' && key !== 'birthOrder') {
-        onChange(key as keyof BirthRecord)(extractedData[key] || "");
+      if (!response.ok) {
+        throw new Error("Failed to extract data");
       }
-    });
 
-    alert("✅ Data extracted successfully! Please review and correct any errors.");
-  } catch (error) {
-    console.error("Error extracting data:", error);
-    alert("Failed to extract data from image. Please fill manually.");
-  } finally {
-    setIsProcessing(false);
-  }
-};
+      const extractedData = await response.json();
+
+      if (extractedData.birthOrder) {
+        onChange("isTwin")(true);
+        onChange("birthOrder")(extractedData.birthOrder);
+      }
+
+      // Populate form fields
+      Object.keys(extractedData).forEach((key) => {
+        if (
+          extractedData[key] !== undefined &&
+          key !== "isTwin" &&
+          key !== "birthOrder"
+        ) {
+          onChange(key as keyof BirthRecord)(extractedData[key] || "");
+        }
+      });
+
+      alert(
+        "✅ Data extracted successfully! Please review and correct any errors."
+      );
+    } catch (error) {
+      console.error("Error extracting data:", error);
+      alert("Failed to extract data from image. Please fill manually.");
+    } finally {
+      setIsProcessing(false);
+    }
+  };
 
   const removeDocument = () => {
     setDocumentPreview(null);
-    const fileInput = document.getElementById("documentUpload") as HTMLInputElement;
+    const fileInput = document.getElementById(
+      "documentUpload"
+    ) as HTMLInputElement;
     if (fileInput) fileInput.value = "";
   };
 
@@ -183,7 +201,8 @@ export const BirthRecordForm: React.FC<BirthRecordFormProps> = ({
                       Auto-populate from Document
                     </h4>
                     <p className="text-sm text-blue-700 mb-3">
-                      Upload a birth certificate image and AI will automatically extract and fill the form fields.
+                      Upload a birth certificate image and AI will automatically
+                      extract and fill the form fields.
                     </p>
 
                     {!documentPreview ? (
@@ -553,7 +572,9 @@ export const BirthRecordForm: React.FC<BirthRecordFormProps> = ({
                             type="button"
                             variant="outline"
                             onClick={() =>
-                              document.getElementById("signatureUpload")?.click()
+                              document
+                                .getElementById("signatureUpload")
+                                ?.click()
                             }
                             className="flex items-center gap-2"
                           >
@@ -596,7 +617,11 @@ export const BirthRecordForm: React.FC<BirthRecordFormProps> = ({
               </div>
 
               <div className="flex gap-2 pt-4">
-                <Button type="submit" className="flex-1" disabled={isProcessing}>
+                <Button
+                  type="submit"
+                  className="flex-1"
+                  disabled={isProcessing}
+                >
                   {isEditing ? "Update Record" : "Save Record"}
                 </Button>
                 <Button type="button" variant="ghost" onClick={onCancel}>
