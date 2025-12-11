@@ -141,7 +141,6 @@ const styles = StyleSheet.create({
   // Remarks section
   remarksSection: {
     marginTop: 20,
-    marginBottom: 10,
   },
   remarksTitle: {
     fontSize: 11,
@@ -159,7 +158,7 @@ const styles = StyleSheet.create({
   // Footer
   footerText: {
     fontSize: 10,
-    marginBottom: 10,
+    marginBottom: 5,
   },
   // Signature section
   signatureRightContainer: {
@@ -311,6 +310,15 @@ const BirthCertificatePDF: React.FC<{ record: BirthRecord }> = ({ record }) => {
           <Text style={styles.fieldColon}>:</Text>
           <Text style={styles.fieldValue}>{record.dateOfBirth}</Text>
         </View>
+
+        
+        {record.isTwin && record.birthOrder && (
+          <View style={styles.fieldRow}>
+            <Text style={styles.fieldLabel}>Birth Order</Text>
+            <Text style={styles.fieldColon}>:</Text>
+            <Text style={styles.fieldValue}>{record.birthOrder}</Text>
+          </View>
+        )}
 
         <View style={styles.fieldRow}>
           <Text style={styles.fieldLabel}>Place of Birth</Text>

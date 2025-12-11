@@ -14,7 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ArrowLeft, Upload, X } from "lucide-react";
+import { ArrowLeft, Upload, X, FileImage, Loader2 } from "lucide-react";
 import { BirthRecord } from "@/types";
 import Image from "next/image";
 
@@ -47,25 +47,24 @@ export const BirthRecordForm: React.FC<BirthRecordFormProps> = ({
   const [signaturePreview, setSignaturePreview] = useState<string | null>(
     formData.signatureImage || null
   );
+  const [documentPreview, setDocumentPreview] = useState<string | null>(null);
+  const [isProcessing, setIsProcessing] = useState(false);
 
   const handleSignatureUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Validate file type
     if (!file.type.startsWith("image/")) {
       alert("Please upload an image file");
       return;
     }
 
-    // Validate file size (max 2MB)
     if (file.size > 2 * 1024 * 1024) {
       alert("Image size should be less than 2MB");
       return;
     }
 
     try {
-      // Convert to base64
       const reader = new FileReader();
       reader.onloadend = () => {
         const base64String = reader.result as string;
@@ -82,8 +81,78 @@ export const BirthRecordForm: React.FC<BirthRecordFormProps> = ({
   const removeSignature = () => {
     setSignaturePreview(null);
     onChange("signatureImage")("");
-    // Reset file input
     const fileInput = document.getElementById("signatureUpload") as HTMLInputElement;
+    if (fileInput) fileInput.value = "";
+  };
+
+  const handleDocumentUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      alert("Please upload an image file");
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      alert("Image size should be less than 5MB");
+      return;
+    }
+
+    setIsProcessing(true);
+
+    try {
+      const reader = new FileReader();
+      reader.onloadend = async () => {
+        const base64String = reader.result as string;
+        setDocumentPreview(base64String);
+
+        // Extract text from image using Claude API
+        await extractDataFromImage(base64String);
+      };
+      reader.readAsDataURL(file);
+    } catch (error) {
+      console.error("Error uploading document:", error);
+      alert("Failed to upload document");
+      setIsProcessing(false);
+    }
+  };
+
+ const extractDataFromImage = async (base64Image: string) => {
+  try {
+    const response = await fetch("/api/extract", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        base64Image: base64Image.split(",")[1],
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to extract data");
+    }
+
+    const extractedData = await response.json();
+
+    // Populate form fields
+    Object.keys(extractedData).forEach((key) => {
+      if (extractedData[key] !== undefined && key !== 'isTwin' && key !== 'birthOrder') {
+        onChange(key as keyof BirthRecord)(extractedData[key] || "");
+      }
+    });
+
+    alert("✅ Data extracted successfully! Please review and correct any errors.");
+  } catch (error) {
+    console.error("Error extracting data:", error);
+    alert("Failed to extract data from image. Please fill manually.");
+  } finally {
+    setIsProcessing(false);
+  }
+};
+
+  const removeDocument = () => {
+    setDocumentPreview(null);
+    const fileInput = document.getElementById("documentUpload") as HTMLInputElement;
     if (fileInput) fileInput.value = "";
   };
 
@@ -104,6 +173,85 @@ export const BirthRecordForm: React.FC<BirthRecordFormProps> = ({
           </CardHeader>
 
           <CardContent>
+            {/* Auto-populate Section */}
+            {!isEditing && (
+              <div className="mb-6 p-4 border-2 border-dashed border-blue-300 rounded-lg bg-blue-50">
+                <div className="flex items-start gap-4">
+                  <FileImage className="w-8 h-8 text-blue-600 mt-1" />
+                  <div className="flex-1">
+                    <h4 className="font-semibold text-blue-900 mb-2">
+                      Auto-populate from Document
+                    </h4>
+                    <p className="text-sm text-blue-700 mb-3">
+                      Upload a birth certificate image and AI will automatically extract and fill the form fields.
+                    </p>
+
+                    {!documentPreview ? (
+                      <div className="flex items-center gap-3">
+                        <Input
+                          id="documentUpload"
+                          type="file"
+                          accept="image/*"
+                          onChange={handleDocumentUpload}
+                          className="hidden"
+                          disabled={isProcessing}
+                        />
+                        <Button
+                          type="button"
+                          variant="default"
+                          onClick={() =>
+                            document.getElementById("documentUpload")?.click()
+                          }
+                          disabled={isProcessing}
+                          className="flex items-center gap-2"
+                        >
+                          {isProcessing ? (
+                            <>
+                              <Loader2 className="w-4 h-4 animate-spin" />
+                              Processing...
+                            </>
+                          ) : (
+                            <>
+                              <Upload className="w-4 h-4" />
+                              Upload Birth Certificate
+                            </>
+                          )}
+                        </Button>
+                        <span className="text-sm text-gray-600">
+                          PNG, JPG up to 5MB
+                        </span>
+                      </div>
+                    ) : (
+                      <div className="border rounded-lg p-3 bg-white">
+                        <div className="flex items-start justify-between mb-2">
+                          <span className="text-sm font-medium text-green-700">
+                            ✓ Document uploaded and processed
+                          </span>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            onClick={removeDocument}
+                            className="h-8 w-8 p-0"
+                          >
+                            <X className="w-4 h-4" />
+                          </Button>
+                        </div>
+                        <div className="relative w-full h-32 bg-gray-100 border rounded overflow-hidden">
+                          <Image
+                            src={documentPreview}
+                            alt="Document preview"
+                            fill
+                            className="object-contain"
+                          />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
+
             <form onSubmit={onSubmit} className="space-y-6">
               {/* Registry Information */}
               <div className="grid grid-cols-2 gap-4">
@@ -448,7 +596,7 @@ export const BirthRecordForm: React.FC<BirthRecordFormProps> = ({
               </div>
 
               <div className="flex gap-2 pt-4">
-                <Button type="submit" className="flex-1">
+                <Button type="submit" className="flex-1" disabled={isProcessing}>
                   {isEditing ? "Update Record" : "Save Record"}
                 </Button>
                 <Button type="button" variant="ghost" onClick={onCancel}>
