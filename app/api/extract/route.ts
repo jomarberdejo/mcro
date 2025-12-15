@@ -1,30 +1,25 @@
 import { NextResponse } from "next/server";
+import OpenAI from "openai";
+
+const client = new OpenAI({
+  apiKey: process.env.NEXT_PUBLIC_API_KEY,
+});
 
 export async function POST(req: Request) {
   try {
     const { base64Image } = await req.json();
 
-    const response = await fetch(
-      "https://openrouter.ai/api/v1/chat/completions",
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${process.env.NEXT_PUBLIC_API_KEY}`,
-          "X-Title": "Birth Certificate Extractor", // optional
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          model: "gpt-4o-mini", // same model name but OpenRouter version
-          response_format: { type: "json_object" },
-          temperature: 0.1,
-          max_tokens: 1500,
-          messages: [
+    const response = await client.chat.completions.create({
+      model: "gpt-4o-mini",
+      temperature: 0.1,
+      max_tokens: 1500,
+      messages: [
+        {
+          role: "user",
+          content: [
             {
-              role: "user",
-              content: [
-                {
-                  type: "text",
-                  text: `You are an expert at extracting data from birth certificates. Extract ALL information from this birth certificate image.
+              type: "text",
+              text: `You are an expert at extracting data from birth certificates. Extract ALL information from this birth certificate image.
 
 CRITICAL INSTRUCTIONS FOR REMARKS SECTION:
 1. Look for a section titled "REMARKS" (all caps, possibly with space after it)
@@ -66,23 +61,20 @@ ADDITIONAL RULES:
 5. Format dates as "Month Day, Year" (e.g., "January 15, 2024")
 6. Leave fields as "" if not found
 7. Return ONLY the JSON object, no additional text`,
-                },
-                {
-                  type: "image_url",
-                  image_url: {
-                    url: `data:image/jpeg;base64,${base64Image}`,
-                    detail: "high",
-                  },
-                },
-              ],
+            },
+            {
+              type: "image_url",
+              image_url: {
+                url: `data:image/jpeg;base64,${base64Image}`,
+                detail: "high",
+              },
             },
           ],
-        }),
-      }
-    );
+        },
+      ],
+    });
 
-    const data = await response.json();
-    const outputText = data?.choices?.[0]?.message?.content || "";
+    const outputText = response.choices?.[0]?.message?.content || "";
 
     let extractedData;
     try {
