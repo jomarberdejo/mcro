@@ -1,0 +1,95 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+//////////////////////
+// ENUMS
+//////////////////////
+
+enum UserRole {
+  ADMIN
+  REGISTRAR
+  STAFF
+}
+
+//////////////////////
+// USER
+//////////////////////
+
+model User {
+  // Internal DB ID
+  id String @id @default(uuid())
+
+  // Public / LGU User ID
+  publicId String @unique
+
+  name     String
+  username String @unique
+  password String
+  email    String @unique
+
+  role     UserRole
+  office   String // e.g. "Civil Registry"
+  metadata Json? // flexible user metadata
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  birthCertificates BirthCertificate[]
+}
+
+//////////////////////
+// BIRTH CERTIFICATE
+//////////////////////
+
+model BirthCertificate {
+  id String @id @default(uuid())
+
+  publicId String @unique // e.g. BIRTH-2025-000123
+
+  registryNo         String?
+  dateOfRegistration DateTime?
+
+  childLastName   String
+  childFirstName  String
+  childMiddleName String?
+  sex             String
+  dateOfBirth     DateTime
+  placeOfBirth    String
+
+  motherLastName    String
+  motherFirstName   String
+  motherMiddleName  String?
+  motherCitizenship String?
+
+  fatherLastName    String?
+  fatherFirstName   String?
+  fatherMiddleName  String?
+  fatherCitizenship String?
+
+  dateOfMarriage  DateTime?
+  placeOfMarriage String?
+
+  remarks      String?
+  signatureUrl String?
+
+  createdById String
+  createdBy   User   @relation(fields: [createdById], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([publicId])
+  @@index([childLastName, childFirstName])
+}
