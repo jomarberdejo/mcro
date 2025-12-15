@@ -90,6 +90,8 @@ model BirthCertificate {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  birthCertificateImageUrl String?
+
   @@index([publicId])
   @@index([childLastName, childFirstName])
 }

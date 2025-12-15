@@ -1,4 +1,4 @@
-export interface LiveBirthRecord {
+export interface BirthCertificateRecordType {
   id: string;
   registry_no: string;
   date_of_registration: string;
