@@ -36,7 +36,7 @@ const BirthCertificatePDF: React.FC<{ record: BirthRecord }> = ({ record }) => {
       <Page size="A4" style={styles.page}>
         <View style={styles.headerRow}>
           <View style={styles.leftColumn}>
-            <Image src="/logos/datu-gara.png" style={styles.lapuLapuImage} />
+            <Image src="/logos/datu-gara-2.png" style={styles.lapuLapuImage}  />
           </View>
 
           <View style={styles.centerColumn}>

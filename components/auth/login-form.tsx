@@ -71,8 +71,8 @@ export function LoginForm() {
                   src="/logos/mcro.png"
                   alt="Municipal Civil Registrar Office Logo"
                   className="mx-auto object-contain brightness-0 invert"
-                  width={320}
-                  height={320}
+                  width={300}
+                  height={300}
                   priority
                 />
                 {/* <div className="space-y-2 text-center">
@@ -84,7 +84,7 @@ export function LoginForm() {
               </div>
             </div>
 
-            <div className="space-y-2 text-sm text-blue-100">
+            <div className="space-y-2 mt-4 text-sm text-blue-100">
               <p className="flex items-center gap-2">
                 <ShieldCheck className="h-4 w-4" />
                 Authorized Personnel Only
@@ -101,7 +101,7 @@ export function LoginForm() {
           <div className="bg-white">
             <form
               onSubmit={handleSubmit(onSubmit)}
-              className="flex min-h-[600px] flex-col justify-center p-8 md:p-12"
+              className="flex min-h-[500px] flex-col justify-center p-8 md:p-12"
             >
               <div className="mx-auto w-full max-w-md space-y-8">
                 {/* Mobile Logo */}
@@ -230,16 +230,7 @@ export function LoginForm() {
                   </div>
                 </FieldGroup>
 
-                {/* Footer
-                <div className="space-y-4 pt-4">
-                  <div className="flex items-center justify-center gap-2 text-sm text-gray-500">
-                    <ShieldCheck className="h-4 w-4" />
-                    <span>Secure Government Portal</span>
-                  </div>
-                  <p className="text-center text-xs text-gray-500">
-                    For technical support, contact the Municipal IT Department
-                  </p>
-                </div> */}
+                
               </div>
             </form>
           </div>
