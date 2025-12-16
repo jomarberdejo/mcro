@@ -1,25 +1,30 @@
 import { NextResponse } from "next/server";
-import OpenAI from "openai";
-
-const client = new OpenAI({
-  apiKey: process.env.NEXT_PUBLIC_API_KEY,
-});
 
 export async function POST(req: Request) {
   try {
     const { base64Image } = await req.json();
 
-    const response = await client.chat.completions.create({
-      model: "gpt-4o-mini",
-      temperature: 0.1,
-      max_tokens: 1500,
-      messages: [
-        {
-          role: "user",
-          content: [
+    const response = await fetch(
+      "https://openrouter.ai/api/v1/chat/completions",
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${process.env.NEXT_PUBLIC_API_KEY}`,
+          "Content-Type": "application/json",
+          "HTTP-Referer": "http://localhost:3001",
+          "X-Title": "Birth Certificate Extraction",
+        },
+        body: JSON.stringify({
+          model: "openai/gpt-4o-mini", 
+          temperature: 0.1,
+          max_tokens: 1500,
+          messages: [
             {
-              type: "text",
-              text: `You are an expert at extracting data from birth certificates. Extract ALL information from this birth certificate image.
+              role: "user",
+              content: [
+                {
+                  type: "text",
+                  text: `You are an expert at extracting data from birth certificates. Extract ALL information from this birth certificate image.
 
 CRITICAL INSTRUCTIONS FOR REMARKS SECTION:
 1. Look for a section titled "REMARKS" (all caps, possibly with space after it)
@@ -55,28 +60,32 @@ Return ONLY valid JSON with this exact structure:
 
 ADDITIONAL RULES:
 1. Extract ALL visible text including small print
-2. For "REMARKS": Look for the exact word "REMARKS" in any format (REMARKS, Remarks, remarks)
-3. Extract everything that follows "REMARKS" in that section
-4. Preserve the exact text formatting of remarks
-5. Format dates as "Month Day, Year" (e.g., "January 15, 2024")
+2. For "REMARKS": Look for the exact word "REMARKS" in any format
+3. Extract everything that follows "REMARKS"
+4. Preserve exact text formatting of remarks
+5. Format dates as "Month Day, Year"
 6. Leave fields as "" if not found
-7. Return ONLY the JSON object, no additional text`,
-            },
-            {
-              type: "image_url",
-              image_url: {
-                url: `data:image/jpeg;base64,${base64Image}`,
-                detail: "high",
-              },
+7. Return ONLY the JSON object`,
+                },
+                {
+                  type: "image_url",
+                  image_url: {
+                    url: `data:image/jpeg;base64,${base64Image}`,
+                    detail: "high",
+                  },
+                },
+              ],
             },
           ],
-        },
-      ],
-    });
+        }),
+      }
+    );
 
-    const outputText = response.choices?.[0]?.message?.content || "";
+    const data = await response.json();
+    const outputText = data?.choices?.[0]?.message?.content || "";
 
     let extractedData;
+
     try {
       const jsonMatch = outputText.match(/\{[\s\S]*\}/);
       extractedData = jsonMatch

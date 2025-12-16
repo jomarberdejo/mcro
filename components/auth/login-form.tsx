@@ -53,9 +53,7 @@ export function LoginForm() {
     <div className="flex flex-col gap-6">
       <Card className="w-full overflow-hidden border-0 shadow-2xl p-0">
         <CardContent className="grid p-0 md:grid-cols-2">
-          {/* Left Side - Branding */}
           <div className="relative hidden flex-col justify-between bg-linear-to-br from-blue-600 via-blue-700 to-blue-800 p-10 text-white md:flex">
-            {/* Logo and Header */}
             <div className="space-y-6">
               <div className="flex items-center gap-4">
                 <div>
@@ -104,7 +102,6 @@ export function LoginForm() {
               className="flex min-h-[500px] flex-col justify-center p-8 md:p-12"
             >
               <div className="mx-auto w-full max-w-md space-y-8">
-                {/* Mobile Logo */}
                 <div className="flex flex-col items-center gap-4 md:hidden">
                   <div className="rounded-full bg-blue-600 p-3">
                     <ShieldCheck className="h-8 w-8 text-white" />
@@ -229,8 +226,6 @@ export function LoginForm() {
                     </Button>
                   </div>
                 </FieldGroup>
-
-                
               </div>
             </form>
           </div>
