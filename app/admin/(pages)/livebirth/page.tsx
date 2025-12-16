@@ -1,4 +1,3 @@
-// CivilRegistrySystem.tsx
 "use client";
 
 import React, { useEffect, useState } from "react";
@@ -15,9 +14,9 @@ import {
   deleteRecord,
   filterRecords,
 } from "@/utils";
-import { BirthRecordForm } from "@/components/birth-record-form";
-import { BirthRecordView } from "@/components/birth-record-view";
-import { BirthRecordList } from "@/components/birth-record-list";
+import { BirthRecordForm } from "@/components/birth-certificate/birth-record-form";
+import { BirthRecordView } from "@/components/birth-certificate/birth-record-view";
+import { BirthRecordList } from "@/components/birth-certificate/birth-record-list";
 
 const CivilRegistrySystem: React.FC = () => {
   const [page, setPage] = useState<PageMode>("list");

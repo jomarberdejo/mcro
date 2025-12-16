@@ -4,20 +4,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Plus, Eye, Edit2, Trash2, ChevronLeft, ChevronRight } from "lucide-react";
-import { BirthRecord, FilterState } from "@/types";
+import { BirthRecord, BirthRecordListProps, FilterState } from "@/types";
 import { getFullName } from "@/utils";
-
-interface BirthRecordListProps {
-  records: BirthRecord[];
-  filters: FilterState;
-  storageAvailable: boolean | null;
-  onFilterChange: (filters: FilterState) => void;
-  onClearFilters: () => void;
-  onNew: () => void;
-  onView: (record: BirthRecord) => void;
-  onEdit: (record: BirthRecord) => void;
-  onDelete: (id: string) => void;
-}
 
 export const BirthRecordList: React.FC<BirthRecordListProps> = ({
   records,
@@ -33,33 +21,28 @@ export const BirthRecordList: React.FC<BirthRecordListProps> = ({
   const [currentPage, setCurrentPage] = React.useState(1);
   const [recordsPerPage, setRecordsPerPage] = React.useState(10);
 
-  // Calculate pagination values
   const totalPages = Math.ceil(records.length / recordsPerPage);
   const indexOfLastRecord = currentPage * recordsPerPage;
   const indexOfFirstRecord = indexOfLastRecord - recordsPerPage;
   const currentRecords = records.slice(indexOfFirstRecord, indexOfLastRecord);
   const totalRecords = records.length;
 
-  // Reset to first page when filters change
   React.useEffect(() => {
     setCurrentPage(1);
   }, [filters, records]);
 
-  // Handle page navigation
   const goToPage = (page: number) => {
     if (page >= 1 && page <= totalPages) {
       setCurrentPage(page);
     }
   };
 
-  // Handle records per page change
   const handleRecordsPerPageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const value = parseInt(e.target.value);
     setRecordsPerPage(value);
-    setCurrentPage(1); // Reset to first page when changing page size
+    setCurrentPage(1); 
   };
 
-  // Generate page numbers to display
   const getPageNumbers = () => {
     const pageNumbers = [];
     const maxVisiblePages = 5;
@@ -94,7 +77,6 @@ export const BirthRecordList: React.FC<BirthRecordListProps> = ({
                 Live Birth Records
               </CardTitle>
               
-              {/* Records per page selector */}
               <div className="flex items-center gap-2">
                 <span className="text-sm text-gray-600">Show:</span>
                 <select
@@ -197,7 +179,6 @@ export const BirthRecordList: React.FC<BirthRecordListProps> = ({
               </div>
             )}
 
-            {/* Records count summary */}
             <div className="mb-4 text-sm text-gray-600">
               Showing {indexOfFirstRecord + 1} to {Math.min(indexOfLastRecord, totalRecords)} of {totalRecords} records
             </div>
@@ -279,7 +260,6 @@ export const BirthRecordList: React.FC<BirthRecordListProps> = ({
               </table>
             </div>
 
-            {/* Pagination Controls */}
             {totalPages > 1 && (
               <div className="mt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
                 <div className="text-sm text-gray-600">
@@ -287,7 +267,6 @@ export const BirthRecordList: React.FC<BirthRecordListProps> = ({
                 </div>
                 
                 <div className="flex items-center gap-2">
-                  {/* Previous button */}
                   <Button
                     variant="outline"
                     size="sm"
@@ -299,7 +278,6 @@ export const BirthRecordList: React.FC<BirthRecordListProps> = ({
                     Previous
                   </Button>
 
-                  {/* Page numbers */}
                   <div className="flex items-center gap-1">
                     {getPageNumbers().map((page) => (
                       <Button
@@ -314,7 +292,6 @@ export const BirthRecordList: React.FC<BirthRecordListProps> = ({
                     ))}
                   </div>
 
-                  {/* Next button */}
                   <Button
                     variant="outline"
                     size="sm"

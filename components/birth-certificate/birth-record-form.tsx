@@ -14,26 +14,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ArrowLeft, Upload, X, FileImage, Loader2 } from "lucide-react";
-import { BirthRecord } from "@/types";
+import { BirthRecord, BirthRecordFormProps } from "@/types";
 import Image from "next/image";
-
-type OnChangeHandler = (
-  name: keyof BirthRecord
-) => (
-  value:
-    | string
-    | React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-    | boolean
-) => void;
-
-interface BirthRecordFormProps {
-  formData: BirthRecord;
-  isEditing: boolean;
-  onBack: () => void;
-  onSubmit: (e: React.FormEvent) => void;
-  onCancel: () => void;
-  onChange: OnChangeHandler;
-}
 
 export const BirthRecordForm: React.FC<BirthRecordFormProps> = ({
   formData,
@@ -112,7 +94,6 @@ export const BirthRecordForm: React.FC<BirthRecordFormProps> = ({
         const base64String = reader.result as string;
         setDocumentPreview(base64String);
 
-        // Extract text from image using Claude API
         await extractDataFromImage(base64String);
       };
       reader.readAsDataURL(file);
@@ -144,7 +125,6 @@ export const BirthRecordForm: React.FC<BirthRecordFormProps> = ({
         onChange("birthOrder")(extractedData.birthOrder);
       }
 
-      // Populate form fields
       Object.keys(extractedData).forEach((key) => {
         if (
           extractedData[key] !== undefined &&
@@ -191,7 +171,6 @@ export const BirthRecordForm: React.FC<BirthRecordFormProps> = ({
           </CardHeader>
 
           <CardContent>
-            {/* Auto-populate Section */}
             {!isEditing && (
               <div className="mb-6 p-4 border-2 border-dashed border-blue-300 rounded-lg bg-blue-50">
                 <div className="flex items-start gap-4">
@@ -272,7 +251,6 @@ export const BirthRecordForm: React.FC<BirthRecordFormProps> = ({
             )}
 
             <form onSubmit={onSubmit} className="space-y-6">
-              {/* Registry Information */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label className="mb-1" htmlFor="registryNo">
@@ -297,7 +275,6 @@ export const BirthRecordForm: React.FC<BirthRecordFormProps> = ({
                 </div>
               </div>
 
-              {/* Child Information */}
               <div className="border-t pt-4">
                 <h3 className="font-semibold mb-3">Child Information</h3>
                 <div className="grid grid-cols-3 gap-4">
@@ -403,7 +380,6 @@ export const BirthRecordForm: React.FC<BirthRecordFormProps> = ({
                 </div>
               </div>
 
-              {/* Mother Information */}
               <div className="border-t pt-4">
                 <h3 className="font-semibold mb-3">Mother Information</h3>
                 <div className="grid grid-cols-3 gap-4">
@@ -450,7 +426,6 @@ export const BirthRecordForm: React.FC<BirthRecordFormProps> = ({
                 </div>
               </div>
 
-              {/* Father Information */}
               <div className="border-t pt-4">
                 <h3 className="font-semibold mb-3">Father Information</h3>
                 <div className="grid grid-cols-3 gap-4">
@@ -497,7 +472,6 @@ export const BirthRecordForm: React.FC<BirthRecordFormProps> = ({
                 </div>
               </div>
 
-              {/* Marriage Information */}
               <div className="border-t pt-4">
                 <h3 className="font-semibold mb-3">
                   Marriage Information (Optional)
@@ -527,7 +501,6 @@ export const BirthRecordForm: React.FC<BirthRecordFormProps> = ({
                 </div>
               </div>
 
-              {/* Additional Information */}
               <div className="border-t pt-4">
                 <div className="space-y-4">
                   <div>
@@ -553,7 +526,6 @@ export const BirthRecordForm: React.FC<BirthRecordFormProps> = ({
                     />
                   </div>
 
-                  {/* Signature Upload Section */}
                   <div>
                     <Label className="mb-2 block" htmlFor="signatureUpload">
                       Registrar Signature (Optional)

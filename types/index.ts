@@ -1,7 +1,5 @@
-// types.ts
 export type PageMode = "list" | "form" | "view";
 
-// types/index.ts or wherever your BirthRecord type is defined
 
 export interface BirthRecord {
   id: string;
@@ -28,8 +26,54 @@ export interface BirthRecord {
   placeOfMarriage: string;
   remarks: string;
   registrarName: string;
-  signatureImage: string; // Base64 encoded image string
+  signatureImage: string; 
 }
+
+
+export interface BirthRecordViewProps {
+  record: BirthRecord;
+  onBack: () => void;
+  onEdit: () => void;
+  onDelete: () => void;
+}
+
+
+
+export interface BirthRecordListProps {
+  records: BirthRecord[];
+  filters: FilterState;
+  storageAvailable: boolean | null;
+  onFilterChange: (filters: FilterState) => void;
+  onClearFilters: () => void;
+  onNew: () => void;
+  onView: (record: BirthRecord) => void;
+  onEdit: (record: BirthRecord) => void;
+  onDelete: (id: string) => void;
+}
+
+
+
+export interface BirthRecordFormProps {
+  formData: BirthRecord;
+  isEditing: boolean;
+  onBack: () => void;
+  onSubmit: (e: React.FormEvent) => void;
+  onCancel: () => void;
+  onChange: OnChangeHandler;
+}
+
+export type OnChangeHandler = (
+  name: keyof BirthRecord
+) => (
+  value:
+    | string
+    | React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    | boolean
+) => void;
+
+
+
+
 
 export interface FilterState {
   childLastName: string;
@@ -44,7 +88,6 @@ export interface FilterState {
 export const PREFIX = "birth_record:";
 
 
-// Update your emptyRecord function
 
 export const emptyRecord = (): BirthRecord => ({
   id: "",
@@ -71,5 +114,5 @@ export const emptyRecord = (): BirthRecord => ({
   placeOfMarriage: "",
   remarks: "",
   registrarName: "DARRYL U. MONTEALEGRE, MM",
-  signatureImage: "", // Add this line
+  signatureImage: "",
 });
