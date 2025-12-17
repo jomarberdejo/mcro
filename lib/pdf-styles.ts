@@ -116,7 +116,7 @@ export const styles = StyleSheet.create({
     color: "#666",
   },
   remarksText: {
-    fontSize: 10,
+    fontSize: 9,
     lineHeight: 1.5,
     textAlign: "justify",
     marginBottom: 10,
