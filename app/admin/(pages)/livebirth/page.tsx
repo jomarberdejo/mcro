@@ -1,30 +1,14 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { storage } from "@/lib/storage";
-import {
-  BirthRecord,
-  PageMode,
-  FilterState,
-  emptyRecord,
-} from "@/types";
-import {
-  loadRecords,
-  saveRecord,
-  deleteRecord,
-  filterRecords,
-} from "@/utils";
-import { BirthRecordForm } from "@/components/birth-certificate/birth-record-form";
-import { BirthRecordView } from "@/components/birth-certificate/birth-record-view";
+import { useRouter } from "next/navigation";
+import { BirthRecord, FilterState } from "@/types";
 import { BirthRecordList } from "@/components/birth-certificate/birth-record-list";
+import { toast } from "sonner";
 
-const CivilRegistrySystem: React.FC = () => {
-  const [page, setPage] = useState<PageMode>("list");
+const LiveBirth: React.FC = () => {
+  const router = useRouter();
   const [records, setRecords] = useState<BirthRecord[]>([]);
-  const [selectedRecord, setSelectedRecord] = useState<BirthRecord | null>(null);
-  const [isEditing, setIsEditing] = useState(false);
-  const [formData, setFormData] = useState<BirthRecord>(emptyRecord());
-  const [storageAvailable, setStorageAvailable] = useState<boolean | null>(null);
   const [filters, setFilters] = useState<FilterState>({
     childLastName: "",
     childFirstName: "",
@@ -36,84 +20,58 @@ const CivilRegistrySystem: React.FC = () => {
   });
 
   useEffect(() => {
-    const ok = typeof window !== "undefined" && !!storage;
-    setStorageAvailable(ok);
-    if (ok) loadAllRecords();
+    loadAllRecords();
   }, []);
 
   const loadAllRecords = async () => {
-    const loaded = await loadRecords();
-    setRecords(loaded);
-  };
+    try {
+      const response = await fetch("/api/birth-records");
+      
+      if (!response.ok) {
+        throw new Error("Failed to fetch records");
+      }
 
-  const handleSaveRecord = async (e?: React.FormEvent) => {
-    if (e) e.preventDefault();
-
-    if (!storageAvailable) {
-      alert("Storage unavailable in this environment.");
-      return;
-    }
-
-    const success = await saveRecord(formData);
-    if (success) {
-      await loadAllRecords();
-      setFormData(emptyRecord());
-      setPage("list");
-      setIsEditing(false);
+      const data = await response.json();
+      setRecords(data);
+    } catch (error) {
+      console.error("Error loading records:", error);
+      toast.error("Failed to load birth records");
+    } finally {
     }
   };
 
   const handleDeleteRecord = async (id: string) => {
-    const success = await deleteRecord(id);
-    if (success) {
-      await loadAllRecords();
-      if (selectedRecord?.id === id) {
-        setSelectedRecord(null);
-        setPage("list");
+    if (!confirm("Are you sure you want to delete this record?")) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/birth-records/${id}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to delete record");
       }
+
+      toast.success("Record deleted successfully");
+      await loadAllRecords();
+    } catch (error) {
+      console.error("Error deleting record:", error);
+      toast.error("Failed to delete record");
     }
   };
 
-  const handleChange = (
-    name: keyof BirthRecord
-  ): ((
-    value:
-      | string
-      | React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-      | boolean
-  ) => void) => {
-    return (value) => {
-      const v =
-        typeof value === "string"
-          ? value
-          : typeof value === "boolean"
-          ? value
-          : value.target.value;
-      setFormData((p) => ({ ...p, [name]: v }));
-    };
-  };
-
-  const handleEdit = (record: BirthRecord) => {
-    setFormData(record);
-    setIsEditing(true);
-    setPage("form");
+  const handleNew = () => {
+    router.push("/admin/birth-records/new");
   };
 
   const handleView = (record: BirthRecord) => {
-    setSelectedRecord(record);
-    setPage("view");
+    router.push(`/admin/birth-records/${record.id}`);
   };
 
-  const handleNew = () => {
-    setFormData(emptyRecord());
-    setIsEditing(false);
-    setPage("form");
-  };
-
-  const handleCancel = () => {
-    setPage("list");
-    setFormData(emptyRecord());
-    setIsEditing(false);
+  const handleEdit = (record: BirthRecord) => {
+    router.push(`/admin/birth-records/${record.id}/edit`);
   };
 
   const handleClearFilters = () => {
@@ -128,38 +86,13 @@ const CivilRegistrySystem: React.FC = () => {
     });
   };
 
-  const filteredRecords = filterRecords(records, filters);
+  const filteredRecords = filterRecordsLocally(records, filters);
 
-  if (page === "form") {
-    return (
-      <BirthRecordForm
-        formData={formData}
-        isEditing={isEditing}
-        onBack={() => setPage("list")}
-        onSubmit={handleSaveRecord}
-        onCancel={handleCancel}
-        onChange={handleChange}
-      />
-    );
-  }
-
-  if (page === "view" && selectedRecord) {
-    return (
-      <BirthRecordView
-        record={selectedRecord}
-        onBack={() => setPage("list")}
-        onEdit={() => handleEdit(selectedRecord)}
-        onDelete={() => handleDeleteRecord(selectedRecord.id)}
-      />
-    );
-  }
-
-  // Render list page
   return (
     <BirthRecordList
       records={filteredRecords}
       filters={filters}
-      storageAvailable={storageAvailable}
+      storageAvailable={true}
       onFilterChange={setFilters}
       onClearFilters={handleClearFilters}
       onNew={handleNew}
@@ -170,4 +103,46 @@ const CivilRegistrySystem: React.FC = () => {
   );
 };
 
-export default CivilRegistrySystem;
+function filterRecordsLocally(records: BirthRecord[], filters: FilterState): BirthRecord[] {
+  return records.filter((record) => {
+    const matchesChildLastName =
+      !filters.childLastName ||
+      record.childLastName.toLowerCase().includes(filters.childLastName.toLowerCase());
+    
+    const matchesChildFirstName =
+      !filters.childFirstName ||
+      record.childFirstName.toLowerCase().includes(filters.childFirstName.toLowerCase());
+    
+    const matchesFatherLastName =
+      !filters.fatherLastName ||
+      record.fatherLastName?.toLowerCase().includes(filters.fatherLastName.toLowerCase());
+    
+    const matchesFatherFirstName =
+      !filters.fatherFirstName ||
+      record.fatherFirstName?.toLowerCase().includes(filters.fatherFirstName.toLowerCase());
+    
+    const matchesMotherLastName =
+      !filters.motherLastName ||
+      record.motherLastName?.toLowerCase().includes(filters.motherLastName.toLowerCase());
+    
+    const matchesMotherFirstName =
+      !filters.motherFirstName ||
+      record.motherFirstName?.toLowerCase().includes(filters.motherFirstName.toLowerCase());
+    
+    const matchesDob =
+      !filters.dob ||
+      record.dateOfBirth.toLowerCase().includes(filters.dob.toLowerCase());
+
+    return (
+      matchesChildLastName &&
+      matchesChildFirstName &&
+      matchesFatherLastName &&
+      matchesFatherFirstName &&
+      matchesMotherLastName &&
+      matchesMotherFirstName &&
+      matchesDob
+    );
+  });
+}
+
+export default LiveBirth;

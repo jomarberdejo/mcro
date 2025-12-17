@@ -20,7 +20,7 @@ const config: runtime.GetPrismaClientConfig = {
   "clientVersion": "7.1.0",
   "engineVersion": "ab635e6b9d606fa5c8fb8b1a7f909c3c3c1c98ba",
   "activeProvider": "mysql",
-  "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?\n// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init\n\ngenerator client {\n  provider = \"prisma-client\"\n  output   = \"../lib/generated/prisma\"\n}\n\ndatasource db {\n  provider = \"mysql\"\n}\n",
+  "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?\n// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init\n\ngenerator client {\n  provider = \"prisma-client\"\n  output   = \"../lib/generated/prisma\"\n}\n\ndatasource db {\n  provider = \"mysql\"\n}\n\n//////////////////////\n// ENUMS\n//////////////////////\n\nenum UserRole {\n  ADMIN\n  REGISTRAR\n  STAFF\n}\n\n//////////////////////\n// USER\n//////////////////////\n\nmodel User {\n  // Internal DB ID\n  id String @id @default(uuid())\n\n  // Public / LGU User ID\n  publicId String @unique\n\n  name     String\n  username String @unique\n  password String\n  email    String @unique\n\n  role     UserRole\n  office   String // e.g. \"Civil Registry\"\n  metadata Json? // flexible user metadata\n\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  birthRecord BirthRecord[]\n}\n\n//////////////////////\n// BIRTH CERTIFICATE\n//////////////////////\n\nmodel BirthRecord {\n  id                 String @id @default(cuid())\n  registryNo         String @unique\n  dateOfRegistration String\n\n  // Child Information\n  childLastName   String\n  childFirstName  String\n  childMiddleName String?\n  sex             String\n  dateOfBirth     String\n  placeOfBirth    String?\n  isTwin          Boolean @default(false)\n  birthOrder      String?\n\n  // Mother Information\n  motherLastName    String?\n  motherFirstName   String?\n  motherMiddleName  String?\n  motherCitizenship String?\n\n  // Father Information\n  fatherLastName    String?\n  fatherFirstName   String?\n  fatherMiddleName  String?\n  fatherCitizenship String?\n\n  // Marriage Information\n  dateOfMarriage  String?\n  placeOfMarriage String?\n\n  // Additional Information\n  remarks            String?\n  registrarName      String?\n  signatureImagePath String? // Store file path instead of base64\n\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n  user      User?    @relation(fields: [userId], references: [id])\n  userId    String?\n\n  @@index([registryNo])\n  @@index([childLastName, childFirstName])\n}\n",
   "runtimeDataModel": {
     "models": {},
     "enums": {},
@@ -28,7 +28,7 @@ const config: runtime.GetPrismaClientConfig = {
   }
 }
 
-config.runtimeDataModel = JSON.parse("{\"models\":{},\"enums\":{},\"types\":{}}")
+config.runtimeDataModel = JSON.parse("{\"models\":{\"User\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"publicId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"username\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"password\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"role\",\"kind\":\"enum\",\"type\":\"UserRole\"},{\"name\":\"office\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"metadata\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"birthRecord\",\"kind\":\"object\",\"type\":\"BirthRecord\",\"relationName\":\"BirthRecordToUser\"}],\"dbName\":null},\"BirthRecord\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"registryNo\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"dateOfRegistration\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"childLastName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"childFirstName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"childMiddleName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"sex\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"dateOfBirth\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"placeOfBirth\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"isTwin\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"birthOrder\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"motherLastName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"motherFirstName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"motherMiddleName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"motherCitizenship\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"fatherLastName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"fatherFirstName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"fatherMiddleName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"fatherCitizenship\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"dateOfMarriage\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"placeOfMarriage\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"remarks\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"registrarName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"signatureImagePath\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"BirthRecordToUser\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"}],\"dbName\":null}},\"enums\":{},\"types\":{}}")
 
 async function decodeBase64AsWasm(wasmBase64: string): Promise<WebAssembly.Module> {
   const { Buffer } = await import('node:buffer')
@@ -174,7 +174,25 @@ export interface PrismaClient<
     extArgs: ExtArgs
   }>>
 
-    
+      /**
+   * `prisma.user`: Exposes CRUD operations for the **User** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Users
+    * const users = await prisma.user.findMany()
+    * ```
+    */
+  get user(): Prisma.UserDelegate<ExtArgs, { omit: OmitOpts }>;
+
+  /**
+   * `prisma.birthRecord`: Exposes CRUD operations for the **BirthRecord** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more BirthRecords
+    * const birthRecords = await prisma.birthRecord.findMany()
+    * ```
+    */
+  get birthRecord(): Prisma.BirthRecordDelegate<ExtArgs, { omit: OmitOpts }>;
 }
 
 export function getPrismaClientClass(): PrismaClientConstructor {

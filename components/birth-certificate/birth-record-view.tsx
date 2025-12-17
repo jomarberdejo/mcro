@@ -1,7 +1,10 @@
+"use client";
+
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Download, Edit2, Trash2, FileText } from "lucide-react";
-import { BirthRecord, BirthRecordViewProps } from "@/types";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { getFullName } from "@/utils";
 import {
   Document,
@@ -13,6 +16,34 @@ import {
   Image,
 } from "@react-pdf/renderer";
 import { styles } from "@/lib/pdf-styles";
+
+interface BirthRecord {
+  id: string;
+  registryNo: string;
+  dateOfRegistration: string;
+  childLastName: string;
+  childFirstName: string;
+  childMiddleName?: string | null; // Add | null
+  sex: string;
+  dateOfBirth: string;
+  placeOfBirth?: string | null; // Add | null
+  isTwin: boolean;
+  birthOrder?: string | null; // Add | null
+  motherLastName?: string | null; // Add | null
+  motherFirstName?: string | null; // Add | null
+  motherMiddleName?: string | null; // Add | null
+  motherCitizenship?: string | null; // Add | null
+  fatherLastName?: string | null; // Add | null
+  fatherFirstName?: string | null; // Add | null
+  fatherMiddleName?: string | null; // Add | null
+  fatherCitizenship?: string | null; // Add | null
+  dateOfMarriage?: string | null; // Add | null
+  placeOfMarriage?: string | null; // Add | null
+  remarks?: string | null; // Add | null
+  registrarName?: string | null; // Add | null
+  signatureImagePath?: string | null; // Add | null
+  userId?: string | null; // Add this if you need it
+}
 
 const BirthCertificatePDF: React.FC<{ record: BirthRecord }> = ({ record }) => {
   const childFullName = getFullName(
@@ -36,7 +67,7 @@ const BirthCertificatePDF: React.FC<{ record: BirthRecord }> = ({ record }) => {
       <Page size="A4" style={styles.page}>
         <View style={styles.headerRow}>
           <View style={styles.leftColumn}>
-            <Image src="/logos/datu-gara-2.png" style={styles.lapuLapuImage}  />
+            <Image src="/logos/datu-gara-2.png" style={styles.lapuLapuImage} />
           </View>
 
           <View style={styles.centerColumn}>
@@ -164,26 +195,30 @@ const BirthCertificatePDF: React.FC<{ record: BirthRecord }> = ({ record }) => {
               <Text style={styles.remarksText}>
                 PURSUANT TO THE DECISION RENDERED BY MCR DARRYL U. MONTEALEGRE
                 DATED JUNE 27, 2025 AND AFFIRMED BY CRG UNDER OCRG NUMBER
-                25-2820504 DATED SEPTEMBER 24, 2025 THE CHILD'S MIDDLE NAME IS
-                HEREBY CORRECTED FROM "M" TO "MORANO".
+                25-2820504 DATED SEPTEMBER 24, 2025 THE CHILD&apos;S MIDDLE NAME
+                IS HEREBY CORRECTED FROM &quot;M&quot; TO &quot;MORANO&quot;.
               </Text>
               <Text style={styles.remarksText}>
                 PURSUANT TO THE DECISION RENDERED BY MCR DARRYL U. MONTEALEGRE
                 DATED JULY 14, 2025 AND AFFIRMED BY CRG UNDER OCRG NUMBER
-                25-2820504 DATED SEPTEMBER 24, 2025 THE CHILD'S DATE OF BIRTH IS
-                HEREBY CORRECTED FROM "JUNE 27, 1956" TO "JULY 3, 1956".
+                25-2820504 DATED SEPTEMBER 24, 2025 THE CHILD&apos;S DATE OF
+                BIRTH IS HEREBY CORRECTED FROM &quot;JUNE 27, 1956&quot; TO
+                &quot;JULY 3, 1956&quot;.
               </Text>
             </>
           )}
         </View>
 
-        <Text style={styles.footerText}>
+        {/* <Text style={styles.footerText}>
           This certification is issued to PSA – OCRG for filing in the archives.
-        </Text>
+        </Text> */}
 
         <View style={styles.signatureRightContainer}>
-          {record.signatureImage && (
-            <Image src={record.signatureImage} style={styles.signatureImage} />
+          {record.signatureImagePath && (
+            <Image
+              src={record.signatureImagePath}
+              style={styles.signatureImage}
+            />
           )}
           <View style={styles.signatureRight}>
             <Text style={styles.signatureName}>
@@ -198,8 +233,11 @@ const BirthCertificatePDF: React.FC<{ record: BirthRecord }> = ({ record }) => {
         </View>
 
         <View style={styles.signatureLeftContainer}>
-          {record.signatureImage && (
-            <Image src={record.signatureImage} style={styles.signatureImage} />
+          {record.signatureImagePath && (
+            <Image
+              src={record.signatureImagePath}
+              style={styles.signatureImage}
+            />
           )}
           <View style={styles.signatureLeft}>
             <Text style={styles.signatureName}>DARRYL U. MONTEALEGRE, MM</Text>
@@ -219,19 +257,52 @@ const BirthCertificatePDF: React.FC<{ record: BirthRecord }> = ({ record }) => {
   );
 };
 
-export const BirthRecordView: React.FC<BirthRecordViewProps> = ({
+export const BirthRecordView: React.FC<{ record: BirthRecord }> = ({
   record,
-  onBack,
-  onEdit,
-  onDelete,
 }) => {
+  const router = useRouter();
   const [showPDF, setShowPDF] = useState(true);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const handleBack = () => {
+    router.push("/admin/birth-records");
+  };
+
+  const handleEdit = () => {
+    router.push(`/admin/birth-records/${record.id}/edit`);
+  };
+
+  const handleDelete = async () => {
+    if (!confirm("Are you sure you want to delete this record?")) {
+      return;
+    }
+
+    setIsDeleting(true);
+    try {
+      const response = await fetch(`/api/birth-records/${record.id}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to delete record");
+      }
+
+      toast.success("Record deleted successfully");
+      router.push("/birth-records");
+      router.refresh();
+    } catch (error) {
+      console.error("Error deleting record:", error);
+      toast.error("Failed to delete record");
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 p-8">
       <div className="max-w-6xl mx-auto">
         <div className="mb-4 flex gap-2">
-          <Button variant="ghost" onClick={onBack}>
+          <Button variant="ghost" onClick={handleBack}>
             <ArrowLeft className="w-4 h-4 mr-2" /> Back to Records
           </Button>
 
@@ -247,12 +318,17 @@ export const BirthRecordView: React.FC<BirthRecordViewProps> = ({
             )}
           </PDFDownloadLink>
 
-          <Button variant="ghost" onClick={onEdit}>
+          <Button variant="ghost" onClick={handleEdit}>
             <Edit2 className="w-4 h-4 mr-2" /> Edit
           </Button>
 
-          <Button variant="destructive" onClick={onDelete}>
-            <Trash2 className="w-4 h-4 mr-2" /> Delete
+          <Button
+            variant="destructive"
+            onClick={handleDelete}
+            disabled={isDeleting}
+          >
+            <Trash2 className="w-4 h-4 mr-2" />
+            {isDeleting ? "Deleting..." : "Delete"}
           </Button>
 
           <Button variant="outline" onClick={() => setShowPDF(!showPDF)}>

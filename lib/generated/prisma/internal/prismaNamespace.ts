@@ -384,7 +384,8 @@ type FieldRefInputType<Model, FieldType> = Model extends never ? never : FieldRe
 
 
 export const ModelName = {
-
+  User: 'User',
+  BirthRecord: 'BirthRecord'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -400,10 +401,143 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: never
+    modelProps: "user" | "birthRecord"
     txIsolationLevel: TransactionIsolationLevel
   }
-  model: {}
+  model: {
+    User: {
+      payload: Prisma.$UserPayload<ExtArgs>
+      fields: Prisma.UserFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.UserFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.UserFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserPayload>
+        }
+        findFirst: {
+          args: Prisma.UserFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.UserFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserPayload>
+        }
+        findMany: {
+          args: Prisma.UserFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserPayload>[]
+        }
+        create: {
+          args: Prisma.UserCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserPayload>
+        }
+        createMany: {
+          args: Prisma.UserCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        delete: {
+          args: Prisma.UserDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserPayload>
+        }
+        update: {
+          args: Prisma.UserUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserPayload>
+        }
+        deleteMany: {
+          args: Prisma.UserDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.UserUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        upsert: {
+          args: Prisma.UserUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserPayload>
+        }
+        aggregate: {
+          args: Prisma.UserAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateUser>
+        }
+        groupBy: {
+          args: Prisma.UserGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.UserGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.UserCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.UserCountAggregateOutputType> | number
+        }
+      }
+    }
+    BirthRecord: {
+      payload: Prisma.$BirthRecordPayload<ExtArgs>
+      fields: Prisma.BirthRecordFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.BirthRecordFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BirthRecordPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.BirthRecordFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BirthRecordPayload>
+        }
+        findFirst: {
+          args: Prisma.BirthRecordFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BirthRecordPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.BirthRecordFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BirthRecordPayload>
+        }
+        findMany: {
+          args: Prisma.BirthRecordFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BirthRecordPayload>[]
+        }
+        create: {
+          args: Prisma.BirthRecordCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BirthRecordPayload>
+        }
+        createMany: {
+          args: Prisma.BirthRecordCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        delete: {
+          args: Prisma.BirthRecordDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BirthRecordPayload>
+        }
+        update: {
+          args: Prisma.BirthRecordUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BirthRecordPayload>
+        }
+        deleteMany: {
+          args: Prisma.BirthRecordDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.BirthRecordUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        upsert: {
+          args: Prisma.BirthRecordUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BirthRecordPayload>
+        }
+        aggregate: {
+          args: Prisma.BirthRecordAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateBirthRecord>
+        }
+        groupBy: {
+          args: Prisma.BirthRecordGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.BirthRecordGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.BirthRecordCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.BirthRecordCountAggregateOutputType> | number
+        }
+      }
+    }
+  }
 } & {
   other: {
     payload: any
@@ -442,7 +576,193 @@ export const TransactionIsolationLevel = runtime.makeStrictEnum({
 export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof typeof TransactionIsolationLevel]
 
 
+export const UserScalarFieldEnum = {
+  id: 'id',
+  publicId: 'publicId',
+  name: 'name',
+  username: 'username',
+  password: 'password',
+  email: 'email',
+  role: 'role',
+  office: 'office',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
 
+export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
+
+
+export const BirthRecordScalarFieldEnum = {
+  id: 'id',
+  registryNo: 'registryNo',
+  dateOfRegistration: 'dateOfRegistration',
+  childLastName: 'childLastName',
+  childFirstName: 'childFirstName',
+  childMiddleName: 'childMiddleName',
+  sex: 'sex',
+  dateOfBirth: 'dateOfBirth',
+  placeOfBirth: 'placeOfBirth',
+  isTwin: 'isTwin',
+  birthOrder: 'birthOrder',
+  motherLastName: 'motherLastName',
+  motherFirstName: 'motherFirstName',
+  motherMiddleName: 'motherMiddleName',
+  motherCitizenship: 'motherCitizenship',
+  fatherLastName: 'fatherLastName',
+  fatherFirstName: 'fatherFirstName',
+  fatherMiddleName: 'fatherMiddleName',
+  fatherCitizenship: 'fatherCitizenship',
+  dateOfMarriage: 'dateOfMarriage',
+  placeOfMarriage: 'placeOfMarriage',
+  remarks: 'remarks',
+  registrarName: 'registrarName',
+  signatureImagePath: 'signatureImagePath',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  userId: 'userId'
+} as const
+
+export type BirthRecordScalarFieldEnum = (typeof BirthRecordScalarFieldEnum)[keyof typeof BirthRecordScalarFieldEnum]
+
+
+export const SortOrder = {
+  asc: 'asc',
+  desc: 'desc'
+} as const
+
+export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
+
+
+export const NullableJsonNullValueInput = {
+  DbNull: DbNull,
+  JsonNull: JsonNull
+} as const
+
+export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
+
+
+export const JsonNullValueFilter = {
+  DbNull: DbNull,
+  JsonNull: JsonNull,
+  AnyNull: AnyNull
+} as const
+
+export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
+
+
+export const QueryMode = {
+  default: 'default',
+  insensitive: 'insensitive'
+} as const
+
+export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode]
+
+
+export const NullsOrder = {
+  first: 'first',
+  last: 'last'
+} as const
+
+export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
+
+
+export const UserOrderByRelevanceFieldEnum = {
+  id: 'id',
+  publicId: 'publicId',
+  name: 'name',
+  username: 'username',
+  password: 'password',
+  email: 'email',
+  office: 'office'
+} as const
+
+export type UserOrderByRelevanceFieldEnum = (typeof UserOrderByRelevanceFieldEnum)[keyof typeof UserOrderByRelevanceFieldEnum]
+
+
+export const BirthRecordOrderByRelevanceFieldEnum = {
+  id: 'id',
+  registryNo: 'registryNo',
+  dateOfRegistration: 'dateOfRegistration',
+  childLastName: 'childLastName',
+  childFirstName: 'childFirstName',
+  childMiddleName: 'childMiddleName',
+  sex: 'sex',
+  dateOfBirth: 'dateOfBirth',
+  placeOfBirth: 'placeOfBirth',
+  birthOrder: 'birthOrder',
+  motherLastName: 'motherLastName',
+  motherFirstName: 'motherFirstName',
+  motherMiddleName: 'motherMiddleName',
+  motherCitizenship: 'motherCitizenship',
+  fatherLastName: 'fatherLastName',
+  fatherFirstName: 'fatherFirstName',
+  fatherMiddleName: 'fatherMiddleName',
+  fatherCitizenship: 'fatherCitizenship',
+  dateOfMarriage: 'dateOfMarriage',
+  placeOfMarriage: 'placeOfMarriage',
+  remarks: 'remarks',
+  registrarName: 'registrarName',
+  signatureImagePath: 'signatureImagePath',
+  userId: 'userId'
+} as const
+
+export type BirthRecordOrderByRelevanceFieldEnum = (typeof BirthRecordOrderByRelevanceFieldEnum)[keyof typeof BirthRecordOrderByRelevanceFieldEnum]
+
+
+
+/**
+ * Field references
+ */
+
+
+/**
+ * Reference to a field of type 'String'
+ */
+export type StringFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'String'>
+    
+
+
+/**
+ * Reference to a field of type 'UserRole'
+ */
+export type EnumUserRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'UserRole'>
+    
+
+
+/**
+ * Reference to a field of type 'Json'
+ */
+export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
+    
+
+
+/**
+ * Reference to a field of type 'QueryMode'
+ */
+export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QueryMode'>
+    
+
+
+/**
+ * Reference to a field of type 'DateTime'
+ */
+export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime'>
+    
+
+
+/**
+ * Reference to a field of type 'Boolean'
+ */
+export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
+    
+
+
+/**
+ * Reference to a field of type 'Int'
+ */
+export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
+    
 
 /**
  * Batch Payload for updateMany & deleteMany & createMany
@@ -538,7 +858,10 @@ export type PrismaClientOptions = ({
    */
   comments?: runtime.SqlCommenterPlugin[]
 }
-export type GlobalOmitConfig = {}
+export type GlobalOmitConfig = {
+  user?: Prisma.UserOmit
+  birthRecord?: Prisma.BirthRecordOmit
+}
 
 /* Types for Logging */
 export type LogLevel = 'info' | 'query' | 'warn' | 'error'

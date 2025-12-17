@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Plus, Eye, Edit2, Trash2, ChevronLeft, ChevronRight } from "lucide-react";
-import { BirthRecord, BirthRecordListProps, FilterState } from "@/types";
+import { BirthRecordListProps } from "@/types";
 import { getFullName } from "@/utils";
 
 export const BirthRecordList: React.FC<BirthRecordListProps> = ({
@@ -53,7 +53,7 @@ export const BirthRecordList: React.FC<BirthRecordListProps> = ({
       }
     } else {
       let start = Math.max(1, currentPage - 2);
-      let end = Math.min(totalPages, start + maxVisiblePages - 1);
+      const end = Math.min(totalPages, start + maxVisiblePages - 1);
       
       if (end - start + 1 < maxVisiblePages) {
         start = end - maxVisiblePages + 1;

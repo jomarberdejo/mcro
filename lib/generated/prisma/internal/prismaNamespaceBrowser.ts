@@ -51,7 +51,8 @@ export const AnyNull = runtime.AnyNull
 
 
 export const ModelName = {
-
+  User: 'User',
+  BirthRecord: 'BirthRecord'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -68,4 +69,138 @@ export const TransactionIsolationLevel = {
 } as const
 
 export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof typeof TransactionIsolationLevel]
+
+
+export const UserScalarFieldEnum = {
+  id: 'id',
+  publicId: 'publicId',
+  name: 'name',
+  username: 'username',
+  password: 'password',
+  email: 'email',
+  role: 'role',
+  office: 'office',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
+
+
+export const BirthRecordScalarFieldEnum = {
+  id: 'id',
+  registryNo: 'registryNo',
+  dateOfRegistration: 'dateOfRegistration',
+  childLastName: 'childLastName',
+  childFirstName: 'childFirstName',
+  childMiddleName: 'childMiddleName',
+  sex: 'sex',
+  dateOfBirth: 'dateOfBirth',
+  placeOfBirth: 'placeOfBirth',
+  isTwin: 'isTwin',
+  birthOrder: 'birthOrder',
+  motherLastName: 'motherLastName',
+  motherFirstName: 'motherFirstName',
+  motherMiddleName: 'motherMiddleName',
+  motherCitizenship: 'motherCitizenship',
+  fatherLastName: 'fatherLastName',
+  fatherFirstName: 'fatherFirstName',
+  fatherMiddleName: 'fatherMiddleName',
+  fatherCitizenship: 'fatherCitizenship',
+  dateOfMarriage: 'dateOfMarriage',
+  placeOfMarriage: 'placeOfMarriage',
+  remarks: 'remarks',
+  registrarName: 'registrarName',
+  signatureImagePath: 'signatureImagePath',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  userId: 'userId'
+} as const
+
+export type BirthRecordScalarFieldEnum = (typeof BirthRecordScalarFieldEnum)[keyof typeof BirthRecordScalarFieldEnum]
+
+
+export const SortOrder = {
+  asc: 'asc',
+  desc: 'desc'
+} as const
+
+export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
+
+
+export const NullableJsonNullValueInput = {
+  DbNull: 'DbNull',
+  JsonNull: 'JsonNull'
+} as const
+
+export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
+
+
+export const JsonNullValueFilter = {
+  DbNull: 'DbNull',
+  JsonNull: 'JsonNull',
+  AnyNull: 'AnyNull'
+} as const
+
+export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
+
+
+export const QueryMode = {
+  default: 'default',
+  insensitive: 'insensitive'
+} as const
+
+export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode]
+
+
+export const NullsOrder = {
+  first: 'first',
+  last: 'last'
+} as const
+
+export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
+
+
+export const UserOrderByRelevanceFieldEnum = {
+  id: 'id',
+  publicId: 'publicId',
+  name: 'name',
+  username: 'username',
+  password: 'password',
+  email: 'email',
+  office: 'office'
+} as const
+
+export type UserOrderByRelevanceFieldEnum = (typeof UserOrderByRelevanceFieldEnum)[keyof typeof UserOrderByRelevanceFieldEnum]
+
+
+export const BirthRecordOrderByRelevanceFieldEnum = {
+  id: 'id',
+  registryNo: 'registryNo',
+  dateOfRegistration: 'dateOfRegistration',
+  childLastName: 'childLastName',
+  childFirstName: 'childFirstName',
+  childMiddleName: 'childMiddleName',
+  sex: 'sex',
+  dateOfBirth: 'dateOfBirth',
+  placeOfBirth: 'placeOfBirth',
+  birthOrder: 'birthOrder',
+  motherLastName: 'motherLastName',
+  motherFirstName: 'motherFirstName',
+  motherMiddleName: 'motherMiddleName',
+  motherCitizenship: 'motherCitizenship',
+  fatherLastName: 'fatherLastName',
+  fatherFirstName: 'fatherFirstName',
+  fatherMiddleName: 'fatherMiddleName',
+  fatherCitizenship: 'fatherCitizenship',
+  dateOfMarriage: 'dateOfMarriage',
+  placeOfMarriage: 'placeOfMarriage',
+  remarks: 'remarks',
+  registrarName: 'registrarName',
+  signatureImagePath: 'signatureImagePath',
+  userId: 'userId'
+} as const
+
+export type BirthRecordOrderByRelevanceFieldEnum = (typeof BirthRecordOrderByRelevanceFieldEnum)[keyof typeof BirthRecordOrderByRelevanceFieldEnum]
 
