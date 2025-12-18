@@ -182,7 +182,6 @@ export const BirthRecordOrderByRelevanceFieldEnum = {
   childLastName: 'childLastName',
   childFirstName: 'childFirstName',
   childMiddleName: 'childMiddleName',
-  sex: 'sex',
   dateOfBirth: 'dateOfBirth',
   placeOfBirth: 'placeOfBirth',
   birthOrder: 'birthOrder',

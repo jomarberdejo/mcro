@@ -265,11 +265,11 @@ export const BirthRecordView: React.FC<{ record: BirthRecord }> = ({
   const [isDeleting, setIsDeleting] = useState(false);
 
   const handleBack = () => {
-    router.push("/admin/birth-records");
+    router.push("/admin/birth-certificate");
   };
 
   const handleEdit = () => {
-    router.push(`/admin/birth-records/${record.id}/edit`);
+    router.push(`/admin/birth-certificate/${record.id}/edit`);
   };
 
   const handleDelete = async () => {
@@ -279,7 +279,7 @@ export const BirthRecordView: React.FC<{ record: BirthRecord }> = ({
 
     setIsDeleting(true);
     try {
-      const response = await fetch(`/api/birth-records/${record.id}`, {
+      const response = await fetch(`/api/birth-certificate/${record.id}`, {
         method: "DELETE",
       });
 
@@ -288,7 +288,7 @@ export const BirthRecordView: React.FC<{ record: BirthRecord }> = ({
       }
 
       toast.success("Record deleted successfully");
-      router.push("/birth-records");
+      router.push("/birth-certificate");
       router.refresh();
     } catch (error) {
       console.error("Error deleting record:", error);

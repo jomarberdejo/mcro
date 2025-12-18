@@ -23,6 +23,11 @@ enum UserRole {
   STAFF
 }
 
+enum Sex {
+  Male
+  Female
+}
+
 //////////////////////
 // USER
 //////////////////////
@@ -62,7 +67,7 @@ model BirthRecord {
   childLastName   String
   childFirstName  String
   childMiddleName String?
-  sex             String
+  sex             Sex
   dateOfBirth     String
   placeOfBirth    String?
   isTwin          Boolean @default(false)
@@ -87,7 +92,7 @@ model BirthRecord {
   // Additional Information
   remarks            String?  @db.Text
   registrarName      String?
-  signatureImagePath String? // Store file path instead of base64
+  signatureImagePath String? 
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

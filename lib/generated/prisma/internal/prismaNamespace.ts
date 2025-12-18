@@ -687,7 +687,6 @@ export const BirthRecordOrderByRelevanceFieldEnum = {
   childLastName: 'childLastName',
   childFirstName: 'childFirstName',
   childMiddleName: 'childMiddleName',
-  sex: 'sex',
   dateOfBirth: 'dateOfBirth',
   placeOfBirth: 'placeOfBirth',
   birthOrder: 'birthOrder',
@@ -748,6 +747,13 @@ export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$Prisma
  * Reference to a field of type 'DateTime'
  */
 export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime'>
+    
+
+
+/**
+ * Reference to a field of type 'Sex'
+ */
+export type EnumSexFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Sex'>
     
 
 

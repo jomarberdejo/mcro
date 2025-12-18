@@ -43,7 +43,7 @@ export function LoginForm() {
 
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      router.push("/admin/livebirth");
+      router.push("/admin/birth-certificate");
     } catch (error) {
       console.error("Login error:", error);
     }

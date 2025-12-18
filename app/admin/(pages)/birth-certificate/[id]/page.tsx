@@ -18,6 +18,8 @@ export default async function ViewBirthRecordPage({ params }: ViewPageProps) {
     notFound();
   }
 
+
+
   return <BirthRecordView record={record} />
 
 }

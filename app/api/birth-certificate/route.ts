@@ -1,10 +1,8 @@
-// app/api/birth-records/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { birthRecordSchema } from "@/lib/validations/birth-record.schema";
 import { z } from "zod";
 
-// GET all birth records
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
@@ -33,7 +31,6 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// POST new birth record
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();

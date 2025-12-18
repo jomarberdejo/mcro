@@ -30,6 +30,8 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { useFileUpload } from "@/hooks/use-file-upload";
+import { useBirthRecordForm } from "@/hooks/use-birth-record-form";
 
 interface BirthRecordFormProps {
   recordId?: string;
@@ -42,82 +44,28 @@ export const BirthRecordForm: React.FC<BirthRecordFormProps> = ({
   defaultValues,
   isEditing = false,
 }) => {
-  const router = useRouter();
-  const [signaturePreview, setSignaturePreview] = useState<string | null>(
-    defaultValues?.signatureImagePath || null
-  );
-  const [documentPreview, setDocumentPreview] = useState<string | null>(null);
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [isUploadingSignature, setIsUploadingSignature] = useState(false);
+const {
+    form,
+    signaturePreview,
+    setSignaturePreview,
+    documentPreview,
+    setDocumentPreview,
+    isProcessing,
+    setIsProcessing,
+    isUploadingSignature,
+    setIsUploadingSignature,
+    onSubmit,
+    handleCancel,
+  } = useBirthRecordForm({ recordId, defaultValues, isEditing });
 
-  const form = useForm<BirthRecordFormInput>({
-    resolver: zodResolver(birthRecordSchema),
-    defaultValues: defaultValues || {
-      registryNo: "",
-      dateOfRegistration: "",
-      childLastName: "",
-      childFirstName: "",
-      childMiddleName: "",
-      sex: "" as "Male" | "Female",
-      dateOfBirth: "",
-      placeOfBirth: "",
-      isTwin: false,
-      birthOrder: "",
-      motherLastName: "",
-      motherFirstName: "",
-      motherMiddleName: "",
-      motherCitizenship: "",
-      fatherLastName: "",
-      fatherFirstName: "",
-      fatherMiddleName: "",
-      fatherCitizenship: "",
-      dateOfMarriage: "",
-      placeOfMarriage: "",
-      remarks: "",
-      registrarName: "",
-      signatureImagePath: "",
-    },
-  });
+  const { control, handleSubmit, setValue, watch, formState: { isSubmitting } } = form;
 
-  const {
-    control,
-    handleSubmit,
+  const { uploadFile, deleteFile, extractDataFromFile } = useFileUpload(
     setValue,
-    watch,
-    formState: {  isSubmitting },
-  } = form;
+    watch
+  );
 
   const isTwinValue = watch("isTwin");
-
-  const uploadFile = async (file: File, type: "signature" | "document") => {
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("type", type);
-
-    const response = await fetch("/api/upload", {
-      method: "POST",
-      body: formData,
-    });
-
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.error || "Failed to upload file");
-    }
-
-    return await response.json();
-  };
-
-  const deleteFile = async (filePath: string) => {
-    try {
-      await fetch("/api/upload/delete", {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ filePath }),
-      });
-    } catch (error) {
-      console.error("Error deleting file:", error);
-    }
-  };
 
   const handleSignatureUpload = async (
     e: React.ChangeEvent<HTMLInputElement>
@@ -138,13 +86,11 @@ export const BirthRecordForm: React.FC<BirthRecordFormProps> = ({
     setIsUploadingSignature(true);
 
     try {
-      // Delete old signature if exists
       const currentSignaturePath = watch("signatureImagePath");
       if (currentSignaturePath) {
         await deleteFile(currentSignaturePath);
       }
 
-      // Upload new signature
       const result = await uploadFile(file, "signature");
       setSignaturePreview(result.path);
       setValue("signatureImagePath", result.path);
@@ -173,6 +119,7 @@ export const BirthRecordForm: React.FC<BirthRecordFormProps> = ({
     if (fileInput) fileInput.value = "";
   };
 
+  // Document upload handlers
   const handleDocumentUpload = async (
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -192,94 +139,22 @@ export const BirthRecordForm: React.FC<BirthRecordFormProps> = ({
     setIsProcessing(true);
 
     try {
-      // Upload document to get path
-      const result = await uploadFile(file, "document");
-      setDocumentPreview(result.path);
-
-      // Extract data from the uploaded image
-      await extractDataFromImage(result.path);
-
-      // Optionally delete the document after extraction
-      // await deleteFile(result.path);
+      const previewUrl = URL.createObjectURL(file);
+      setDocumentPreview(previewUrl);
+      await extractDataFromFile(file);
     } catch (error) {
-      console.error("Error uploading document:", error);
+      console.error("Error processing document:", error);
       toast.error(
-        error instanceof Error ? error.message : "Failed to upload document"
+        error instanceof Error ? error.message : "Failed to process document"
       );
     } finally {
       setIsProcessing(false);
     }
   };
 
-  const extractDataFromImage = async (imagePath: string) => {
-    try {
-      const response = await fetch("/api/extract", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ imagePath }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Failed to extract data");
-      }
-
-      const extractedData = await response.json();
-
-      const fieldMapping: Record<string, keyof BirthRecordFormData> = {
-        registryNo: "registryNo",
-        dateOfRegistration: "dateOfRegistration",
-        childLastName: "childLastName",
-        childFirstName: "childFirstName",
-        childMiddleName: "childMiddleName",
-        sex: "sex",
-        dateOfBirth: "dateOfBirth",
-        birthOrder: "birthOrder",
-        placeOfBirth: "placeOfBirth",
-        motherLastName: "motherLastName",
-        motherFirstName: "motherFirstName",
-        motherMiddleName: "motherMiddleName",
-        motherCitizenship: "motherCitizenship",
-        fatherLastName: "fatherLastName",
-        fatherFirstName: "fatherFirstName",
-        fatherMiddleName: "fatherMiddleName",
-        fatherCitizenship: "fatherCitizenship",
-        dateOfMarriage: "dateOfMarriage",
-        placeOfMarriage: "placeOfMarriage",
-        remarks: "remarks",
-        registrarName: "registrarName",
-      };
-
-      Object.entries(fieldMapping).forEach(([apiKey, formKey]) => {
-        if (extractedData.birthOrder) {
-          setValue("isTwin", true);
-        }
-        if (
-          extractedData[apiKey] !== undefined &&
-          extractedData[apiKey] !== null
-        ) {
-          setValue(formKey, extractedData[apiKey], {
-            shouldValidate: false,
-          });
-        }
-      });
-
-      toast.success(
-        "Data extracted successfully! Please review and correct any errors."
-      );
-    } catch (error) {
-      console.error("Error extracting data:", error);
-      toast.error(
-        error instanceof Error
-          ? error.message
-          : "Failed to extract data from image. Please fill manually."
-      );
-    }
-  };
-
-  const removeDocument = async () => {
+  const removeDocument = () => {
     if (documentPreview) {
-      await deleteFile(documentPreview);
+      URL.revokeObjectURL(documentPreview);
     }
     setDocumentPreview(null);
     const fileInput = document.getElementById(
@@ -288,42 +163,7 @@ export const BirthRecordForm: React.FC<BirthRecordFormProps> = ({
     if (fileInput) fileInput.value = "";
   };
 
-  const onSubmit = async (data: BirthRecordFormInput) => {
-    try {
-      const url = isEditing
-        ? `/api/birth-records/${recordId}`
-        : "/api/birth-records";
-      const method = isEditing ? "PUT" : "POST";
-
-      const response = await fetch(url, {
-        method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || "Failed to save record");
-      }
-
-      toast.success(
-        isEditing
-          ? "Birth record updated successfully"
-          : "Birth record created successfully"
-      );
-      router.push("/admin/birth-records");
-      router.refresh();
-    } catch (error) {
-      console.error("Error saving birth record:", error);
-      toast.error(
-        error instanceof Error ? error.message : "Failed to save birth record"
-      );
-    }
-  };
-
-  const handleCancel = () => {
-    router.back();
-  };
+ 
 
   return (
     <div className="min-h-screen bg-gray-50 p-8">

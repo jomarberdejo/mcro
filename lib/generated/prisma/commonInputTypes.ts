@@ -160,6 +160,13 @@ export type StringNullableFilter<$PrismaModel = never> = {
   not?: Prisma.NestedStringNullableFilter<$PrismaModel> | string | null
 }
 
+export type EnumSexFilter<$PrismaModel = never> = {
+  equals?: $Enums.Sex | Prisma.EnumSexFieldRefInput<$PrismaModel>
+  in?: $Enums.Sex[]
+  notIn?: $Enums.Sex[]
+  not?: Prisma.NestedEnumSexFilter<$PrismaModel> | $Enums.Sex
+}
+
 export type BoolFilter<$PrismaModel = never> = {
   equals?: boolean | Prisma.BooleanFieldRefInput<$PrismaModel>
   not?: Prisma.NestedBoolFilter<$PrismaModel> | boolean
@@ -181,6 +188,16 @@ export type StringNullableWithAggregatesFilter<$PrismaModel = never> = {
   _count?: Prisma.NestedIntNullableFilter<$PrismaModel>
   _min?: Prisma.NestedStringNullableFilter<$PrismaModel>
   _max?: Prisma.NestedStringNullableFilter<$PrismaModel>
+}
+
+export type EnumSexWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.Sex | Prisma.EnumSexFieldRefInput<$PrismaModel>
+  in?: $Enums.Sex[]
+  notIn?: $Enums.Sex[]
+  not?: Prisma.NestedEnumSexWithAggregatesFilter<$PrismaModel> | $Enums.Sex
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumSexFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumSexFilter<$PrismaModel>
 }
 
 export type BoolWithAggregatesFilter<$PrismaModel = never> = {
@@ -327,6 +344,13 @@ export type NestedStringNullableFilter<$PrismaModel = never> = {
   not?: Prisma.NestedStringNullableFilter<$PrismaModel> | string | null
 }
 
+export type NestedEnumSexFilter<$PrismaModel = never> = {
+  equals?: $Enums.Sex | Prisma.EnumSexFieldRefInput<$PrismaModel>
+  in?: $Enums.Sex[]
+  notIn?: $Enums.Sex[]
+  not?: Prisma.NestedEnumSexFilter<$PrismaModel> | $Enums.Sex
+}
+
 export type NestedBoolFilter<$PrismaModel = never> = {
   equals?: boolean | Prisma.BooleanFieldRefInput<$PrismaModel>
   not?: Prisma.NestedBoolFilter<$PrismaModel> | boolean
@@ -348,6 +372,16 @@ export type NestedStringNullableWithAggregatesFilter<$PrismaModel = never> = {
   _count?: Prisma.NestedIntNullableFilter<$PrismaModel>
   _min?: Prisma.NestedStringNullableFilter<$PrismaModel>
   _max?: Prisma.NestedStringNullableFilter<$PrismaModel>
+}
+
+export type NestedEnumSexWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.Sex | Prisma.EnumSexFieldRefInput<$PrismaModel>
+  in?: $Enums.Sex[]
+  notIn?: $Enums.Sex[]
+  not?: Prisma.NestedEnumSexWithAggregatesFilter<$PrismaModel> | $Enums.Sex
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumSexFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumSexFilter<$PrismaModel>
 }
 
 export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {

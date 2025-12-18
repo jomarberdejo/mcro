@@ -5,6 +5,8 @@ import path from "path";
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
+
+    console.log(body)
     const { base64Image, imagePath } = body;
 
     let finalBase64Image = base64Image;
@@ -60,7 +62,7 @@ export async function POST(req: NextRequest) {
         headers: {
           Authorization: `Bearer ${process.env.NEXT_PUBLIC_API_KEY}`,
           "Content-Type": "application/json",
-          "HTTP-Referer": "http://localhost:3001",
+          "HTTP-Referer": "http://localhost:3000",
           "X-Title": "Birth Certificate Extraction",
         },
         body: JSON.stringify({

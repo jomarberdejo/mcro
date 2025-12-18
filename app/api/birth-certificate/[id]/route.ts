@@ -1,4 +1,3 @@
-// app/api/birth-records/[id]/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { birthRecordSchema } from "@/lib/validations/birth-record.schema";
@@ -86,7 +85,6 @@ export async function PUT(
   }
 }
 
-// DELETE birth record
 export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -94,7 +92,6 @@ export async function DELETE(
   try {
     const { id } = await params;
     
-    // Get record to delete associated files
     const record = await prisma.birthRecord.findUnique({
       where: { id },
     });
@@ -106,7 +103,6 @@ export async function DELETE(
       );
     }
 
-    // Delete signature file if exists
     if (record.signatureImagePath) {
       const filePath = path.join(
         process.cwd(),
@@ -118,7 +114,6 @@ export async function DELETE(
       }
     }
 
-    // Delete record from database
     await prisma.birthRecord.delete({
       where: { id },
     });
