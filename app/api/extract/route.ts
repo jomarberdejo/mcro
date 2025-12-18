@@ -1,59 +1,56 @@
 import { NextRequest, NextResponse } from "next/server";
-import fs from "fs/promises";
-import path from "path";
+
+
+
+function getEmptyStructure() {
+  return {
+    registryNo: "",
+    dateOfRegistration: "",
+    childLastName: "",
+    childFirstName: "",
+    childMiddleName: "",
+    sex: "",
+    dateOfBirth: "",
+    birthOrder: "",
+    placeOfBirth: "",
+    motherLastName: "",
+    motherFirstName: "",
+    motherMiddleName: "",
+    motherCitizenship: "",
+    fatherLastName: "",
+    fatherFirstName: "",
+    fatherMiddleName: "",
+    fatherCitizenship: "",
+    dateOfMarriage: "",
+    placeOfMarriage: "",
+    remarks: "",
+    registrarName: "",
+  };
+}
+
 
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json();
+    const formData = await req.formData();
+    const file = formData.get("file") as File;
 
-    console.log(body)
-    const { base64Image, imagePath } = body;
-
-    let finalBase64Image = base64Image;
-
-    // If imagePath is provided instead of base64, read the file
-    if (imagePath && !base64Image) {
-      try {
-        // Remove leading slash if present and construct full path
-        const relativePath = imagePath.startsWith("/")
-          ? imagePath.slice(1)
-          : imagePath;
-        const fullPath = path.join(process.cwd(), "public", relativePath);
-
-        // Check if file exists
-        try {
-          await fs.access(fullPath);
-        } catch {
-          return NextResponse.json(
-            { error: "Image file not found", path: fullPath },
-            { status: 404 }
-          );
-        }
-
-        // Read file and convert to base64
-        const fileBuffer = await fs.readFile(fullPath);
-        finalBase64Image = fileBuffer.toString("base64");
-      } catch (fsError) {
-        console.error("File system error:", fsError);
-        return NextResponse.json(
-          {
-            error: "Failed to read image file",
-            details: (fsError as Error).message,
-          },
-          { status: 500 }
-        );
-      }
-    }
-
-    if (!finalBase64Image) {
+    if (!file) {
       return NextResponse.json(
-        {
-          error:
-            "No image provided. Please provide either base64Image or imagePath",
-        },
+        { error: "No file provided" },
         { status: 400 }
       );
     }
+
+    if (!file.type.startsWith("image/")) {
+      return NextResponse.json(
+        { error: "File must be an image" },
+        { status: 400 }
+      );
+    }
+
+    const bytes = await file.arrayBuffer();
+    const buffer = Buffer.from(bytes);
+    const base64Image = buffer.toString("base64");
 
     const response = await fetch(
       "https://openrouter.ai/api/v1/chat/completions",
@@ -62,30 +59,31 @@ export async function POST(req: NextRequest) {
         headers: {
           Authorization: `Bearer ${process.env.NEXT_PUBLIC_API_KEY}`,
           "Content-Type": "application/json",
-          "HTTP-Referer": "http://localhost:3000",
+          "HTTP-Referer": process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000",
           "X-Title": "Birth Certificate Extraction",
         },
         body: JSON.stringify({
           model: "openai/gpt-4o-mini",
           temperature: 0.1,
-          max_tokens: 1500,
+          max_tokens: 2000,
+          response_format: { type: "json_object" },
           messages: [
             {
               role: "user",
               content: [
                 {
                   type: "text",
-                  text: `You are an expert at extracting data from birth certificates. Extract ALL information from this birth certificate image.
+                  text: `You are an expert at extracting data from birth certificates. Extract ALL information from this birth certificate image and return ONLY a valid JSON object.
 
-CRITICAL INSTRUCTIONS FOR REMARKS SECTION:
-1. Look for a section titled "REMARKS" (all caps, possibly with space after it)
-2. The "REMARKS" section might be at the bottom of the document
-3. Extract ALL text that comes after "REMARKS" until the end of that section
-4. Include any text, codes, numbers, or notes in the remarks
-5. Common remark content: "ASDASDASD ASDA S" or similar text
-6. If there's no remarks section, leave it as empty string ""
+CRITICAL INSTRUCTIONS:
+1. You MUST return ONLY valid JSON, no markdown, no backticks, no explanations
+2. Start your response with { and end with }
+3. For the REMARKS section: Look for "REMARKS" and extract ALL text after it
+4. Format dates as "Month Day, Year" (e.g., "January 15, 2024")
+5. Leave fields as "" (empty string) if not found
+6. DO NOT include any text before or after the JSON object
 
-Return ONLY valid JSON with this exact structure:
+Return this exact JSON structure:
 {
   "registryNo": "",
   "dateOfRegistration": "",
@@ -107,22 +105,13 @@ Return ONLY valid JSON with this exact structure:
   "dateOfMarriage": "",
   "placeOfMarriage": "",
   "remarks": "",
-  "registrarName: "",
-}
-
-ADDITIONAL RULES:
-1. Extract ALL visible text including small print
-2. For "REMARKS": Look for the exact word "REMARKS" in any format
-3. Extract everything that follows "REMARKS"
-4. Preserve exact text formatting of remarks
-5. Format dates as "Month Day, Year"
-6. Leave fields as "" if not found
-7. Return ONLY the JSON object`,
+  "registrarName": ""
+}`,
                 },
                 {
                   type: "image_url",
                   image_url: {
-                    url: `data:image/jpeg;base64,${finalBase64Image}`,
+                    url: `data:image/jpeg;base64,${base64Image}`,
                     detail: "high",
                   },
                 },
@@ -136,76 +125,57 @@ ADDITIONAL RULES:
     if (!response.ok) {
       const errorText = await response.text();
       console.error("OpenRouter API error:", errorText);
-      throw new Error(`OpenRouter API error: ${response.status} ${errorText}`);
+      throw new Error(`OpenRouter API error: ${response.status}`);
     }
 
     const data = await response.json();
-    const outputText = data?.choices?.[0]?.message?.content || "";
+    const outputText = data?.choices?.[0]?.message?.content || "{}";
 
-    console.log("OpenRouter response:", outputText);
+    console.log("Raw OpenRouter response:", outputText);
 
     let extractedData;
 
     try {
-      const jsonMatch = outputText.match(/\{[\s\S]*\}/);
+      let cleanedText = outputText.trim();
+      cleanedText = cleanedText.replace(/```json\s*/g, "");
+      cleanedText = cleanedText.replace(/```\s*/g, "");
+      cleanedText = cleanedText.trim();
+
+      const jsonMatch = cleanedText.match(/\{[\s\S]*\}/);
       if (jsonMatch) {
         extractedData = JSON.parse(jsonMatch[0]);
       } else {
-        extractedData = JSON.parse(outputText);
+        throw new Error("No JSON object found in response");
       }
-    } catch (error) {
+    } catch (parseError) {
       console.error("Failed to parse JSON from OpenRouter:", outputText);
-      console.error("Parse error:", error);
+      console.error("Parse error:", parseError);
 
-      // Return a default structure with empty values
-      extractedData = {
-        registryNo: "",
-        dateOfRegistration: "",
-        childLastName: "",
-        childFirstName: "",
-        childMiddleName: "",
-        sex: "",
-        dateOfBirth: "",
-        birthOrder: "",
-        placeOfBirth: "",
-        motherLastName: "",
-        motherFirstName: "",
-        motherMiddleName: "",
-        motherCitizenship: "",
-        fatherLastName: "",
-        fatherFirstName: "",
-        fatherMiddleName: "",
-        fatherCitizenship: "",
-        dateOfMarriage: "",
-        placeOfMarriage: "",
-        remarks: "",
-        registrarName: "",
-      };
+      extractedData = getEmptyStructure();
     }
 
-    // Ensure all fields are present even if OpenRouter missed some
     const fullExtractedData = {
-      registryNo: extractedData.registryNo || "",
-      dateOfRegistration: extractedData.dateOfRegistration || "",
-      childLastName: extractedData.childLastName || "",
-      childFirstName: extractedData.childFirstName || "",
-      childMiddleName: extractedData.childMiddleName || "",
-      sex: extractedData.sex || "",
-      dateOfBirth: extractedData.dateOfBirth || "",
-      birthOrder: extractedData.birthOrder || "",
-      placeOfBirth: extractedData.placeOfBirth || "",
-      motherLastName: extractedData.motherLastName || "",
-      motherFirstName: extractedData.motherFirstName || "",
-      motherMiddleName: extractedData.motherMiddleName || "",
-      motherCitizenship: extractedData.motherCitizenship || "",
-      fatherLastName: extractedData.fatherLastName || "",
-      fatherFirstName: extractedData.fatherFirstName || "",
-      fatherMiddleName: extractedData.fatherMiddleName || "",
-      fatherCitizenship: extractedData.fatherCitizenship || "",
-      dateOfMarriage: extractedData.dateOfMarriage || "",
-      placeOfMarriage: extractedData.placeOfMarriage || "",
-      remarks: extractedData.remarks || "",
-      registrarName: extractedData.registrarName || "",
+      registryNo: String(extractedData.registryNo || ""),
+      dateOfRegistration: String(extractedData.dateOfRegistration || ""),
+      childLastName: String(extractedData.childLastName || ""),
+      childFirstName: String(extractedData.childFirstName || ""),
+      childMiddleName: String(extractedData.childMiddleName || ""),
+      sex: String(extractedData.sex || ""),
+      dateOfBirth: String(extractedData.dateOfBirth || ""),
+      birthOrder: String(extractedData.birthOrder || ""),
+      placeOfBirth: String(extractedData.placeOfBirth || ""),
+      motherLastName: String(extractedData.motherLastName || ""),
+      motherFirstName: String(extractedData.motherFirstName || ""),
+      motherMiddleName: String(extractedData.motherMiddleName || ""),
+      motherCitizenship: String(extractedData.motherCitizenship || ""),
+      fatherLastName: String(extractedData.fatherLastName || ""),
+      fatherFirstName: String(extractedData.fatherFirstName || ""),
+      fatherMiddleName: String(extractedData.fatherMiddleName || ""),
+      fatherCitizenship: String(extractedData.fatherCitizenship || ""),
+      dateOfMarriage: String(extractedData.dateOfMarriage || ""),
+      placeOfMarriage: String(extractedData.placeOfMarriage || ""),
+      remarks: String(extractedData.remarks || ""),
+      registrarName: String(extractedData.registrarName || ""),
     };
 
     return NextResponse.json(fullExtractedData);
@@ -222,6 +192,11 @@ ADDITIONAL RULES:
         { status: 500 }
       );
     }
+
+    return NextResponse.json(
+      { error: "An unknown error occurred" },
+      { status: 500 }
+    );
   }
 }
 

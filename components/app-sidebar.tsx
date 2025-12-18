@@ -26,7 +26,7 @@ const data = {
   navMain: [
     {
       title: "Birth Certificate",
-      url: "/admin/livebirth",
+      url: "/admin/birth-certificate",
       icon: FileText,
       isActive: true,
     },
@@ -40,12 +40,6 @@ const data = {
       url: "/marriage-certificate",
       icon: Heart,
     },
-
-    {
-      title: "Application for Marriage Certificate",
-      url: "/apply-marriage",
-      icon: FileSignature,
-    },
   ],
 };
 
@@ -56,7 +50,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
-              <Link href="/admin/livebirth">
+              <Link href="/admin/birth-certificate">
                 <div className="bg-sidebar-border text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
                   <Image
                     src="/logos/lgu-carigara.png"

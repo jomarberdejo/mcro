@@ -27,7 +27,6 @@ import {
   BirthRecordFormInput,
 } from "@/lib/validations/birth-record.schema";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { useFileUpload } from "@/hooks/use-file-upload";
@@ -263,7 +262,6 @@ const {
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
               <FieldGroup>
                 <div className="space-y-5">
-                  {/* Registry Information */}
                   <div className="grid grid-cols-2 gap-4">
                     <Controller
                       name="registryNo"
@@ -322,7 +320,6 @@ const {
                     />
                   </div>
 
-                  {/* Child Information */}
                   <div className="border-t pt-4">
                     <h3 className="font-semibold mb-3 text-gray-900">
                       Child Information
@@ -546,7 +543,6 @@ const {
                     </div>
                   </div>
 
-                  {/* Mother Information */}
                   <div className="border-t pt-4">
                     <h3 className="font-semibold mb-3 text-gray-900">
                       Mother Information
@@ -633,7 +629,6 @@ const {
                     </div>
                   </div>
 
-                  {/* Father Information */}
                   <div className="border-t pt-4">
                     <h3 className="font-semibold mb-3 text-gray-900">
                       Father Information
@@ -720,7 +715,6 @@ const {
                     </div>
                   </div>
 
-                  {/* Marriage Information */}
                   <div className="border-t pt-4">
                     <h3 className="font-semibold mb-3 text-gray-900">
                       Marriage Information (Optional)
@@ -768,7 +762,6 @@ const {
                     </div>
                   </div>
 
-                  {/* Additional Information */}
                   <div className="border-t pt-4">
                     <div className="space-y-5">
                       <Controller

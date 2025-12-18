@@ -53,7 +53,6 @@ export function useFileUpload(
 
       const extractedData = await response.json();
 
-      // Update form with extracted data
       Object.entries(extractedData).forEach(([key, value]) => {
         if (key === "birthOrder" && value) {
           setValue("isTwin", true);
