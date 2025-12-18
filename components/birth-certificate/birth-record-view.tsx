@@ -23,26 +23,26 @@ interface BirthRecord {
   dateOfRegistration: string;
   childLastName: string;
   childFirstName: string;
-  childMiddleName?: string | null; // Add | null
+  childMiddleName?: string | null; 
   sex: string;
   dateOfBirth: string;
-  placeOfBirth?: string | null; // Add | null
+  placeOfBirth?: string | null; 
   isTwin: boolean;
-  birthOrder?: string | null; // Add | null
-  motherLastName?: string | null; // Add | null
-  motherFirstName?: string | null; // Add | null
-  motherMiddleName?: string | null; // Add | null
-  motherCitizenship?: string | null; // Add | null
-  fatherLastName?: string | null; // Add | null
-  fatherFirstName?: string | null; // Add | null
-  fatherMiddleName?: string | null; // Add | null
-  fatherCitizenship?: string | null; // Add | null
-  dateOfMarriage?: string | null; // Add | null
-  placeOfMarriage?: string | null; // Add | null
-  remarks?: string | null; // Add | null
-  registrarName?: string | null; // Add | null
-  signatureImagePath?: string | null; // Add | null
-  userId?: string | null; // Add this if you need it
+  birthOrder?: string | null; 
+  motherLastName?: string | null; 
+  motherFirstName?: string | null; 
+  motherMiddleName?: string | null; 
+  motherCitizenship?: string | null; 
+  fatherLastName?: string | null; 
+  fatherFirstName?: string | null; 
+  fatherMiddleName?: string | null; 
+  fatherCitizenship?: string | null; 
+  dateOfMarriage?: string | null; 
+  placeOfMarriage?: string | null; 
+  remarks?: string | null; 
+  registrarName?: string | null; 
+  signatureImagePath?: string | null; 
+  userId?: string | null; 
 }
 
 const BirthCertificatePDF: React.FC<{ record: BirthRecord }> = ({ record }) => {
