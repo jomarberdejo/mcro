@@ -9,6 +9,7 @@
  * 🟢 You can import this file directly.
  */
 export type * from './models/User'
+export type * from './models/SupportingDocument'
 export type * from './models/BirthRecord'
 export type * from './models/DeathRecord'
 export type * from './models/MarriageRecord'

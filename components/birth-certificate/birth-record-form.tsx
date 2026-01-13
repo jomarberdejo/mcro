@@ -543,7 +543,7 @@ export const BirthRecordForm: React.FC<BirthRecordFormProps> = ({
                               >
                                 <SelectValue placeholder="Select sex" />
                               </SelectTrigger>
-                              <SelectContent className="w-[var(--radix-select-trigger-width)]">
+                              <SelectContent className="w-(--radix-select-trigger-width)">
                                 <SelectItem value="Male">Male</SelectItem>
                                 <SelectItem value="Female">Female</SelectItem>
                               </SelectContent>

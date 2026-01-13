@@ -34,3 +34,14 @@ export const CivilStatus = {
 } as const
 
 export type CivilStatus = (typeof CivilStatus)[keyof typeof CivilStatus]
+
+
+export const DocumentType = {
+  BIRTH_CERTIFICATE: 'BIRTH_CERTIFICATE',
+  DEATH_CERTIFICATE: 'DEATH_CERTIFICATE',
+  MARRIAGE_CERTIFICATE: 'MARRIAGE_CERTIFICATE',
+  MARRIAGE_CERTIFICATE_APPLICATION: 'MARRIAGE_CERTIFICATE_APPLICATION',
+  OTHER: 'OTHER'
+} as const
+
+export type DocumentType = (typeof DocumentType)[keyof typeof DocumentType]

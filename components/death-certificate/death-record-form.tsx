@@ -459,7 +459,7 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
                               >
                                 <SelectValue placeholder="Select sex" />
                               </SelectTrigger>
-                              <SelectContent>
+                              <SelectContent className="w-(--radix-select-trigger-width)">
                                 <SelectItem value="Male">Male</SelectItem>
                                 <SelectItem value="Female">Female</SelectItem>
                               </SelectContent>
@@ -511,7 +511,7 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
                               >
                                 <SelectValue placeholder="Select status" />
                               </SelectTrigger>
-                              <SelectContent>
+                              <SelectContent className="w-(--radix-select-trigger-width)">
                                 <SelectItem value="Single">Single</SelectItem>
                                 <SelectItem value="Married">Married</SelectItem>
                                 <SelectItem value="Widowed">Widowed</SelectItem>

@@ -52,6 +52,7 @@ export const AnyNull = runtime.AnyNull
 
 export const ModelName = {
   User: 'User',
+  SupportingDocument: 'SupportingDocument',
   BirthRecord: 'BirthRecord',
   DeathRecord: 'DeathRecord',
   MarriageRecord: 'MarriageRecord',
@@ -89,6 +90,25 @@ export const UserScalarFieldEnum = {
 } as const
 
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
+
+
+export const SupportingDocumentScalarFieldEnum = {
+  id: 'id',
+  filePath: 'filePath',
+  fileName: 'fileName',
+  fileSize: 'fileSize',
+  mimeType: 'mimeType',
+  description: 'description',
+  type: 'type',
+  birthRecordId: 'birthRecordId',
+  deathRecordId: 'deathRecordId',
+  marriageRecordId: 'marriageRecordId',
+  marriageCertificateApplicationId: 'marriageCertificateApplicationId',
+  uploadedBy: 'uploadedBy',
+  uploadedAt: 'uploadedAt'
+} as const
+
+export type SupportingDocumentScalarFieldEnum = (typeof SupportingDocumentScalarFieldEnum)[keyof typeof SupportingDocumentScalarFieldEnum]
 
 
 export const BirthRecordScalarFieldEnum = {
@@ -285,6 +305,22 @@ export const UserOrderByRelevanceFieldEnum = {
 } as const
 
 export type UserOrderByRelevanceFieldEnum = (typeof UserOrderByRelevanceFieldEnum)[keyof typeof UserOrderByRelevanceFieldEnum]
+
+
+export const SupportingDocumentOrderByRelevanceFieldEnum = {
+  id: 'id',
+  filePath: 'filePath',
+  fileName: 'fileName',
+  mimeType: 'mimeType',
+  description: 'description',
+  birthRecordId: 'birthRecordId',
+  deathRecordId: 'deathRecordId',
+  marriageRecordId: 'marriageRecordId',
+  marriageCertificateApplicationId: 'marriageCertificateApplicationId',
+  uploadedBy: 'uploadedBy'
+} as const
+
+export type SupportingDocumentOrderByRelevanceFieldEnum = (typeof SupportingDocumentOrderByRelevanceFieldEnum)[keyof typeof SupportingDocumentOrderByRelevanceFieldEnum]
 
 
 export const BirthRecordOrderByRelevanceFieldEnum = {

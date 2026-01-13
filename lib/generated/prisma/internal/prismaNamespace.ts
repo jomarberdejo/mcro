@@ -385,6 +385,7 @@ type FieldRefInputType<Model, FieldType> = Model extends never ? never : FieldRe
 
 export const ModelName = {
   User: 'User',
+  SupportingDocument: 'SupportingDocument',
   BirthRecord: 'BirthRecord',
   DeathRecord: 'DeathRecord',
   MarriageRecord: 'MarriageRecord',
@@ -404,7 +405,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "birthRecord" | "deathRecord" | "marriageRecord" | "marriageCertificateApplication"
+    modelProps: "user" | "supportingDocument" | "birthRecord" | "deathRecord" | "marriageRecord" | "marriageCertificateApplication"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -471,6 +472,72 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.UserCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.UserCountAggregateOutputType> | number
+        }
+      }
+    }
+    SupportingDocument: {
+      payload: Prisma.$SupportingDocumentPayload<ExtArgs>
+      fields: Prisma.SupportingDocumentFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.SupportingDocumentFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupportingDocumentPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.SupportingDocumentFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupportingDocumentPayload>
+        }
+        findFirst: {
+          args: Prisma.SupportingDocumentFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupportingDocumentPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.SupportingDocumentFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupportingDocumentPayload>
+        }
+        findMany: {
+          args: Prisma.SupportingDocumentFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupportingDocumentPayload>[]
+        }
+        create: {
+          args: Prisma.SupportingDocumentCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupportingDocumentPayload>
+        }
+        createMany: {
+          args: Prisma.SupportingDocumentCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        delete: {
+          args: Prisma.SupportingDocumentDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupportingDocumentPayload>
+        }
+        update: {
+          args: Prisma.SupportingDocumentUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupportingDocumentPayload>
+        }
+        deleteMany: {
+          args: Prisma.SupportingDocumentDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.SupportingDocumentUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        upsert: {
+          args: Prisma.SupportingDocumentUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupportingDocumentPayload>
+        }
+        aggregate: {
+          args: Prisma.SupportingDocumentAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateSupportingDocument>
+        }
+        groupBy: {
+          args: Prisma.SupportingDocumentGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SupportingDocumentGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.SupportingDocumentCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SupportingDocumentCountAggregateOutputType> | number
         }
       }
     }
@@ -794,6 +861,25 @@ export const UserScalarFieldEnum = {
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
 
 
+export const SupportingDocumentScalarFieldEnum = {
+  id: 'id',
+  filePath: 'filePath',
+  fileName: 'fileName',
+  fileSize: 'fileSize',
+  mimeType: 'mimeType',
+  description: 'description',
+  type: 'type',
+  birthRecordId: 'birthRecordId',
+  deathRecordId: 'deathRecordId',
+  marriageRecordId: 'marriageRecordId',
+  marriageCertificateApplicationId: 'marriageCertificateApplicationId',
+  uploadedBy: 'uploadedBy',
+  uploadedAt: 'uploadedAt'
+} as const
+
+export type SupportingDocumentScalarFieldEnum = (typeof SupportingDocumentScalarFieldEnum)[keyof typeof SupportingDocumentScalarFieldEnum]
+
+
 export const BirthRecordScalarFieldEnum = {
   id: 'id',
   registryNo: 'registryNo',
@@ -990,6 +1076,22 @@ export const UserOrderByRelevanceFieldEnum = {
 export type UserOrderByRelevanceFieldEnum = (typeof UserOrderByRelevanceFieldEnum)[keyof typeof UserOrderByRelevanceFieldEnum]
 
 
+export const SupportingDocumentOrderByRelevanceFieldEnum = {
+  id: 'id',
+  filePath: 'filePath',
+  fileName: 'fileName',
+  mimeType: 'mimeType',
+  description: 'description',
+  birthRecordId: 'birthRecordId',
+  deathRecordId: 'deathRecordId',
+  marriageRecordId: 'marriageRecordId',
+  marriageCertificateApplicationId: 'marriageCertificateApplicationId',
+  uploadedBy: 'uploadedBy'
+} as const
+
+export type SupportingDocumentOrderByRelevanceFieldEnum = (typeof SupportingDocumentOrderByRelevanceFieldEnum)[keyof typeof SupportingDocumentOrderByRelevanceFieldEnum]
+
+
 export const BirthRecordOrderByRelevanceFieldEnum = {
   id: 'id',
   registryNo: 'registryNo',
@@ -1157,6 +1259,20 @@ export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel
 
 
 /**
+ * Reference to a field of type 'Int'
+ */
+export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
+    
+
+
+/**
+ * Reference to a field of type 'DocumentType'
+ */
+export type EnumDocumentTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DocumentType'>
+    
+
+
+/**
  * Reference to a field of type 'Sex'
  */
 export type EnumSexFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Sex'>
@@ -1167,13 +1283,6 @@ export type EnumSexFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel,
  * Reference to a field of type 'Boolean'
  */
 export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
-    
-
-
-/**
- * Reference to a field of type 'Int'
- */
-export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
     
 
 
@@ -1286,6 +1395,7 @@ export type PrismaClientOptions = ({
 }
 export type GlobalOmitConfig = {
   user?: Prisma.UserOmit
+  supportingDocument?: Prisma.SupportingDocumentOmit
   birthRecord?: Prisma.BirthRecordOmit
   deathRecord?: Prisma.DeathRecordOmit
   marriageRecord?: Prisma.MarriageRecordOmit

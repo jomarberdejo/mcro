@@ -21,9 +21,7 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { ArrowLeft, Upload, X, FileImage, Loader2 } from "lucide-react";
-import {
-  MarriageRecordFormInput,
-} from "@/lib/validations/marriage-record.schema";
+import { MarriageRecordFormInput } from "@/lib/validations/marriage-record.schema";
 import Image from "next/image";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -34,6 +32,13 @@ interface MarriageRecordFormProps {
   recordId?: string;
   defaultValues?: Partial<MarriageRecordFormInput>;
   isEditing?: boolean;
+}
+
+interface SupportingDocument {
+  id: string;
+  path: string;
+  preview: string;
+  name: string;
 }
 
 export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
@@ -55,12 +60,20 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
     handleCancel,
   } = useMarriageRecordForm({ recordId, defaultValues, isEditing });
 
-  const { control, handleSubmit, setValue, watch, formState: { isSubmitting } } = form;
-
-  const { uploadFile, deleteFile, extractDataFromFile } = useFileUpload(
+  const {
+    control,
+    handleSubmit,
     setValue,
-    watch
-  );
+    watch,
+    formState: { isSubmitting },
+  } = form;
+
+  const { uploadFile, deleteFile } = useFileUpload(setValue, watch);
+
+  const [supportingDocuments, setSupportingDocuments] = useState<
+    SupportingDocument[]
+  >([]);
+  const [isUploadingDoc, setIsUploadingDoc] = useState(false);
 
   const handleSignatureUpload = async (
     e: React.ChangeEvent<HTMLInputElement>
@@ -114,47 +127,84 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
     if (fileInput) fileInput.value = "";
   };
 
-  const handleDocumentUpload = async (
+  // Supporting documents handlers
+  const handleSupportingDocumentsUpload = async (
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+    const files = Array.from(e.target.files || []);
+    if (files.length === 0) return;
 
-    if (!file.type.startsWith("image/")) {
-      toast.error("Please upload an image file");
+    // Validate files
+    const invalidFiles = files.filter(
+      (file) => !file.type.startsWith("image/") || file.size > 5 * 1024 * 1024
+    );
+
+    if (invalidFiles.length > 0) {
+      toast.error("All files must be images under 5MB");
       return;
     }
 
-    if (file.size > 5 * 1024 * 1024) {
-      toast.error("Image size should be less than 5MB");
-      return;
-    }
-
-    setIsProcessing(true);
+    setIsUploadingDoc(true);
 
     try {
-      const previewUrl = URL.createObjectURL(file);
-      setDocumentPreview(previewUrl);
-      await extractDataFromFile(file);
+      const uploadPromises = files.map(async (file) => {
+        const result = await uploadFile(file, "documents");
+        const previewUrl = URL.createObjectURL(file);
+
+        return {
+          id: result.path,
+          path: result.path,
+          preview: previewUrl,
+          name: file.name,
+        };
+      });
+
+      const uploadedDocs = await Promise.all(uploadPromises);
+      setSupportingDocuments((prev) => [...prev, ...uploadedDocs]);
+
+      // Update form value with paths
+      const allPaths = [
+        ...supportingDocuments.map((d) => d.path),
+        ...uploadedDocs.map((d) => d.path),
+      ];
+      setValue("supportingDocuments", allPaths);
+
+      toast.success(`${uploadedDocs.length} document(s) uploaded successfully`);
     } catch (error) {
-      console.error("Error processing document:", error);
+      console.error("Error uploading documents:", error);
       toast.error(
-        error instanceof Error ? error.message : "Failed to process document"
+        error instanceof Error ? error.message : "Failed to upload documents"
       );
     } finally {
-      setIsProcessing(false);
+      setIsUploadingDoc(false);
+      // Reset file input
+      const fileInput = document.getElementById(
+        "documentsUpload"
+      ) as HTMLInputElement;
+      if (fileInput) fileInput.value = "";
     }
   };
 
-  const removeDocument = () => {
-    if (documentPreview) {
-      URL.revokeObjectURL(documentPreview);
+  const removeSupportingDocument = async (docId: string) => {
+    const doc = supportingDocuments.find((d) => d.id === docId);
+    if (!doc) return;
+
+    try {
+      await deleteFile(doc.path);
+      URL.revokeObjectURL(doc.preview);
+
+      const updatedDocs = supportingDocuments.filter((d) => d.id !== docId);
+      setSupportingDocuments(updatedDocs);
+      setValue(
+        "supportingDocuments",
+        updatedDocs.map((d) => d.path)
+      );
+
+      toast.success("Document removed");
+    } catch (error) {
+      console.error("Error removing document:", error);
+      toast.error("Failed to remove document");
     }
-    setDocumentPreview(null);
-    const fileInput = document.getElementById(
-      "documentUpload"
-    ) as HTMLInputElement;
-    if (fileInput) fileInput.value = "";
   };
 
   return (
@@ -169,94 +219,113 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
         <Card>
           <CardHeader>
             <CardTitle>
-              {isEditing ? "Edit Marriage Registration" : "New Marriage Registration"}
+              {isEditing
+                ? "Edit Marriage Registration"
+                : "New Marriage Registration"}
             </CardTitle>
           </CardHeader>
 
           <CardContent>
-            {!isEditing && (
-              <div className="mb-6 p-4 border-2 border-dashed border-blue-300 rounded-lg bg-blue-50">
-                <div className="flex items-start gap-4">
-                  <FileImage className="w-8 h-8 text-blue-600 mt-1" />
-                  <div className="flex-1">
-                    <h4 className="font-semibold text-blue-900 mb-2">
-                      Auto-populate from Document
-                    </h4>
-                    <p className="text-sm text-blue-700 mb-3">
-                      Upload a marriage certificate image and AI will automatically
-                      extract and fill the form fields.
-                    </p>
+            {/* Supporting Documents Section */}
+            <div className="mb-6 p-4 border-2 border-dashed border-blue-300 rounded-lg bg-blue-50">
+              <div className="flex items-start gap-4">
+                <FileImage className="w-8 h-8 text-blue-600 mt-1" />
+                <div className="flex-1">
+                  <h4 className="font-semibold text-blue-900 mb-2">
+                    Supporting Documents
+                  </h4>
+                  <p className="text-sm text-blue-700 mb-3">
+                    Upload supporting documents such as death certificates, IDs,
+                    or other relevant files. You can upload multiple images at
+                    once.
+                  </p>
 
-                    {!documentPreview ? (
-                      <div className="flex items-center gap-3">
-                        <Input
-                          id="documentUpload"
-                          type="file"
-                          accept="image/*"
-                          onChange={handleDocumentUpload}
-                          className="hidden"
-                          disabled={isProcessing}
-                        />
-                        <Button
-                          type="button"
-                          variant="default"
-                          onClick={() =>
-                            document.getElementById("documentUpload")?.click()
-                          }
-                          disabled={isProcessing}
-                        >
-                          {isProcessing ? (
-                            <>
-                              <Loader2 className="w-4 h-4 animate-spin mr-2" />
-                              Processing...
-                            </>
-                          ) : (
-                            <>
-                              <Upload className="w-4 h-4 mr-2" />
-                              Upload Marriage Certificate
-                            </>
-                          )}
-                        </Button>
-                        <span className="text-sm text-gray-600">
-                          PNG, JPG up to 5MB
-                        </span>
-                      </div>
-                    ) : (
-                      <div className="border rounded-lg p-3 bg-white">
-                        <div className="flex items-start justify-between mb-2">
-                          <span className="text-sm font-medium text-green-700">
-                            ✓ Document uploaded and processed
-                          </span>
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="sm"
-                            onClick={removeDocument}
-                            className="h-8 w-8 p-0"
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-3">
+                      <Input
+                        id="documentsUpload"
+                        type="file"
+                        accept="image/*"
+                        multiple
+                        onChange={handleSupportingDocumentsUpload}
+                        className="hidden"
+                        disabled={isUploadingDoc}
+                      />
+                      <Button
+                        type="button"
+                        variant="default"
+                        onClick={() =>
+                          document.getElementById("documentsUpload")?.click()
+                        }
+                        disabled={isUploadingDoc}
+                      >
+                        {isUploadingDoc ? (
+                          <>
+                            <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                            Uploading...
+                          </>
+                        ) : (
+                          <>
+                            <Upload className="w-4 h-4 mr-2" />
+                            Upload Documents
+                          </>
+                        )}
+                      </Button>
+                      <span className="text-sm text-gray-600">
+                        PNG, JPG up to 5MB each
+                      </span>
+                    </div>
+
+                    {/* Documents Preview Grid */}
+                    {supportingDocuments.length > 0 && (
+                      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 mt-4">
+                        {supportingDocuments.map((doc) => (
+                          <div
+                            key={doc.id}
+                            className="relative border rounded-lg p-2 bg-white group"
                           >
-                            <X className="w-4 h-4" />
-                          </Button>
-                        </div>
-                        <div className="relative w-full h-32 bg-gray-100 border rounded overflow-hidden">
-                          <Image
-                            src={documentPreview}
-                            alt="Document preview"
-                            fill
-                            className="object-contain"
-                          />
-                        </div>
+                            <Button
+                              type="button"
+                              variant="destructive"
+                              size="sm"
+                              onClick={() => removeSupportingDocument(doc.id)}
+                              className="absolute -top-2 -right-2 h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity z-10"
+                            >
+                              <X className="w-3 h-3" />
+                            </Button>
+                            <div className="relative w-full h-24 bg-gray-100 border rounded overflow-hidden">
+                              <Image
+                                src={doc.preview}
+                                alt={doc.name}
+                                fill
+                                className="object-cover"
+                              />
+                            </div>
+                            <p className="text-xs text-gray-600 mt-1 truncate">
+                              {doc.name}
+                            </p>
+                          </div>
+                        ))}
                       </div>
+                    )}
+
+                    {supportingDocuments.length > 0 && (
+                      <p className="text-sm text-green-700 font-medium">
+                        ✓ {supportingDocuments.length} document(s) uploaded
+                      </p>
                     )}
                   </div>
                 </div>
               </div>
-            )}
+            </div>
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
               <FieldGroup>
                 <div className="space-y-5">
                   <div className="space-y-4">
-                    <h3 className="font-semibold text-gray-900">Registry Information</h3>
+                    <h3 className="font-semibold text-gray-900">
+                      Registry Information
+                    </h3>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <Controller
@@ -264,7 +333,10 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                         control={control}
                         render={({ field, fieldState }) => (
                           <Field>
-                            <FieldLabel htmlFor="registryNo" className="text-sm font-semibold text-gray-700">
+                            <FieldLabel
+                              htmlFor="registryNo"
+                              className="text-sm font-semibold text-gray-700"
+                            >
                               Registry No. *
                             </FieldLabel>
                             <Input
@@ -272,11 +344,14 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                               {...field}
                               className={cn(
                                 "h-11 text-base transition-all",
-                                fieldState.invalid && "border-red-500 focus-visible:ring-red-500"
+                                fieldState.invalid &&
+                                  "border-red-500 focus-visible:ring-red-500"
                               )}
                               aria-invalid={fieldState.invalid}
                             />
-                            {fieldState.error && <FieldError errors={[fieldState.error]} />}
+                            {fieldState.error && (
+                              <FieldError errors={[fieldState.error]} />
+                            )}
                           </Field>
                         )}
                       />
@@ -286,10 +361,17 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                         control={control}
                         render={({ field }) => (
                           <Field>
-                            <FieldLabel htmlFor="pageNo" className="text-sm font-semibold text-gray-700">
+                            <FieldLabel
+                              htmlFor="pageNo"
+                              className="text-sm font-semibold text-gray-700"
+                            >
                               Page No.
                             </FieldLabel>
-                            <Input id="pageNo" {...field} className="h-11 text-base transition-all" />
+                            <Input
+                              id="pageNo"
+                              {...field}
+                              className="h-11 text-base transition-all"
+                            />
                           </Field>
                         )}
                       />
@@ -299,10 +381,17 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                         control={control}
                         render={({ field }) => (
                           <Field>
-                            <FieldLabel htmlFor="bookNo" className="text-sm font-semibold text-gray-700">
+                            <FieldLabel
+                              htmlFor="bookNo"
+                              className="text-sm font-semibold text-gray-700"
+                            >
                               Book No.
                             </FieldLabel>
-                            <Input id="bookNo" {...field} className="h-11 text-base transition-all" />
+                            <Input
+                              id="bookNo"
+                              {...field}
+                              className="h-11 text-base transition-all"
+                            />
                           </Field>
                         )}
                       />
@@ -314,7 +403,10 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                         control={control}
                         render={({ field, fieldState }) => (
                           <Field>
-                            <FieldLabel htmlFor="dateOfMarriage" className="text-sm font-semibold text-gray-700">
+                            <FieldLabel
+                              htmlFor="dateOfMarriage"
+                              className="text-sm font-semibold text-gray-700"
+                            >
                               Date of Marriage *
                             </FieldLabel>
                             <Input
@@ -323,11 +415,14 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                               {...field}
                               className={cn(
                                 "h-11 text-base transition-all",
-                                fieldState.invalid && "border-red-500 focus-visible:ring-red-500"
+                                fieldState.invalid &&
+                                  "border-red-500 focus-visible:ring-red-500"
                               )}
                               aria-invalid={fieldState.invalid}
                             />
-                            {fieldState.error && <FieldError errors={[fieldState.error]} />}
+                            {fieldState.error && (
+                              <FieldError errors={[fieldState.error]} />
+                            )}
                           </Field>
                         )}
                       />
@@ -337,7 +432,10 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                         control={control}
                         render={({ field, fieldState }) => (
                           <Field>
-                            <FieldLabel htmlFor="placeOfMarriage" className="text-sm font-semibold text-gray-700">
+                            <FieldLabel
+                              htmlFor="placeOfMarriage"
+                              className="text-sm font-semibold text-gray-700"
+                            >
                               Place of Marriage *
                             </FieldLabel>
                             <Input
@@ -345,11 +443,14 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                               {...field}
                               className={cn(
                                 "h-11 text-base transition-all",
-                                fieldState.invalid && "border-red-500 focus-visible:ring-red-500"
+                                fieldState.invalid &&
+                                  "border-red-500 focus-visible:ring-red-500"
                               )}
                               aria-invalid={fieldState.invalid}
                             />
-                            {fieldState.error && <FieldError errors={[fieldState.error]} />}
+                            {fieldState.error && (
+                              <FieldError errors={[fieldState.error]} />
+                            )}
                           </Field>
                         )}
                       />
@@ -360,7 +461,10 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                       control={control}
                       render={({ field }) => (
                         <Field>
-                          <FieldLabel htmlFor="dateOfRegistration" className="text-sm font-semibold text-gray-700">
+                          <FieldLabel
+                            htmlFor="dateOfRegistration"
+                            className="text-sm font-semibold text-gray-700"
+                          >
                             Date of Registration
                           </FieldLabel>
                           <Input
@@ -375,14 +479,19 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                   </div>
 
                   <div className="border-t pt-4">
-                    <h3 className="font-semibold mb-3 text-gray-900">Husband Information</h3>
+                    <h3 className="font-semibold mb-3 text-gray-900">
+                      Husband Information
+                    </h3>
                     <div className="grid grid-cols-3 gap-4">
                       <Controller
                         name="husbandLastName"
                         control={control}
                         render={({ field, fieldState }) => (
                           <Field>
-                            <FieldLabel htmlFor="husbandLastName" className="text-sm font-semibold text-gray-700">
+                            <FieldLabel
+                              htmlFor="husbandLastName"
+                              className="text-sm font-semibold text-gray-700"
+                            >
                               Last Name *
                             </FieldLabel>
                             <Input
@@ -390,11 +499,14 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                               {...field}
                               className={cn(
                                 "h-11 text-base transition-all",
-                                fieldState.invalid && "border-red-500 focus-visible:ring-red-500"
+                                fieldState.invalid &&
+                                  "border-red-500 focus-visible:ring-red-500"
                               )}
                               aria-invalid={fieldState.invalid}
                             />
-                            {fieldState.error && <FieldError errors={[fieldState.error]} />}
+                            {fieldState.error && (
+                              <FieldError errors={[fieldState.error]} />
+                            )}
                           </Field>
                         )}
                       />
@@ -403,7 +515,10 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                         control={control}
                         render={({ field, fieldState }) => (
                           <Field>
-                            <FieldLabel htmlFor="husbandFirstName" className="text-sm font-semibold text-gray-700">
+                            <FieldLabel
+                              htmlFor="husbandFirstName"
+                              className="text-sm font-semibold text-gray-700"
+                            >
                               First Name *
                             </FieldLabel>
                             <Input
@@ -411,11 +526,14 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                               {...field}
                               className={cn(
                                 "h-11 text-base transition-all",
-                                fieldState.invalid && "border-red-500 focus-visible:ring-red-500"
+                                fieldState.invalid &&
+                                  "border-red-500 focus-visible:ring-red-500"
                               )}
                               aria-invalid={fieldState.invalid}
                             />
-                            {fieldState.error && <FieldError errors={[fieldState.error]} />}
+                            {fieldState.error && (
+                              <FieldError errors={[fieldState.error]} />
+                            )}
                           </Field>
                         )}
                       />
@@ -424,10 +542,17 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                         control={control}
                         render={({ field }) => (
                           <Field>
-                            <FieldLabel htmlFor="husbandMiddleName" className="text-sm font-semibold text-gray-700">
+                            <FieldLabel
+                              htmlFor="husbandMiddleName"
+                              className="text-sm font-semibold text-gray-700"
+                            >
                               Middle Name
                             </FieldLabel>
-                            <Input id="husbandMiddleName" {...field} className="h-11 text-base transition-all" />
+                            <Input
+                              id="husbandMiddleName"
+                              {...field}
+                              className="h-11 text-base transition-all"
+                            />
                           </Field>
                         )}
                       />
@@ -439,21 +564,29 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                         control={control}
                         render={({ field, fieldState }) => (
                           <Field>
-                            <FieldLabel htmlFor="husbandAge" className="text-sm font-semibold text-gray-700">
+                            <FieldLabel
+                              htmlFor="husbandAge"
+                              className="text-sm font-semibold text-gray-700"
+                            >
                               Age *
                             </FieldLabel>
                             <Input
                               id="husbandAge"
                               type="number"
                               {...field}
-                              onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
+                                onChange={(e) =>
+                                field.onChange(e.target.value)
+                              }
                               className={cn(
                                 "h-11 text-base transition-all",
-                                fieldState.invalid && "border-red-500 focus-visible:ring-red-500"
+                                fieldState.invalid &&
+                                  "border-red-500 focus-visible:ring-red-500"
                               )}
                               aria-invalid={fieldState.invalid}
                             />
-                            {fieldState.error && <FieldError errors={[fieldState.error]} />}
+                            {fieldState.error && (
+                              <FieldError errors={[fieldState.error]} />
+                            )}
                           </Field>
                         )}
                       />
@@ -463,7 +596,10 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                         control={control}
                         render={({ field, fieldState }) => (
                           <Field>
-                            <FieldLabel htmlFor="husbandNationality" className="text-sm font-semibold text-gray-700">
+                            <FieldLabel
+                              htmlFor="husbandNationality"
+                              className="text-sm font-semibold text-gray-700"
+                            >
                               Nationality *
                             </FieldLabel>
                             <Input
@@ -471,11 +607,14 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                               {...field}
                               className={cn(
                                 "h-11 text-base transition-all",
-                                fieldState.invalid && "border-red-500 focus-visible:ring-red-500"
+                                fieldState.invalid &&
+                                  "border-red-500 focus-visible:ring-red-500"
                               )}
                               aria-invalid={fieldState.invalid}
                             />
-                            {fieldState.error && <FieldError errors={[fieldState.error]} />}
+                            {fieldState.error && (
+                              <FieldError errors={[fieldState.error]} />
+                            )}
                           </Field>
                         )}
                       />
@@ -485,28 +624,41 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                         control={control}
                         render={({ field, fieldState }) => (
                           <Field>
-                            <FieldLabel htmlFor="husbandCivilStatus" className="text-sm font-semibold text-gray-700">
+                            <FieldLabel
+                              htmlFor="husbandCivilStatus"
+                              className="text-sm font-semibold text-gray-700"
+                            >
                               Civil Status *
                             </FieldLabel>
-                            <Select onValueChange={field.onChange} value={field.value}>
+                            <Select
+                              onValueChange={field.onChange}
+                              value={field.value}
+                            >
                               <SelectTrigger
                                 id="husbandCivilStatus"
                                 className={cn(
                                   "w-full h-11 text-base",
-                                  fieldState.invalid && "border-red-500 focus:ring-red-500"
+                                  fieldState.invalid &&
+                                    "border-red-500 focus:ring-red-500"
                                 )}
                               >
                                 <SelectValue placeholder="Select status" />
                               </SelectTrigger>
-                              <SelectContent>
+                              <SelectContent className="w-(--radix-select-trigger-width)">
                                 <SelectItem value="Single">Single</SelectItem>
                                 <SelectItem value="Married">Married</SelectItem>
                                 <SelectItem value="Widowed">Widowed</SelectItem>
-                                <SelectItem value="Divorced">Divorced</SelectItem>
-                                <SelectItem value="Separated">Separated</SelectItem>
+                                <SelectItem value="Divorced">
+                                  Divorced
+                                </SelectItem>
+                                <SelectItem value="Separated">
+                                  Separated
+                                </SelectItem>
                               </SelectContent>
                             </Select>
-                            {fieldState.error && <FieldError errors={[fieldState.error]} />}
+                            {fieldState.error && (
+                              <FieldError errors={[fieldState.error]} />
+                            )}
                           </Field>
                         )}
                       />
@@ -518,10 +670,17 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                         control={control}
                         render={({ field }) => (
                           <Field>
-                            <FieldLabel htmlFor="husbandFatherName" className="text-sm font-semibold text-gray-700">
+                            <FieldLabel
+                              htmlFor="husbandFatherName"
+                              className="text-sm font-semibold text-gray-700"
+                            >
                               Father's Name
                             </FieldLabel>
-                            <Input id="husbandFatherName" {...field} className="h-11 text-base transition-all" />
+                            <Input
+                              id="husbandFatherName"
+                              {...field}
+                              className="h-11 text-base transition-all"
+                            />
                           </Field>
                         )}
                       />
@@ -531,10 +690,17 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                         control={control}
                         render={({ field }) => (
                           <Field>
-                            <FieldLabel htmlFor="husbandMotherName" className="text-sm font-semibold text-gray-700">
+                            <FieldLabel
+                              htmlFor="husbandMotherName"
+                              className="text-sm font-semibold text-gray-700"
+                            >
                               Mother's Name
                             </FieldLabel>
-                            <Input id="husbandMotherName" {...field} className="h-11 text-base transition-all" />
+                            <Input
+                              id="husbandMotherName"
+                              {...field}
+                              className="h-11 text-base transition-all"
+                            />
                           </Field>
                         )}
                       />
@@ -542,14 +708,19 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                   </div>
 
                   <div className="border-t pt-4">
-                    <h3 className="font-semibold mb-3 text-gray-900">Wife Information</h3>
+                    <h3 className="font-semibold mb-3 text-gray-900">
+                      Wife Information
+                    </h3>
                     <div className="grid grid-cols-3 gap-4">
                       <Controller
                         name="wifeLastName"
                         control={control}
                         render={({ field, fieldState }) => (
                           <Field>
-                            <FieldLabel htmlFor="wifeLastName" className="text-sm font-semibold text-gray-700">
+                            <FieldLabel
+                              htmlFor="wifeLastName"
+                              className="text-sm font-semibold text-gray-700"
+                            >
                               Last Name *
                             </FieldLabel>
                             <Input
@@ -557,11 +728,14 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                               {...field}
                               className={cn(
                                 "h-11 text-base transition-all",
-                                fieldState.invalid && "border-red-500 focus-visible:ring-red-500"
+                                fieldState.invalid &&
+                                  "border-red-500 focus-visible:ring-red-500"
                               )}
                               aria-invalid={fieldState.invalid}
                             />
-                            {fieldState.error && <FieldError errors={[fieldState.error]} />}
+                            {fieldState.error && (
+                              <FieldError errors={[fieldState.error]} />
+                            )}
                           </Field>
                         )}
                       />
@@ -570,7 +744,10 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                         control={control}
                         render={({ field, fieldState }) => (
                           <Field>
-                            <FieldLabel htmlFor="wifeFirstName" className="text-sm font-semibold text-gray-700">
+                            <FieldLabel
+                              htmlFor="wifeFirstName"
+                              className="text-sm font-semibold text-gray-700"
+                            >
                               First Name *
                             </FieldLabel>
                             <Input
@@ -578,11 +755,14 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                               {...field}
                               className={cn(
                                 "h-11 text-base transition-all",
-                                fieldState.invalid && "border-red-500 focus-visible:ring-red-500"
+                                fieldState.invalid &&
+                                  "border-red-500 focus-visible:ring-red-500"
                               )}
                               aria-invalid={fieldState.invalid}
                             />
-                            {fieldState.error && <FieldError errors={[fieldState.error]} />}
+                            {fieldState.error && (
+                              <FieldError errors={[fieldState.error]} />
+                            )}
                           </Field>
                         )}
                       />
@@ -591,10 +771,17 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                         control={control}
                         render={({ field }) => (
                           <Field>
-                            <FieldLabel htmlFor="wifeMiddleName" className="text-sm font-semibold text-gray-700">
+                            <FieldLabel
+                              htmlFor="wifeMiddleName"
+                              className="text-sm font-semibold text-gray-700"
+                            >
                               Middle Name
                             </FieldLabel>
-                            <Input id="wifeMiddleName" {...field} className="h-11 text-base transition-all" />
+                            <Input
+                              id="wifeMiddleName"
+                              {...field}
+                              className="h-11 text-base transition-all"
+                            />
                           </Field>
                         )}
                       />
@@ -606,21 +793,29 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                         control={control}
                         render={({ field, fieldState }) => (
                           <Field>
-                            <FieldLabel htmlFor="wifeAge" className="text-sm font-semibold text-gray-700">
+                            <FieldLabel
+                              htmlFor="wifeAge"
+                              className="text-sm font-semibold text-gray-700"
+                            >
                               Age *
                             </FieldLabel>
                             <Input
                               id="wifeAge"
                               type="number"
                               {...field}
-                              onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
+                              onChange={(e) =>
+                                field.onChange(e.target.value)
+                              }
                               className={cn(
                                 "h-11 text-base transition-all",
-                                fieldState.invalid && "border-red-500 focus-visible:ring-red-500"
+                                fieldState.invalid &&
+                                  "border-red-500 focus-visible:ring-red-500"
                               )}
                               aria-invalid={fieldState.invalid}
                             />
-                            {fieldState.error && <FieldError errors={[fieldState.error]} />}
+                            {fieldState.error && (
+                              <FieldError errors={[fieldState.error]} />
+                            )}
                           </Field>
                         )}
                       />
@@ -630,7 +825,10 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                         control={control}
                         render={({ field, fieldState }) => (
                           <Field>
-                            <FieldLabel htmlFor="wifeNationality" className="text-sm font-semibold text-gray-700">
+                            <FieldLabel
+                              htmlFor="wifeNationality"
+                              className="text-sm font-semibold text-gray-700"
+                            >
                               Nationality *
                             </FieldLabel>
                             <Input
@@ -638,11 +836,14 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                               {...field}
                               className={cn(
                                 "h-11 text-base transition-all",
-                                fieldState.invalid && "border-red-500 focus-visible:ring-red-500"
+                                fieldState.invalid &&
+                                  "border-red-500 focus-visible:ring-red-500"
                               )}
                               aria-invalid={fieldState.invalid}
                             />
-                            {fieldState.error && <FieldError errors={[fieldState.error]} />}
+                            {fieldState.error && (
+                              <FieldError errors={[fieldState.error]} />
+                            )}
                           </Field>
                         )}
                       />
@@ -652,28 +853,41 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                         control={control}
                         render={({ field, fieldState }) => (
                           <Field>
-                            <FieldLabel htmlFor="wifeCivilStatus" className="text-sm font-semibold text-gray-700">
+                            <FieldLabel
+                              htmlFor="wifeCivilStatus"
+                              className="text-sm font-semibold text-gray-700"
+                            >
                               Civil Status *
                             </FieldLabel>
-                            <Select onValueChange={field.onChange} value={field.value}>
+                            <Select
+                              onValueChange={field.onChange}
+                              value={field.value}
+                            >
                               <SelectTrigger
                                 id="wifeCivilStatus"
                                 className={cn(
                                   "w-full h-11 text-base",
-                                  fieldState.invalid && "border-red-500 focus:ring-red-500"
+                                  fieldState.invalid &&
+                                    "border-red-500 focus:ring-red-500"
                                 )}
                               >
                                 <SelectValue placeholder="Select status" />
                               </SelectTrigger>
-                              <SelectContent>
+                              <SelectContent className="w-(--radix-select-trigger-width)">
                                 <SelectItem value="Single">Single</SelectItem>
                                 <SelectItem value="Married">Married</SelectItem>
                                 <SelectItem value="Widowed">Widowed</SelectItem>
-                                <SelectItem value="Divorced">Divorced</SelectItem>
-                                <SelectItem value="Separated">Separated</SelectItem>
+                                <SelectItem value="Divorced">
+                                  Divorced
+                                </SelectItem>
+                                <SelectItem value="Separated">
+                                  Separated
+                                </SelectItem>
                               </SelectContent>
                             </Select>
-                            {fieldState.error && <FieldError errors={[fieldState.error]} />}
+                            {fieldState.error && (
+                              <FieldError errors={[fieldState.error]} />
+                            )}
                           </Field>
                         )}
                       />
@@ -685,10 +899,17 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                         control={control}
                         render={({ field }) => (
                           <Field>
-                            <FieldLabel htmlFor="wifeFatherName" className="text-sm font-semibold text-gray-700">
+                            <FieldLabel
+                              htmlFor="wifeFatherName"
+                              className="text-sm font-semibold text-gray-700"
+                            >
                               Father's Name
                             </FieldLabel>
-                            <Input id="wifeFatherName" {...field} className="h-11 text-base transition-all" />
+                            <Input
+                              id="wifeFatherName"
+                              {...field}
+                              className="h-11 text-base transition-all"
+                            />
                           </Field>
                         )}
                       />
@@ -698,10 +919,17 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                         control={control}
                         render={({ field }) => (
                           <Field>
-                            <FieldLabel htmlFor="wifeMotherName" className="text-sm font-semibold text-gray-700">
+                            <FieldLabel
+                              htmlFor="wifeMotherName"
+                              className="text-sm font-semibold text-gray-700"
+                            >
                               Mother's Name
                             </FieldLabel>
-                            <Input id="wifeMotherName" {...field} className="h-11 text-base transition-all" />
+                            <Input
+                              id="wifeMotherName"
+                              {...field}
+                              className="h-11 text-base transition-all"
+                            />
                           </Field>
                         )}
                       />
@@ -709,7 +937,9 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                   </div>
 
                   <div className="border-t pt-4">
-                    <h3 className="font-semibold mb-3 text-gray-900">Additional Information</h3>
+                    <h3 className="font-semibold mb-3 text-gray-900">
+                      Additional Information
+                    </h3>
 
                     <div className="space-y-4">
                       <Controller
@@ -717,7 +947,10 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                         control={control}
                         render={({ field }) => (
                           <Field>
-                            <FieldLabel htmlFor="remarks" className="text-sm font-semibold text-gray-700">
+                            <FieldLabel
+                              htmlFor="remarks"
+                              className="text-sm font-semibold text-gray-700"
+                            >
                               Remarks (Optional)
                             </FieldLabel>
                             <Textarea
@@ -736,7 +969,10 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                         control={control}
                         render={({ field }) => (
                           <Field>
-                            <FieldLabel htmlFor="processFeeInfo" className="text-sm font-semibold text-gray-700">
+                            <FieldLabel
+                              htmlFor="processFeeInfo"
+                              className="text-sm font-semibold text-gray-700"
+                            >
                               Registration Fee Details (Optional)
                             </FieldLabel>
                             <Textarea
@@ -753,7 +989,9 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                   </div>
 
                   <div className="border-t pt-4">
-                    <h3 className="font-semibold mb-3 text-gray-900">Issuance Information</h3>
+                    <h3 className="font-semibold mb-3 text-gray-900">
+                      Issuance Information
+                    </h3>
 
                     <div className="grid grid-cols-2 gap-4">
                       <Controller
@@ -761,7 +999,10 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                         control={control}
                         render={({ field }) => (
                           <Field>
-                            <FieldLabel htmlFor="requestorName" className="text-sm font-semibold text-gray-700">
+                            <FieldLabel
+                              htmlFor="requestorName"
+                              className="text-sm font-semibold text-gray-700"
+                            >
                               Issued To (Requestor Name)
                             </FieldLabel>
                             <Input
@@ -779,7 +1020,10 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                         control={control}
                         render={({ field }) => (
                           <Field>
-                            <FieldLabel htmlFor="requestPurpose" className="text-sm font-semibold text-gray-700">
+                            <FieldLabel
+                              htmlFor="requestPurpose"
+                              className="text-sm font-semibold text-gray-700"
+                            >
                               Purpose of Request
                             </FieldLabel>
                             <Input
@@ -795,7 +1039,9 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                   </div>
 
                   <div className="border-t pt-4">
-                    <h3 className="font-semibold mb-3 text-gray-900">Certification Details</h3>
+                    <h3 className="font-semibold mb-3 text-gray-900">
+                      Certification Details
+                    </h3>
 
                     <div className="space-y-4">
                       <Controller
@@ -803,7 +1049,10 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                         control={control}
                         render={({ field }) => (
                           <Field>
-                            <FieldLabel htmlFor="registrarName" className="text-sm font-semibold text-gray-700">
+                            <FieldLabel
+                              htmlFor="registrarName"
+                              className="text-sm font-semibold text-gray-700"
+                            >
                               Municipal Civil Registrar Name
                             </FieldLabel>
                             <Input
@@ -822,7 +1071,10 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                           control={control}
                           render={({ field }) => (
                             <Field>
-                              <FieldLabel htmlFor="verifiedBy" className="text-sm font-semibold text-gray-700">
+                              <FieldLabel
+                                htmlFor="verifiedBy"
+                                className="text-sm font-semibold text-gray-700"
+                              >
                                 Verified By
                               </FieldLabel>
                               <Input
@@ -840,7 +1092,10 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                           control={control}
                           render={({ field }) => (
                             <Field>
-                              <FieldLabel htmlFor="verifierPosition" className="text-sm font-semibold text-gray-700">
+                              <FieldLabel
+                                htmlFor="verifierPosition"
+                                className="text-sm font-semibold text-gray-700"
+                              >
                                 Verifier Position
                               </FieldLabel>
                               <Input
@@ -860,7 +1115,10 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                           control={control}
                           render={({ field }) => (
                             <Field>
-                              <FieldLabel htmlFor="certifyingOfficerName" className="text-sm font-semibold text-gray-700">
+                              <FieldLabel
+                                htmlFor="certifyingOfficerName"
+                                className="text-sm font-semibold text-gray-700"
+                              >
                                 Certifying Officer Name (Optional)
                               </FieldLabel>
                               <Input
@@ -869,7 +1127,9 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                                 className="h-11 text-base transition-all"
                                 {...field}
                               />
-                              <p className="text-xs text-gray-500 mt-1">Leave blank if same as MCR</p>
+                              <p className="text-xs text-gray-500 mt-1">
+                                Leave blank if same as MCR
+                              </p>
                             </Field>
                           )}
                         />
@@ -879,7 +1139,10 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                           control={control}
                           render={({ field }) => (
                             <Field>
-                              <FieldLabel htmlFor="certifyingOfficerPosition" className="text-sm font-semibold text-gray-700">
+                              <FieldLabel
+                                htmlFor="certifyingOfficerPosition"
+                                className="text-sm font-semibold text-gray-700"
+                              >
                                 Certifying Officer Position (Optional)
                               </FieldLabel>
                               <Input
@@ -912,7 +1175,11 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                               <Button
                                 type="button"
                                 variant="outline"
-                                onClick={() => document.getElementById("signatureUpload")?.click()}
+                                onClick={() =>
+                                  document
+                                    .getElementById("signatureUpload")
+                                    ?.click()
+                                }
                                 disabled={isUploadingSignature}
                               >
                                 {isUploadingSignature ? (
@@ -928,13 +1195,16 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                                 )}
                               </Button>
                               <span className="text-sm text-gray-500">
-                                PNG, JPG up to 2MB (transparent background recommended)
+                                PNG, JPG up to 2MB (transparent background
+                                recommended)
                               </span>
                             </div>
                           ) : (
                             <div className="border rounded-lg p-4 bg-gray-50">
                               <div className="flex items-start justify-between mb-2">
-                                <FieldLabel className="text-sm font-medium">Signature Preview</FieldLabel>
+                                <FieldLabel className="text-sm font-medium">
+                                  Signature Preview
+                                </FieldLabel>
                                 <Button
                                   type="button"
                                   variant="ghost"

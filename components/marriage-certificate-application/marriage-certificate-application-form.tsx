@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { Controller } from "react-hook-form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -19,12 +19,20 @@ import { cn } from "@/lib/utils";
 import { useFileUpload } from "@/hooks/use-file-upload";
 import { useMarriageCertificateApplicationForm } from "@/hooks/marriage-certificate-application/use-marriage-certificate-application-form";
 
-
 interface MarriageCertificateApplicationFormProps {
   applicationId?: string;
   defaultValues?: Partial<MarriageCertificateApplicationFormInput>;
   isEditing?: boolean;
 }
+
+
+interface SupportingDocument {
+  id: string;
+  path: string;
+  preview: string;
+  name: string;
+}
+
 
 export const MarriageCertificateApplicationForm: React.FC<
   MarriageCertificateApplicationFormProps
@@ -51,50 +59,98 @@ export const MarriageCertificateApplicationForm: React.FC<
     formState: { isSubmitting },
   } = form;
 
-  const { extractDataFromFile } = useFileUpload(setValue, watch);
+  
 
-  const handleDocumentUpload = async (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
 
-    if (!file.type.startsWith("image/")) {
-      toast.error("Please upload an image file");
-      return;
-    }
+  const { uploadFile, deleteFile } = useFileUpload(setValue, watch);
+  
+    const [supportingDocuments, setSupportingDocuments] = useState<
+      SupportingDocument[]
+    >([]);
+    const [isUploadingDoc, setIsUploadingDoc] = useState(false);
 
-    if (file.size > 5 * 1024 * 1024) {
-      toast.error("Image size should be less than 5MB");
-      return;
-    }
 
-    setIsProcessing(true);
 
-    try {
-      const previewUrl = URL.createObjectURL(file);
-      setDocumentPreview(previewUrl);
-      await extractDataFromFile(file);
-    } catch (error) {
-      console.error("Error processing document:", error);
-      toast.error(
-        error instanceof Error ? error.message : "Failed to process document"
+   // Supporting documents handlers
+    const handleSupportingDocumentsUpload = async (
+      e: React.ChangeEvent<HTMLInputElement>
+    ) => {
+      const files = Array.from(e.target.files || []);
+      if (files.length === 0) return;
+  
+      // Validate files
+      const invalidFiles = files.filter(
+        (file) => !file.type.startsWith("image/") || file.size > 5 * 1024 * 1024
       );
-    } finally {
-      setIsProcessing(false);
-    }
-  };
+  
+      if (invalidFiles.length > 0) {
+        toast.error("All files must be images under 5MB");
+        return;
+      }
+  
+      setIsUploadingDoc(true);
+  
+      try {
+        const uploadPromises = files.map(async (file) => {
+          const result = await uploadFile(file, "documents");
+          const previewUrl = URL.createObjectURL(file);
+  
+          return {
+            id: result.path,
+            path: result.path,
+            preview: previewUrl,
+            name: file.name,
+          };
+        });
+  
+        const uploadedDocs = await Promise.all(uploadPromises);
+        setSupportingDocuments((prev) => [...prev, ...uploadedDocs]);
+  
+        // Update form value with paths
+        const allPaths = [
+          ...supportingDocuments.map((d) => d.path),
+          ...uploadedDocs.map((d) => d.path),
+        ];
+        setValue("supportingDocuments", allPaths);
+  
+        toast.success(`${uploadedDocs.length} document(s) uploaded successfully`);
+      } catch (error) {
+        console.error("Error uploading documents:", error);
+        toast.error(
+          error instanceof Error ? error.message : "Failed to upload documents"
+        );
+      } finally {
+        setIsUploadingDoc(false);
+        // Reset file input
+        const fileInput = document.getElementById(
+          "documentsUpload"
+        ) as HTMLInputElement;
+        if (fileInput) fileInput.value = "";
+      }
+    };
+  
+    const removeSupportingDocument = async (docId: string) => {
+      const doc = supportingDocuments.find((d) => d.id === docId);
+      if (!doc) return;
+  
+      try {
+        await deleteFile(doc.path);
+        URL.revokeObjectURL(doc.preview);
+  
+        const updatedDocs = supportingDocuments.filter((d) => d.id !== docId);
+        setSupportingDocuments(updatedDocs);
+        setValue(
+          "supportingDocuments",
+          updatedDocs.map((d) => d.path)
+        );
+  
+        toast.success("Document removed");
+      } catch (error) {
+        console.error("Error removing document:", error);
+        toast.error("Failed to remove document");
+      }
+    };
 
-  const removeDocument = () => {
-    if (documentPreview) {
-      URL.revokeObjectURL(documentPreview);
-    }
-    setDocumentPreview(null);
-    const fileInput = document.getElementById(
-      "documentUpload"
-    ) as HTMLInputElement;
-    if (fileInput) fileInput.value = "";
-  };
 
   return (
     <div className="min-h-screen bg-gray-50 p-8">
@@ -115,83 +171,98 @@ export const MarriageCertificateApplicationForm: React.FC<
           </CardHeader>
 
           <CardContent>
-            {!isEditing && (
-              <div className="mb-6 p-4 border-2 border-dashed border-blue-300 rounded-lg bg-blue-50">
-                <div className="flex items-start gap-4">
-                  <FileImage className="w-8 h-8 text-blue-600 mt-1" />
-                  <div className="flex-1">
-                    <h4 className="font-semibold text-blue-900 mb-2">
-                      Auto-populate from Document
-                    </h4>
-                    <p className="text-sm text-blue-700 mb-3">
-                      Upload a marriage certificate image and AI will
-                      automatically extract and fill the form fields.
-                    </p>
+            {/* Supporting Documents Section */}
+            <div className="mb-6 p-4 border-2 border-dashed border-blue-300 rounded-lg bg-blue-50">
+              <div className="flex items-start gap-4">
+                <FileImage className="w-8 h-8 text-blue-600 mt-1" />
+                <div className="flex-1">
+                  <h4 className="font-semibold text-blue-900 mb-2">
+                    Supporting Documents
+                  </h4>
+                  <p className="text-sm text-blue-700 mb-3">
+                    Upload supporting documents such as death certificates, IDs,
+                    or other relevant files. You can upload multiple images at
+                    once.
+                  </p>
 
-                    {!documentPreview ? (
-                      <div className="flex items-center gap-3">
-                        <Input
-                          id="documentUpload"
-                          type="file"
-                          accept="image/*"
-                          onChange={handleDocumentUpload}
-                          className="hidden"
-                          disabled={isProcessing}
-                        />
-                        <Button
-                          type="button"
-                          variant="default"
-                          onClick={() =>
-                            document.getElementById("documentUpload")?.click()
-                          }
-                          disabled={isProcessing}
-                        >
-                          {isProcessing ? (
-                            <>
-                              <Loader2 className="w-4 h-4 animate-spin mr-2" />
-                              Processing...
-                            </>
-                          ) : (
-                            <>
-                              <Upload className="w-4 h-4 mr-2" />
-                              Upload Marriage Certificate
-                            </>
-                          )}
-                        </Button>
-                        <span className="text-sm text-gray-600">
-                          PNG, JPG up to 5MB
-                        </span>
-                      </div>
-                    ) : (
-                      <div className="border rounded-lg p-3 bg-white">
-                        <div className="flex items-start justify-between mb-2">
-                          <span className="text-sm font-medium text-green-700">
-                            ✓ Document uploaded and processed
-                          </span>
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="sm"
-                            onClick={removeDocument}
-                            className="h-8 w-8 p-0"
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-3">
+                      <Input
+                        id="documentsUpload"
+                        type="file"
+                        accept="image/*"
+                        multiple
+                        onChange={handleSupportingDocumentsUpload}
+                        className="hidden"
+                        disabled={isUploadingDoc}
+                      />
+                      <Button
+                        type="button"
+                        variant="default"
+                        onClick={() =>
+                          document.getElementById("documentsUpload")?.click()
+                        }
+                        disabled={isUploadingDoc}
+                      >
+                        {isUploadingDoc ? (
+                          <>
+                            <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                            Uploading...
+                          </>
+                        ) : (
+                          <>
+                            <Upload className="w-4 h-4 mr-2" />
+                            Upload Documents
+                          </>
+                        )}
+                      </Button>
+                      <span className="text-sm text-gray-600">
+                        PNG, JPG up to 5MB each
+                      </span>
+                    </div>
+
+                    {/* Documents Preview Grid */}
+                    {supportingDocuments.length > 0 && (
+                      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 mt-4">
+                        {supportingDocuments.map((doc) => (
+                          <div
+                            key={doc.id}
+                            className="relative border rounded-lg p-2 bg-white group"
                           >
-                            <X className="w-4 h-4" />
-                          </Button>
-                        </div>
-                        <div className="relative w-full h-32 bg-gray-100 border rounded overflow-hidden">
-                          <Image
-                            src={documentPreview}
-                            alt="Document preview"
-                            fill
-                            className="object-contain"
-                          />
-                        </div>
+                            <Button
+                              type="button"
+                              variant="destructive"
+                              size="sm"
+                              onClick={() => removeSupportingDocument(doc.id)}
+                              className="absolute -top-2 -right-2 h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity z-10"
+                            >
+                              <X className="w-3 h-3" />
+                            </Button>
+                            <div className="relative w-full h-24 bg-gray-100 border rounded overflow-hidden">
+                              <Image
+                                src={doc.preview}
+                                alt={doc.name}
+                                fill
+                                className="object-cover"
+                              />
+                            </div>
+                            <p className="text-xs text-gray-600 mt-1 truncate">
+                              {doc.name}
+                            </p>
+                          </div>
+                        ))}
                       </div>
+                    )}
+
+                    {supportingDocuments.length > 0 && (
+                      <p className="text-sm text-green-700 font-medium">
+                        ✓ {supportingDocuments.length} document(s) uploaded
+                      </p>
                     )}
                   </div>
                 </div>
               </div>
-            )}
+            </div>
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
               <FieldGroup>
@@ -529,7 +600,11 @@ export const MarriageCertificateApplicationForm: React.FC<
                           {isEditing ? "Updating..." : "Submitting..."}
                         </span>
                       ) : (
-                        <>{isEditing ? "Update Application" : "Submit Application"}</>
+                        <>
+                          {isEditing
+                            ? "Update Application"
+                            : "Submit Application"}
+                        </>
                       )}
                     </Button>
                     <Button

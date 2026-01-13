@@ -23,6 +23,11 @@ export * from './enums';
  */
 export type User = Prisma.UserModel
 /**
+ * Model SupportingDocument
+ * 
+ */
+export type SupportingDocument = Prisma.SupportingDocumentModel
+/**
  * Model BirthRecord
  * 
  */
