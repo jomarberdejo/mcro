@@ -24,3 +24,13 @@ export const Sex = {
 } as const
 
 export type Sex = (typeof Sex)[keyof typeof Sex]
+
+
+export const CivilStatus = {
+  Single: 'Single',
+  Married: 'Married',
+  Widowed: 'Widowed',
+  Divorced: 'Divorced'
+} as const
+
+export type CivilStatus = (typeof CivilStatus)[keyof typeof CivilStatus]

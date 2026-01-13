@@ -3,22 +3,19 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import {
-  birthRecordSchema,
-  BirthRecordFormInput,
-} from "@/lib/validations/birth-record.schema";
+import { MarriageRecordFormInput, marriageRecordSchema } from "@/lib/validations/marriage-record.schema";
 
-interface UseBirthRecordFormProps {
+interface UseMarriageRecordFormProps {
   recordId?: string;
-  defaultValues?: Partial<BirthRecordFormInput>;
+  defaultValues?: Partial<MarriageRecordFormInput>;
   isEditing?: boolean;
 }
 
-export function useBirthRecordForm({
+export function useMarriageRecordForm({
   recordId,
   defaultValues,
   isEditing = false,
-}: UseBirthRecordFormProps) {
+}: UseMarriageRecordFormProps) {
   const router = useRouter();
   const [signaturePreview, setSignaturePreview] = useState<string | null>(
     defaultValues?.signatureImagePath || null
@@ -27,40 +24,49 @@ export function useBirthRecordForm({
   const [isProcessing, setIsProcessing] = useState(false);
   const [isUploadingSignature, setIsUploadingSignature] = useState(false);
 
-  const form = useForm<BirthRecordFormInput>({
-    resolver: zodResolver(birthRecordSchema),
+  const form = useForm<MarriageRecordFormInput>({
+    resolver: zodResolver(marriageRecordSchema),
     defaultValues: defaultValues || {
       registryNo: "",
-      dateOfRegistration: "",
-      childLastName: "",
-      childFirstName: "",
-      childMiddleName: "",
-      sex: "" as "Male" | "Female",
-      dateOfBirth: "",
-      placeOfBirth: "",
-      isTwin: false,
-      birthOrder: "",
-      motherLastName: "",
-      motherFirstName: "",
-      motherMiddleName: "",
-      motherCitizenship: "",
-      fatherLastName: "",
-      fatherFirstName: "",
-      fatherMiddleName: "",
-      fatherCitizenship: "",
+      bookNo: "",
+      pageNo: "",
       dateOfMarriage: "",
       placeOfMarriage: "",
-      remarks: "",
+      dateOfRegistration: "",
+      husbandLastName: "",
+      husbandFirstName: "",
+      husbandMiddleName: "",
+      husbandAge: 0,
+      husbandNationality: "",
+      husbandCivilStatus: "" as "Single" | "Married" | "Widowed" | "Divorced",
+      husbandMotherName: "",
+      husbandFatherName: "",
+      wifeLastName: "",
+      wifeFirstName: "",
+      wifeMiddleName: "",
+      wifeAge: 0,
+      wifeNationality: "",
+      wifeCivilStatus: "" as "Single" | "Married" | "Widowed" | "Divorced",
+      wifeMotherName: "",
+      wifeFatherName: "",
+      requestorName: "",
+      requestPurpose: "",
       registrarName: "",
+      verifiedBy: "",
+      verifierPosition: "",
+      certifyingOfficerName: "",
+      certifyingOfficerPosition: "",
+      processFeeInfo: "",
+      remarks: "",
       signatureImagePath: "",
     },
   });
 
-  const onSubmit = async (data: BirthRecordFormInput) => {
+  const onSubmit = async (data: MarriageRecordFormInput) => {
     try {
       const url = isEditing
-        ? `/api/birth-certificate/${recordId}`
-        : "/api/birth-certificate";
+        ? `/api/marriage-certificate/${recordId}`
+        : "/api/marriage-certificate";
       const method = isEditing ? "PUT" : "POST";
 
       const response = await fetch(url, {
@@ -76,15 +82,15 @@ export function useBirthRecordForm({
 
       toast.success(
         isEditing
-          ? "Birth record updated successfully"
-          : "Birth record created successfully"
+          ? "Marriage record updated successfully"
+          : "Marriage record created successfully"
       );
-      router.push("/admin/birth-certificate");
+      router.push("/admin/marriage-certificate");
       router.refresh();
     } catch (error) {
-      console.error("Error saving birth record:", error);
+      console.error("Error saving marriage record:", error);
       toast.error(
-        error instanceof Error ? error.message : "Failed to save birth record"
+        error instanceof Error ? error.message : "Failed to save marriage record"
       );
     }
   };

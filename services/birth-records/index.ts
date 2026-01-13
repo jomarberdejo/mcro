@@ -13,7 +13,8 @@ export async function fetchBirthRecords(): Promise<BirthRecord[]> {
 export async function deleteBirthRecord(id: string): Promise<void> {
   const res = await fetch(`/api/birth-certificate/${id}`, {
     method: "DELETE",
-  });
+    // cache: "no-store",
+    });
 
   if (!res.ok) {
     throw new Error("Failed to delete birth record");

@@ -1,12 +1,11 @@
 import { toast } from "sonner";
-import { UseFormSetValue, UseFormWatch } from "react-hook-form";
-import { BirthRecordFormInput } from "@/lib/validations/birth-record.schema";
+import { FieldValues, Path, UseFormSetValue, UseFormWatch } from "react-hook-form";
 
-export function useFileUpload(
-  setValue: UseFormSetValue<BirthRecordFormInput>,
-  watch: UseFormWatch<BirthRecordFormInput>
+export function useFileUpload<TFormValues extends FieldValues>(
+  setValue: UseFormSetValue<TFormValues>,
+  watch: UseFormWatch<TFormValues>
 ) {
-  const uploadFile = async (file: File, type: "signature" | "document") => {
+  const uploadFile = async (file: File, type: "signature" | "documents") => {
     const formData = new FormData();
     formData.append("file", file);
     formData.append("type", type);
@@ -55,14 +54,19 @@ export function useFileUpload(
 
       Object.entries(extractedData).forEach(([key, value]) => {
         if (key === "birthOrder" && value) {
-          setValue("isTwin", true);
+          if ("isTwin" in extractedData) {
+            setValue("isTwin" as Path<TFormValues>, true as any);
+          }
         }
+
+        // Set any other extracted value
         if (value !== undefined && value !== null && value !== "") {
-          setValue(key as keyof BirthRecordFormInput, value as any, {
+          setValue(key as unknown as Path<TFormValues>, value as any, {
             shouldValidate: false,
           });
         }
       });
+
 
       toast.success(
         "Data extracted successfully! Please review and correct any errors."

@@ -27,3 +27,18 @@ export type User = Prisma.UserModel
  * 
  */
 export type BirthRecord = Prisma.BirthRecordModel
+/**
+ * Model DeathRecord
+ * 
+ */
+export type DeathRecord = Prisma.DeathRecordModel
+/**
+ * Model MarriageRecord
+ * 
+ */
+export type MarriageRecord = Prisma.MarriageRecordModel
+/**
+ * Model MarriageCertificateApplication
+ * 
+ */
+export type MarriageCertificateApplication = Prisma.MarriageCertificateApplicationModel

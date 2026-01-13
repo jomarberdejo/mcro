@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { FileText, Heart, Cross, FileSignature } from "lucide-react";
+import { FileText, Heart, Cross, ClipboardList } from "lucide-react";
 
 import { NavMain } from "@/components/navigation/nav-main";
 import { NavUser } from "@/components/navigation/nav-user";
@@ -32,13 +32,18 @@ const data = {
     },
     {
       title: "Death Certificate",
-      url: "/admin/pdf",
+      url: "/admin/death-certificate",
       icon: Cross,
     },
     {
       title: "Marriage Certificate",
-      url: "/marriage-certificate",
+      url: "/admin/marriage-certificate",
       icon: Heart,
+    },
+    {
+      title: "Marriage Cert Application",
+      url: "/admin/marriage-certificate-application",
+      icon: ClipboardList,
     },
   ],
 };

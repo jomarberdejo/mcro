@@ -16,36 +16,16 @@ import {
   Image,
 } from "@react-pdf/renderer";
 import { styles } from "@/lib/pdf-styles";
+import { BirthRecord } from "@/lib/generated/prisma/client";
 
-interface BirthRecord {
-  id: string;
-  registryNo: string;
-  dateOfRegistration: string;
-  childLastName: string;
-  childFirstName: string;
-  childMiddleName?: string | null; 
-  sex: string;
-  dateOfBirth: string;
-  placeOfBirth?: string | null; 
-  isTwin: boolean;
-  birthOrder?: string | null; 
-  motherLastName?: string | null; 
-  motherFirstName?: string | null; 
-  motherMiddleName?: string | null; 
-  motherCitizenship?: string | null; 
-  fatherLastName?: string | null; 
-  fatherFirstName?: string | null; 
-  fatherMiddleName?: string | null; 
-  fatherCitizenship?: string | null; 
-  dateOfMarriage?: string | null; 
-  placeOfMarriage?: string | null; 
-  remarks?: string | null; 
-  registrarName?: string | null; 
-  signatureImagePath?: string | null; 
-  userId?: string | null; 
+
+
+interface BirthCertificatePDFProps {
+  record: BirthRecord;
+  pageSize?: 'A4' | 'LEGAL' | 'LETTER';
 }
 
-const BirthCertificatePDF: React.FC<{ record: BirthRecord }> = ({ record }) => {
+const BirthCertificatePDF: React.FC<BirthCertificatePDFProps> = ({ record, pageSize = "A4" }) => {
   const childFullName = getFullName(
     record.childLastName,
     record.childFirstName,
@@ -64,8 +44,8 @@ const BirthCertificatePDF: React.FC<{ record: BirthRecord }> = ({ record }) => {
 
   return (
     <Document>
-      <Page size="A4" style={styles.page}>
-        <View style={styles.headerRow}>
+      <Page size={pageSize} style={styles.page}>
+        <View style={styles.headerRow} wrap={false} >
           <View style={styles.leftColumn}>
             <Image src="/logos/datu-gara-2.png" style={styles.lapuLapuImage} />
           </View>
@@ -97,8 +77,8 @@ const BirthCertificatePDF: React.FC<{ record: BirthRecord }> = ({ record }) => {
         <Text style={styles.bodyText}>
           We certify that among others, the following facts of birth appear in
           our Registry of Births on page{" "}
-          <Text style={{ fontWeight: "bold" }}>97</Text> of Book No.{" "}
-          <Text style={{ fontWeight: "bold" }}>7:</Text>
+          <Text style={{ fontWeight: "bold" }}>{record.pageNo}</Text> of Book No.{" "}
+          <Text style={{ fontWeight: "bold" }}>{record.bookNo}:</Text>
         </Text>
 
         <View style={styles.fieldRow}>
@@ -131,12 +111,24 @@ const BirthCertificatePDF: React.FC<{ record: BirthRecord }> = ({ record }) => {
           <Text style={styles.fieldValue}>{record.dateOfBirth}</Text>
         </View>
 
-        {record.isTwin && record.birthOrder && (
-          <View style={styles.fieldRow}>
-            <Text style={styles.fieldLabel}>Birth Order</Text>
-            <Text style={styles.fieldColon}>:</Text>
-            <Text style={styles.fieldValue}>{record.birthOrder}</Text>
-          </View>
+        {record.isTwin && (
+          <>
+            <View style={styles.fieldRow}>
+              <Text style={styles.fieldLabel}>Type of Birth</Text>
+              <Text style={styles.fieldColon}>:</Text>
+              <Text style={styles.fieldValue}>{record.typeOfBirth}</Text>
+            </View>
+            <View style={styles.fieldRow}>
+              <Text style={styles.fieldLabel}>Birth Order</Text>
+              <Text style={styles.fieldColon}>:</Text>
+              <Text style={styles.fieldValue}>{record.birthOrder}</Text>
+            </View>
+            <View style={styles.fieldRow}>
+              <Text style={styles.fieldLabel}>Time of Birth</Text>
+              <Text style={styles.fieldColon}>:</Text>
+              <Text style={styles.fieldValue}>{record.timeOfBirth}</Text>
+            </View>
+          </>
         )}
 
         <View style={styles.fieldRow}>
@@ -185,33 +177,35 @@ const BirthCertificatePDF: React.FC<{ record: BirthRecord }> = ({ record }) => {
           </Text>
         </View>
 
-        <View style={styles.remarksSection}>
-          <Text style={styles.remarksTitle}>REMARKS:</Text>
+        {record.remarks &&
+          <View style={styles.remarksSection}>
+            <Text style={styles.remarksTitle}>REMARKS:</Text>
 
-          {record.remarks ? (
-            <Text style={styles.remarksText}>{record.remarks}</Text>
-          ) : (
-            <>
-              <Text style={styles.remarksText}>
-                PURSUANT TO THE DECISION RENDERED BY MCR DARRYL U. MONTEALEGRE
-                DATED JUNE 27, 2025 AND AFFIRMED BY CRG UNDER OCRG NUMBER
-                25-2820504 DATED SEPTEMBER 24, 2025 THE CHILD&apos;S MIDDLE NAME
-                IS HEREBY CORRECTED FROM &quot;M&quot; TO &quot;MORANO&quot;.
+            {record.remarks
+              .split('\n\n')
+              .filter(para => para.trim())
+              .map((paragraph, index) => (
+                <Text key={index} style={styles.remarksText}>
+                  {paragraph.trim().replace(/\n/g, ' ')}
+                </Text>
+              ))}
+
+          </View>
+        }
+        <View wrap={false}>
+
+          {
+            record.requestorName && record.requestPurpose && (
+              <Text style={styles.footerText}>
+                This certification is issued to {""}
+                <Text style={styles.requestorName}>
+                  {record.requestorName}
+                </Text> {""}
+                {record.requestPurpose}.
               </Text>
-              <Text style={styles.remarksText}>
-                PURSUANT TO THE DECISION RENDERED BY MCR DARRYL U. MONTEALEGRE
-                DATED JULY 14, 2025 AND AFFIRMED BY CRG UNDER OCRG NUMBER
-                25-2820504 DATED SEPTEMBER 24, 2025 THE CHILD&apos;S DATE OF
-                BIRTH IS HEREBY CORRECTED FROM &quot;JUNE 27, 1956&quot; TO
-                &quot;JULY 3, 1956&quot;.
-              </Text>
-            </>
-          )}
+            )
+          }
         </View>
-
-        {/* <Text style={styles.footerText}>
-          This certification is issued to PSA – OCRG for filing in the archives.
-        </Text> */}
 
         <View style={styles.signatureRightContainer}>
           {record.signatureImagePath && (
@@ -222,10 +216,26 @@ const BirthCertificatePDF: React.FC<{ record: BirthRecord }> = ({ record }) => {
           )}
           <View style={styles.signatureRight}>
             <Text style={styles.signatureName}>
-              {record.registrarName || "DARRYL U. MONTEALEGRE, MM"}
+              {record.registrarName}
             </Text>
             <Text style={styles.signatureTitle}>Municipal Civil Registrar</Text>
           </View>
+          {
+            record.certifyingOfficerName && record.certifyingOfficerPosition && (
+              <View style={styles.certifyingContainer}>
+                <Text style={styles.certifyingLabel}>
+                  &quot;FOR AND BEHALF OF THE MCR&quot;
+                </Text>
+
+                <View style={styles.signatureRight}>
+                  <Text style={styles.signatureName}>
+                    {record.certifyingOfficerName}
+                  </Text>
+                  <Text style={styles.signatureTitle}>{record.certifyingOfficerPosition}</Text>
+                </View>
+              </View>
+            )
+          }
         </View>
 
         <View>
@@ -240,9 +250,17 @@ const BirthCertificatePDF: React.FC<{ record: BirthRecord }> = ({ record }) => {
             />
           )}
           <View style={styles.signatureLeft}>
-            <Text style={styles.signatureName}>DARRYL U. MONTEALEGRE, MM</Text>
-            <Text style={styles.signatureTitle}>Municipal Civil Registrar</Text>
+            <Text style={styles.signatureName}>{record.verifiedBy}</Text>
+            <Text style={styles.signatureTitle}>{record.verifierPosition}</Text>
           </View>
+        </View>
+
+        <View style={styles.regFeeInfoContainer}>
+          <Text>
+            {
+              record.processFeeInfo
+            }
+          </Text>
         </View>
 
         <View style={styles.noteContainer}>
@@ -253,6 +271,8 @@ const BirthCertificatePDF: React.FC<{ record: BirthRecord }> = ({ record }) => {
           </Text>
         </View>
       </Page>
+
+      
     </Document>
   );
 };
@@ -263,6 +283,7 @@ export const BirthRecordView: React.FC<{ record: BirthRecord }> = ({
   const router = useRouter();
   const [showPDF, setShowPDF] = useState(true);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [pageSize, setPageSize] = useState<'A4' | 'LEGAL' | 'LETTER'>('A4');
 
   const handleBack = () => {
     router.push("/admin/birth-certificate");
@@ -301,13 +322,27 @@ export const BirthRecordView: React.FC<{ record: BirthRecord }> = ({
   return (
     <div className="min-h-screen bg-gray-50 p-8">
       <div className="max-w-6xl mx-auto">
-        <div className="mb-4 flex gap-2">
+        <div className="mb-4 flex gap-2 items-center">
           <Button variant="ghost" onClick={handleBack}>
             <ArrowLeft className="w-4 h-4 mr-2" /> Back to Records
           </Button>
 
+          {/* Add Paper Size Selector */}
+          <div className="flex items-center gap-2">
+            <label className="text-sm font-medium">Paper Size:</label>
+            <select
+              value={pageSize}
+              onChange={(e) => setPageSize(e.target.value as any)}
+              className="border rounded px-3 py-2 text-sm"
+            >
+              <option value="A4">A4 (8.3" × 11.7")</option>
+              <option value="LEGAL">Legal (8.5" × 14")</option>
+              <option value="LETTER">Letter (8.5" × 11")</option>
+            </select>
+          </div>
+
           <PDFDownloadLink
-            document={<BirthCertificatePDF record={record} />}
+            document={<BirthCertificatePDF record={record} pageSize={pageSize} />}
             fileName={`birth-certificate-${record.registryNo}.pdf`}
           >
             {({ loading }) => (
@@ -343,7 +378,7 @@ export const BirthRecordView: React.FC<{ record: BirthRecord }> = ({
             style={{ height: "800px" }}
           >
             <PDFViewer width="100%" height="100%">
-              <BirthCertificatePDF record={record} />
+              <BirthCertificatePDF record={record} pageSize={pageSize} />
             </PDFViewer>
           </div>
         )}

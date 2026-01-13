@@ -1,0 +1,43 @@
+import { z } from "zod";
+
+export const deathRecordSchema = z.object({
+  registryNo: z.string().min(1, "Registry number is required"),
+  pageNo: z.string().default(""),
+  bookNo: z.string().default(""),
+  
+  // Deceased Information
+  deceasedLastName: z.string().min(1, "Deceased's last name is required"),
+  deceasedFirstName: z.string().min(1, "Deceased's first name is required"),
+  deceasedMiddleName: z.string().default(""),
+  sex: z.enum(["Male", "Female"]),
+  age: z.number().min(0, "Age must be 0 or greater").max(150, "Invalid age"),
+  civilStatus: z.enum(["Single", "Married", "Widowed", "Divorced"]),
+  citizenship: z.string().min(1, "Citizenship is required"),
+  
+  // Death Details
+  dateOfDeath: z.string().min(1, "Date of death is required"),
+  placeOfDeath: z.string().min(1, "Place of death is required"),
+  causeOfDeath: z.string().min(1, "Cause of death is required"),
+  
+  // Registration Details
+  dateOfRegistration: z.string().min(1, "Registration date is required"),
+  
+  // Request Information
+  requestorName: z.string().default(""),
+  requestPurpose: z.string().default(""),
+  
+  // Official Information
+  registrarName: z.string().default(""),
+  verifiedBy: z.string().default(""),
+  verifierPosition: z.string().default(""),
+  certifyingOfficerName: z.string().default(""),
+  certifyingOfficerPosition: z.string().default(""),
+  
+  // Additional Information
+  processFeeInfo: z.string().default(""),
+  remarks: z.string().default(""),
+  signatureImagePath: z.string().default(""),
+});
+
+export type DeathRecordFormInput = z.input<typeof deathRecordSchema>;
+export type DeathRecordFormData = z.output<typeof deathRecordSchema>;

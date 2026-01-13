@@ -22,15 +22,13 @@ import {
 } from "@/components/ui/field";
 import { ArrowLeft, Upload, X, FileImage, Loader2 } from "lucide-react";
 import {
-  birthRecordSchema,
-  BirthRecordFormData,
   BirthRecordFormInput,
 } from "@/lib/validations/birth-record.schema";
 import Image from "next/image";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { useFileUpload } from "@/hooks/use-file-upload";
-import { useBirthRecordForm } from "@/hooks/use-birth-record-form";
+import { useBirthRecordForm } from "@/hooks/birth-certificate/use-birth-record-form";
 
 interface BirthRecordFormProps {
   recordId?: string;
@@ -38,19 +36,22 @@ interface BirthRecordFormProps {
   isEditing?: boolean;
 }
 
+interface SupportingDocument {
+  id: string;
+  path: string;
+  preview: string;
+  name: string;
+}
+
 export const BirthRecordForm: React.FC<BirthRecordFormProps> = ({
   recordId,
   defaultValues,
   isEditing = false,
 }) => {
-const {
+  const {
     form,
     signaturePreview,
     setSignaturePreview,
-    documentPreview,
-    setDocumentPreview,
-    isProcessing,
-    setIsProcessing,
     isUploadingSignature,
     setIsUploadingSignature,
     onSubmit,
@@ -59,10 +60,13 @@ const {
 
   const { control, handleSubmit, setValue, watch, formState: { isSubmitting } } = form;
 
-  const { uploadFile, deleteFile, extractDataFromFile } = useFileUpload(
+  const { uploadFile, deleteFile } = useFileUpload(
     setValue,
     watch
   );
+
+  const [supportingDocuments, setSupportingDocuments] = useState<SupportingDocument[]>([]);
+  const [isUploadingDoc, setIsUploadingDoc] = useState(false);
 
   const isTwinValue = watch("isTwin");
 
@@ -118,51 +122,76 @@ const {
     if (fileInput) fileInput.value = "";
   };
 
-  // Document upload handlers
-  const handleDocumentUpload = async (
+  // Supporting documents handlers
+  const handleSupportingDocumentsUpload = async (
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+    const files = Array.from(e.target.files || []);
+    if (files.length === 0) return;
 
-    if (!file.type.startsWith("image/")) {
-      toast.error("Please upload an image file");
+    // Validate files
+    const invalidFiles = files.filter(
+      file => !file.type.startsWith("image/") || file.size > 5 * 1024 * 1024
+    );
+
+    if (invalidFiles.length > 0) {
+      toast.error("All files must be images under 5MB");
       return;
     }
 
-    if (file.size > 5 * 1024 * 1024) {
-      toast.error("Image size should be less than 5MB");
-      return;
-    }
-
-    setIsProcessing(true);
+    setIsUploadingDoc(true);
 
     try {
-      const previewUrl = URL.createObjectURL(file);
-      setDocumentPreview(previewUrl);
-      await extractDataFromFile(file);
+      const uploadPromises = files.map(async (file) => {
+        const result = await uploadFile(file, "documents");
+        const previewUrl = URL.createObjectURL(file);
+        
+        return {
+          id: result.path,
+          path: result.path,
+          preview: previewUrl,
+          name: file.name,
+        };
+      });
+
+      const uploadedDocs = await Promise.all(uploadPromises);
+      setSupportingDocuments(prev => [...prev, ...uploadedDocs]);
+      
+      const allPaths = [...supportingDocuments.map(d => d.path), ...uploadedDocs.map(d => d.path)];
+      setValue("supportingDocuments", allPaths);
+      
+      toast.success(`${uploadedDocs.length} document(s) uploaded successfully`);
     } catch (error) {
-      console.error("Error processing document:", error);
+      console.error("Error uploading documents:", error);
       toast.error(
-        error instanceof Error ? error.message : "Failed to process document"
+        error instanceof Error ? error.message : "Failed to upload documents"
       );
     } finally {
-      setIsProcessing(false);
+      setIsUploadingDoc(false);
+      // Reset file input
+      const fileInput = document.getElementById("documentsUpload") as HTMLInputElement;
+      if (fileInput) fileInput.value = "";
     }
   };
 
-  const removeDocument = () => {
-    if (documentPreview) {
-      URL.revokeObjectURL(documentPreview);
-    }
-    setDocumentPreview(null);
-    const fileInput = document.getElementById(
-      "documentUpload"
-    ) as HTMLInputElement;
-    if (fileInput) fileInput.value = "";
-  };
+  const removeSupportingDocument = async (docId: string) => {
+    const doc = supportingDocuments.find(d => d.id === docId);
+    if (!doc) return;
 
- 
+    try {
+      await deleteFile(doc.path);
+      URL.revokeObjectURL(doc.preview);
+      
+      const updatedDocs = supportingDocuments.filter(d => d.id !== docId);
+      setSupportingDocuments(updatedDocs);
+      setValue("supportingDocuments", updatedDocs.map(d => d.path));
+      
+      toast.success("Document removed");
+    } catch (error) {
+      console.error("Error removing document:", error);
+      toast.error("Failed to remove document");
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 p-8">
@@ -181,118 +210,203 @@ const {
           </CardHeader>
 
           <CardContent>
-            {!isEditing && (
-              <div className="mb-6 p-4 border-2 border-dashed border-blue-300 rounded-lg bg-blue-50">
-                <div className="flex items-start gap-4">
-                  <FileImage className="w-8 h-8 text-blue-600 mt-1" />
-                  <div className="flex-1">
-                    <h4 className="font-semibold text-blue-900 mb-2">
-                      Auto-populate from Document
-                    </h4>
-                    <p className="text-sm text-blue-700 mb-3">
-                      Upload a birth certificate image and AI will automatically
-                      extract and fill the form fields.
-                    </p>
+            {/* Supporting Documents Section */}
+            <div className="mb-6 p-4 border-2 border-dashed border-blue-300 rounded-lg bg-blue-50">
+              <div className="flex items-start gap-4">
+                <FileImage className="w-8 h-8 text-blue-600 mt-1" />
+                <div className="flex-1">
+                  <h4 className="font-semibold text-blue-900 mb-2">
+                    Supporting Documents
+                  </h4>
+                  <p className="text-sm text-blue-700 mb-3">
+                    Upload supporting documents such as birth certificates, IDs, or other relevant files.
+                    You can upload multiple images at once.
+                  </p>
 
-                    {!documentPreview ? (
-                      <div className="flex items-center gap-3">
-                        <Input
-                          id="documentUpload"
-                          type="file"
-                          accept="image/*"
-                          onChange={handleDocumentUpload}
-                          className="hidden"
-                          disabled={isProcessing}
-                        />
-                        <Button
-                          type="button"
-                          variant="default"
-                          onClick={() =>
-                            document.getElementById("documentUpload")?.click()
-                          }
-                          disabled={isProcessing}
-                        >
-                          {isProcessing ? (
-                            <>
-                              <Loader2 className="w-4 h-4 animate-spin mr-2" />
-                              Processing...
-                            </>
-                          ) : (
-                            <>
-                              <Upload className="w-4 h-4 mr-2" />
-                              Upload Birth Certificate
-                            </>
-                          )}
-                        </Button>
-                        <span className="text-sm text-gray-600">
-                          PNG, JPG up to 5MB
-                        </span>
-                      </div>
-                    ) : (
-                      <div className="border rounded-lg p-3 bg-white">
-                        <div className="flex items-start justify-between mb-2">
-                          <span className="text-sm font-medium text-green-700">
-                            ✓ Document uploaded and processed
-                          </span>
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="sm"
-                            onClick={removeDocument}
-                            className="h-8 w-8 p-0"
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-3">
+                      <Input
+                        id="documentsUpload"
+                        type="file"
+                        accept="image/*"
+                        multiple
+                        onChange={handleSupportingDocumentsUpload}
+                        className="hidden"
+                        disabled={isUploadingDoc}
+                      />
+                      <Button
+                        type="button"
+                        variant="default"
+                        onClick={() =>
+                          document.getElementById("documentsUpload")?.click()
+                        }
+                        disabled={isUploadingDoc}
+                      >
+                        {isUploadingDoc ? (
+                          <>
+                            <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                            Uploading...
+                          </>
+                        ) : (
+                          <>
+                            <Upload className="w-4 h-4 mr-2" />
+                            Upload Documents
+                          </>
+                        )}
+                      </Button>
+                      <span className="text-sm text-gray-600">
+                        PNG, JPG up to 5MB each
+                      </span>
+                    </div>
+
+                    {/* Documents Preview Grid */}
+                    {supportingDocuments.length > 0 && (
+                      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 mt-4">
+                        {supportingDocuments.map((doc) => (
+                          <div
+                            key={doc.id}
+                            className="relative border rounded-lg p-2 bg-white group"
                           >
-                            <X className="w-4 h-4" />
-                          </Button>
-                        </div>
-                        <div className="relative w-full h-32 bg-gray-100 border rounded overflow-hidden">
-                          <Image
-                            src={documentPreview}
-                            alt="Document preview"
-                            fill
-                            className="object-contain"
-                          />
-                        </div>
+                            <Button
+                              type="button"
+                              variant="destructive"
+                              size="sm"
+                              onClick={() => removeSupportingDocument(doc.id)}
+                              className="absolute -top-2 -right-2 h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity z-10"
+                            >
+                              <X className="w-3 h-3" />
+                            </Button>
+                            <div className="relative w-full h-24 bg-gray-100 border rounded overflow-hidden">
+                              <Image
+                                src={doc.preview}
+                                alt={doc.name}
+                                fill
+                                className="object-cover"
+                              />
+                            </div>
+                            <p className="text-xs text-gray-600 mt-1 truncate">
+                              {doc.name}
+                            </p>
+                          </div>
+                        ))}
                       </div>
+                    )}
+
+                    {supportingDocuments.length > 0 && (
+                      <p className="text-sm text-green-700 font-medium">
+                        ✓ {supportingDocuments.length} document(s) uploaded
+                      </p>
                     )}
                   </div>
                 </div>
               </div>
-            )}
+            </div>
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
               <FieldGroup>
                 <div className="space-y-5">
-                  <div className="grid grid-cols-2 gap-4">
-                    <Controller
-                      name="registryNo"
-                      control={control}
-                      render={({ field, fieldState }) => (
-                        <Field>
-                          <FieldLabel
-                            htmlFor="registryNo"
-                            className="text-sm font-semibold text-gray-700"
-                          >
-                            Registry No. *
-                          </FieldLabel>
-                          <Input
-                            id="registryNo"
-                            className={cn(
-                              "h-11 text-base transition-all",
-                              fieldState.invalid &&
+
+                  <div className="space-y-4">
+                    <h3 className="font-semibold text-gray-900">Registry Information</h3>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <Controller
+                        name="registryNo"
+                        control={control}
+                        rules={{ required: "Registry No. is required" }}
+                        render={({ field, fieldState }) => (
+                          <Field>
+                            <FieldLabel
+                              htmlFor="registryNo"
+                              className="text-sm font-semibold text-gray-700"
+                            >
+                              Registry No. *
+                            </FieldLabel>
+                            <Input
+                              id="registryNo"
+                              {...field}
+                              className={cn(
+                                "h-11 text-base transition-all",
+                                fieldState.invalid &&
                                 "border-red-500 focus-visible:ring-red-500"
+                              )}
+                              aria-invalid={fieldState.invalid}
+                            />
+                            {fieldState.error && (
+                              <FieldError errors={[fieldState.error]} />
                             )}
-                            {...field}
-                            aria-invalid={fieldState.invalid}
-                          />
-                          {fieldState.error && (
-                            <FieldError errors={[fieldState.error]} />
-                          )}
-                        </Field>
-                      )}
-                    />
+                          </Field>
+                        )}
+                      />
+
+                      {/* Page No */}
+                      <Controller
+                        name="pageNo"
+                        control={control}
+                        rules={{ required: "Page No. is required" }}
+                        render={({ field, fieldState }) => (
+                          <Field>
+                            <FieldLabel
+                              htmlFor="pageNo"
+                              className="text-sm font-semibold text-gray-700"
+                            >
+                              Page No. *
+                            </FieldLabel>
+                            <Input
+                              id="pageNo"
+                              {...field}
+                              className={cn(
+                                "h-11 text-base transition-all",
+                                fieldState.invalid &&
+                                "border-red-500 focus-visible:ring-red-500"
+                              )}
+                              aria-invalid={fieldState.invalid}
+                            />
+                            {fieldState.error && (
+                              <FieldError errors={[fieldState.error]} />
+                            )}
+                          </Field>
+                        )}
+                      />
+
+                      {/* Book No */}
+                      <Controller
+                        name="bookNo"
+                        control={control}
+                        rules={{ required: "Book No. is required" }}
+                        render={({ field, fieldState }) => (
+                          <Field>
+                            <FieldLabel
+                              htmlFor="bookNo"
+                              className="text-sm font-semibold text-gray-700"
+                            >
+                              Book No. *
+                            </FieldLabel>
+                            <Input
+                              id="bookNo"
+                              {...field}
+                              className={cn(
+                                "h-11 text-base transition-all",
+                                fieldState.invalid &&
+                                "border-red-500 focus-visible:ring-red-500"
+                              )}
+                              aria-invalid={fieldState.invalid}
+                            />
+                            {fieldState.error && (
+                              <FieldError errors={[fieldState.error]} />
+                            )}
+                          </Field>
+                        )}
+                      />
+
+
+                    </div>
+
+                    {/* Date of Registration */}
                     <Controller
                       name="dateOfRegistration"
                       control={control}
+                      rules={{ required: "Date of Registration is required" }}
                       render={({ field, fieldState }) => (
                         <Field>
                           <FieldLabel
@@ -304,12 +418,12 @@ const {
                           <Input
                             id="dateOfRegistration"
                             placeholder="e.g., January 15, 2024"
+                            {...field}
                             className={cn(
                               "h-11 text-base transition-all",
                               fieldState.invalid &&
-                                "border-red-500 focus-visible:ring-red-500"
+                              "border-red-500 focus-visible:ring-red-500"
                             )}
-                            {...field}
                             aria-invalid={fieldState.invalid}
                           />
                           {fieldState.error && (
@@ -319,6 +433,9 @@ const {
                       )}
                     />
                   </div>
+
+
+
 
                   <div className="border-t pt-4">
                     <h3 className="font-semibold mb-3 text-gray-900">
@@ -341,7 +458,7 @@ const {
                               className={cn(
                                 "h-11 text-base transition-all",
                                 fieldState.invalid &&
-                                  "border-red-500 focus-visible:ring-red-500"
+                                "border-red-500 focus-visible:ring-red-500"
                               )}
                               {...field}
                               aria-invalid={fieldState.invalid}
@@ -368,7 +485,7 @@ const {
                               className={cn(
                                 "h-11 text-base transition-all",
                                 fieldState.invalid &&
-                                  "border-red-500 focus-visible:ring-red-500"
+                                "border-red-500 focus-visible:ring-red-500"
                               )}
                               {...field}
                               aria-invalid={fieldState.invalid}
@@ -419,14 +536,14 @@ const {
                               <SelectTrigger
                                 id="sex"
                                 className={cn(
-                                  "h-11 text-base",
+                                  "w-full h-11 text-base",
                                   fieldState.invalid &&
-                                    "border-red-500 focus:ring-red-500"
+                                  "border-red-500 focus:ring-red-500"
                                 )}
                               >
                                 <SelectValue placeholder="Select sex" />
                               </SelectTrigger>
-                              <SelectContent>
+                              <SelectContent className="w-[var(--radix-select-trigger-width)]">
                                 <SelectItem value="Male">Male</SelectItem>
                                 <SelectItem value="Female">Female</SelectItem>
                               </SelectContent>
@@ -454,7 +571,7 @@ const {
                               className={cn(
                                 "h-11 text-base transition-all",
                                 fieldState.invalid &&
-                                  "border-red-500 focus-visible:ring-red-500"
+                                "border-red-500 focus-visible:ring-red-500"
                               )}
                               {...field}
                               aria-invalid={fieldState.invalid}
@@ -511,25 +628,84 @@ const {
                       {isTwinValue && (
                         <div className="ml-6 mt-3">
                           <Controller
+                            name="typeOfBirth"
+                            control={control}
+                            render={({ field, fieldState }) => (
+                              <Field>
+                                <FieldLabel
+                                  htmlFor="typeOfBirth"
+                                  className="text-sm font-semibold text-gray-700"
+                                >
+                                  Type of Birth
+                                </FieldLabel>
+                                <Input
+                                  id="typeOfBirth"
+                                  placeholder="e.g., Twin, Triplet"
+                                  className={cn(
+                                    "h-11 text-base transition-all",
+                                    fieldState.invalid &&
+                                    "border-red-500 focus-visible:ring-red-500"
+                                  )}
+                                  {...field}
+                                  value={field.value ?? ""}
+                                  aria-invalid={fieldState.invalid}
+                                />
+                                {fieldState.error && (
+                                  <FieldError errors={[fieldState.error]} />
+                                )}
+                              </Field>
+                            )}
+                          />
+                          <Controller
                             name="birthOrder"
                             control={control}
                             render={({ field, fieldState }) => (
                               <Field>
                                 <FieldLabel
                                   htmlFor="birthOrder"
-                                  className="text-sm font-semibold text-gray-700"
+                                  className="text-sm font-semibold text-gray-700 mt-4"
                                 >
                                   Birth Order
                                 </FieldLabel>
                                 <Input
                                   id="birthOrder"
-                                  placeholder="e.g., First, Second, Twin A"
+                                  placeholder="e.g., 1st, 2nd"
                                   className={cn(
                                     "h-11 text-base transition-all",
                                     fieldState.invalid &&
-                                      "border-red-500 focus-visible:ring-red-500"
+                                    "border-red-500 focus-visible:ring-red-500"
                                   )}
                                   {...field}
+                                  value={field.value ?? ""}
+                                  aria-invalid={fieldState.invalid}
+                                />
+                                {fieldState.error && (
+                                  <FieldError errors={[fieldState.error]} />
+                                )}
+                              </Field>
+                            )}
+                          />
+                          <Controller
+                            name="timeOfBirth"
+                            control={control}
+                            render={({ field, fieldState }) => (
+                              <Field>
+                                <FieldLabel
+                                  htmlFor="timeOfBirth"
+                                  className="text-sm font-semibold text-gray-700 mt-4"
+                                >
+                                  Time of Birth
+                                </FieldLabel>
+                                <Input
+                                  id="timeOfBirth"
+                                  placeholder="Enter time of birth"
+                                  className={cn(
+                                    "h-11 text-base transition-all",
+                                    fieldState.invalid &&
+                                    "border-red-500 focus-visible:ring-red-500"
+                                  )}
+                                  {...field}
+                                  value={field.value ?? ""}
                                   aria-invalid={fieldState.invalid}
                                 />
                                 {fieldState.error && (
@@ -763,7 +939,11 @@ const {
                   </div>
 
                   <div className="border-t pt-4">
-                    <div className="space-y-5">
+                    <h3 className="font-semibold mb-3 text-gray-900">
+                      Additional Information
+                    </h3>
+
+                    <div className="space-y-4">
                       <Controller
                         name="remarks"
                         control={control}
@@ -775,15 +955,101 @@ const {
                             >
                               Remarks (Optional)
                             </FieldLabel>
+                            <p className="text-xs text-gray-500 mb-2">
+                              Press Enter twice between paragraphs. Each paragraph will be automatically indented in the PDF.
+                            </p>
                             <Textarea
                               id="remarks"
                               rows={4}
-                              className="text-base whitespace-pre-wrap font-mono"
+                              placeholder="Enter remarks here..."
+                              className="text-base"
                               {...field}
                             />
                           </Field>
                         )}
                       />
+
+                      <Controller
+                        name="processFeeInfo"
+                        control={control}
+                        render={({ field }) => (
+                          <Field>
+                            <FieldLabel
+                              htmlFor="processFeeInfo"
+                              className="text-sm font-semibold text-gray-700"
+                            >
+                              Registration Fee Details (Optional)
+                            </FieldLabel>
+                            <Textarea
+                              id="processFeeInfo"
+                              rows={3}
+                              placeholder="e.g., Registration fee paid: PHP 150.00, OR No. 12345"
+                              className="text-base"
+                              {...field}
+                            />
+                          </Field>
+                        )}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="border-t pt-4">
+                    <h3 className="font-semibold mb-3 text-gray-900">
+                      Issuance Information
+                    </h3>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <Controller
+                        name="requestorName"
+                        control={control}
+                        render={({ field }) => (
+                          <Field>
+                            <FieldLabel
+                              htmlFor="requestorName"
+                              className="text-sm font-semibold text-gray-700"
+                            >
+                              Issued To (Requestor Name)
+                            </FieldLabel>
+                            <Input
+                              id="requestorName"
+                              placeholder="e.g., Juan Dela Cruz"
+                              className="h-11 text-base transition-all"
+                              {...field}
+                            />
+                          </Field>
+                        )}
+                      />
+
+                      <Controller
+                        name="requestPurpose"
+                        control={control}
+                        render={({ field }) => (
+                          <Field>
+                            <FieldLabel
+                              htmlFor="requestPurpose"
+                              className="text-sm font-semibold text-gray-700"
+                            >
+                              Purpose of Request
+                            </FieldLabel>
+                            <Input
+                              id="requestPurpose"
+                              placeholder="e.g., upon request, for employment, for travel"
+                              className="h-11 text-base transition-all"
+                              {...field}
+                            />
+                          </Field>
+                        )}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="border-t pt-4">
+                    <h3 className="font-semibold mb-3 text-gray-900">
+                      Certification Details
+                    </h3>
+
+                    <div className="space-y-4">
+                      {/* Registrar */}
                       <Controller
                         name="registrarName"
                         control={control}
@@ -793,10 +1059,11 @@ const {
                               htmlFor="registrarName"
                               className="text-sm font-semibold text-gray-700"
                             >
-                              Registrar Name
+                              Municipal Civil Registrar Name
                             </FieldLabel>
                             <Input
                               id="registrarName"
+                              placeholder="e.g., DARRYL U. MONTEALEGRE, MM"
                               className="h-11 text-base transition-all"
                               {...field}
                             />
@@ -804,10 +1071,104 @@ const {
                         )}
                       />
 
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <Controller
+                          name="verifiedBy"
+                          control={control}
+                          render={({ field }) => (
+                            <Field>
+                              <FieldLabel
+                                htmlFor="verifiedBy"
+                                className="text-sm font-semibold text-gray-700"
+                              >
+                                Verified By
+                              </FieldLabel>
+                              <Input
+                                id="verifiedBy"
+                                placeholder="Name of verifying officer"
+                                className="h-11 text-base transition-all"
+                                {...field}
+                              />
+                            </Field>
+                          )}
+                        />
+
+                        <Controller
+                          name="verifierPosition"
+                          control={control}
+                          render={({ field }) => (
+                            <Field>
+                              <FieldLabel
+                                htmlFor="verifierPosition"
+                                className="text-sm font-semibold text-gray-700"
+                              >
+                                Verifier Position
+                              </FieldLabel>
+                              <Input
+                                id="verifierPosition"
+                                placeholder="e.g., Registration Officer II"
+                                className="h-11 text-base transition-all"
+                                {...field}
+                              />
+                            </Field>
+                          )}
+                        />
+                      </div>
+
+                      {/* Certifying Officer */}
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <Controller
+                          name="certifyingOfficerName"
+                          control={control}
+                          render={({ field }) => (
+                            <Field>
+                              <FieldLabel
+                                htmlFor="certifyingOfficerName"
+                                className="text-sm font-semibold text-gray-700"
+                              >
+                                Certifying Officer Name (Optional)
+                              </FieldLabel>
+                              <Input
+                                id="certifyingOfficerName"
+                                placeholder="Name of officer preparing the certificate"
+                                className="h-11 text-base transition-all"
+                                {...field}
+                              />
+                              <p className="text-xs text-gray-500 mt-1">
+                                Leave blank if same as MCR
+                              </p>
+                            </Field>
+                          )}
+                        />
+
+                        <Controller
+                          name="certifyingOfficerPosition"
+                          control={control}
+                          render={({ field }) => (
+                            <Field>
+                              <FieldLabel
+                                htmlFor="certifyingOfficerPosition"
+                                className="text-sm font-semibold text-gray-700"
+                              >
+                                Certifying Officer Position (Optional)
+                              </FieldLabel>
+                              <Input
+                                id="certifyingOfficerPosition"
+                                placeholder="e.g., Registration Officer I"
+                                className="h-11 text-base transition-all"
+                                {...field}
+                              />
+                            </Field>
+                          )}
+                        />
+                      </div>
+
+                      {/* Signature */}
                       <div>
                         <FieldLabel className="mb-2 block text-sm font-semibold text-gray-700">
-                          Registrar Signature (Optional)
+                          Signature Image (Optional)
                         </FieldLabel>
+
                         <div className="space-y-3">
                           {!signaturePreview ? (
                             <div className="flex items-center gap-3">
@@ -823,9 +1184,7 @@ const {
                                 type="button"
                                 variant="outline"
                                 onClick={() =>
-                                  document
-                                    .getElementById("signatureUpload")
-                                    ?.click()
+                                  document.getElementById("signatureUpload")?.click()
                                 }
                                 disabled={isUploadingSignature}
                               >
@@ -842,7 +1201,7 @@ const {
                                 )}
                               </Button>
                               <span className="text-sm text-gray-500">
-                                PNG, JPG up to 2MB
+                                PNG, JPG up to 2MB (transparent background recommended)
                               </span>
                             </div>
                           ) : (
@@ -861,6 +1220,7 @@ const {
                                   <X className="w-4 h-4" />
                                 </Button>
                               </div>
+
                               <div className="relative w-full max-w-xs h-24 bg-white border rounded flex items-center justify-center">
                                 <Image
                                   src={signaturePreview}
@@ -876,11 +1236,12 @@ const {
                     </div>
                   </div>
 
+
                   <div className="flex gap-2 pt-4">
                     <Button
                       type="submit"
                       className="h-12 flex-1 text-base font-semibold"
-                      disabled={isSubmitting || isProcessing}
+                      disabled={isSubmitting || isUploadingDoc}
                     >
                       {isSubmitting ? (
                         <span className="flex items-center gap-2">

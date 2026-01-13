@@ -4,6 +4,6 @@ export const getFullName = (
   firstName?: string | null,
   middleName?: string | null
 ): string => {
-  return `${lastName}, ${firstName}${middleName ? " " + middleName : ""}`.trim();
+  return `${firstName} ${middleName ? " " + middleName : ""}  ${lastName}`.trim();
 };
 

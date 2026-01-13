@@ -1,8 +1,9 @@
-// lib/validations/birth-record.schema.ts
 import { z } from "zod";
 
 export const birthRecordSchema = z.object({
   registryNo: z.string().min(1, "Registry number is required"),
+  bookNo: z.string().min(1, "Book number is required"),
+  pageNo: z.string().min(1, "Page number is required"),
   dateOfRegistration: z.string().min(1, "Registration date is required"),
   
   // Child Information
@@ -13,7 +14,9 @@ export const birthRecordSchema = z.object({
   dateOfBirth: z.string().min(1, "Date of birth is required"),
   placeOfBirth: z.string().default(""),
   isTwin: z.boolean().default(false),
+  typeOfBirth: z.string().default(""),
   birthOrder: z.string().default(""),
+  timeOfBirth: z.string().default(""),
   
   // Mother Information
   motherLastName: z.string().default(""),
@@ -33,8 +36,16 @@ export const birthRecordSchema = z.object({
   
   // Additional Information
   remarks: z.string().default(""),
+  processFeeInfo: z.string().default(""),
   registrarName: z.string().default(""),
+  verifiedBy: z.string().default(""),
+  verifierPosition: z.string().default(""),
   signatureImagePath: z.string().default(""), 
+  requestorName: z.string().default(""), 
+  requestPurpose: z.string().default(""), 
+  certifyingOfficerName: z.string().default(""), 
+  certifyingOfficerPosition: z.string().default(""), 
+
 }).refine((data) => {
   if (data.isTwin && !data.birthOrder) {
     return false;

@@ -52,7 +52,10 @@ export const AnyNull = runtime.AnyNull
 
 export const ModelName = {
   User: 'User',
-  BirthRecord: 'BirthRecord'
+  BirthRecord: 'BirthRecord',
+  DeathRecord: 'DeathRecord',
+  MarriageRecord: 'MarriageRecord',
+  MarriageCertificateApplication: 'MarriageCertificateApplication'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -92,6 +95,8 @@ export const BirthRecordScalarFieldEnum = {
   id: 'id',
   registryNo: 'registryNo',
   dateOfRegistration: 'dateOfRegistration',
+  bookNo: 'bookNo',
+  pageNo: 'pageNo',
   childLastName: 'childLastName',
   childFirstName: 'childFirstName',
   childMiddleName: 'childMiddleName',
@@ -99,7 +104,9 @@ export const BirthRecordScalarFieldEnum = {
   dateOfBirth: 'dateOfBirth',
   placeOfBirth: 'placeOfBirth',
   isTwin: 'isTwin',
+  typeOfBirth: 'typeOfBirth',
   birthOrder: 'birthOrder',
+  timeOfBirth: 'timeOfBirth',
   motherLastName: 'motherLastName',
   motherFirstName: 'motherFirstName',
   motherMiddleName: 'motherMiddleName',
@@ -113,12 +120,117 @@ export const BirthRecordScalarFieldEnum = {
   remarks: 'remarks',
   registrarName: 'registrarName',
   signatureImagePath: 'signatureImagePath',
+  processFeeInfo: 'processFeeInfo',
+  requestorName: 'requestorName',
+  requestPurpose: 'requestPurpose',
+  verifiedBy: 'verifiedBy',
+  verifierPosition: 'verifierPosition',
+  certifyingOfficerName: 'certifyingOfficerName',
+  certifyingOfficerPosition: 'certifyingOfficerPosition',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   userId: 'userId'
 } as const
 
 export type BirthRecordScalarFieldEnum = (typeof BirthRecordScalarFieldEnum)[keyof typeof BirthRecordScalarFieldEnum]
+
+
+export const DeathRecordScalarFieldEnum = {
+  id: 'id',
+  registryNo: 'registryNo',
+  pageNo: 'pageNo',
+  bookNo: 'bookNo',
+  deceasedLastName: 'deceasedLastName',
+  deceasedFirstName: 'deceasedFirstName',
+  deceasedMiddleName: 'deceasedMiddleName',
+  sex: 'sex',
+  age: 'age',
+  civilStatus: 'civilStatus',
+  citizenship: 'citizenship',
+  dateOfDeath: 'dateOfDeath',
+  placeOfDeath: 'placeOfDeath',
+  causeOfDeath: 'causeOfDeath',
+  dateOfRegistration: 'dateOfRegistration',
+  requestorName: 'requestorName',
+  requestPurpose: 'requestPurpose',
+  registrarName: 'registrarName',
+  verifiedBy: 'verifiedBy',
+  verifierPosition: 'verifierPosition',
+  certifyingOfficerName: 'certifyingOfficerName',
+  certifyingOfficerPosition: 'certifyingOfficerPosition',
+  processFeeInfo: 'processFeeInfo',
+  remarks: 'remarks',
+  signatureImagePath: 'signatureImagePath',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  userId: 'userId'
+} as const
+
+export type DeathRecordScalarFieldEnum = (typeof DeathRecordScalarFieldEnum)[keyof typeof DeathRecordScalarFieldEnum]
+
+
+export const MarriageRecordScalarFieldEnum = {
+  id: 'id',
+  registryNo: 'registryNo',
+  bookNo: 'bookNo',
+  pageNo: 'pageNo',
+  dateOfMarriage: 'dateOfMarriage',
+  placeOfMarriage: 'placeOfMarriage',
+  dateOfRegistration: 'dateOfRegistration',
+  husbandLastName: 'husbandLastName',
+  husbandFirstName: 'husbandFirstName',
+  husbandMiddleName: 'husbandMiddleName',
+  husbandAge: 'husbandAge',
+  husbandNationality: 'husbandNationality',
+  husbandCivilStatus: 'husbandCivilStatus',
+  husbandMotherName: 'husbandMotherName',
+  husbandFatherName: 'husbandFatherName',
+  wifeLastName: 'wifeLastName',
+  wifeFirstName: 'wifeFirstName',
+  wifeMiddleName: 'wifeMiddleName',
+  wifeAge: 'wifeAge',
+  wifeNationality: 'wifeNationality',
+  wifeCivilStatus: 'wifeCivilStatus',
+  wifeMotherName: 'wifeMotherName',
+  wifeFatherName: 'wifeFatherName',
+  requestorName: 'requestorName',
+  requestPurpose: 'requestPurpose',
+  registrarName: 'registrarName',
+  verifiedBy: 'verifiedBy',
+  verifierPosition: 'verifierPosition',
+  certifyingOfficerName: 'certifyingOfficerName',
+  certifyingOfficerPosition: 'certifyingOfficerPosition',
+  processFeeInfo: 'processFeeInfo',
+  remarks: 'remarks',
+  signatureImagePath: 'signatureImagePath',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  userId: 'userId'
+} as const
+
+export type MarriageRecordScalarFieldEnum = (typeof MarriageRecordScalarFieldEnum)[keyof typeof MarriageRecordScalarFieldEnum]
+
+
+export const MarriageCertificateApplicationScalarFieldEnum = {
+  id: 'id',
+  registryNo: 'registryNo',
+  bookNo: 'bookNo',
+  pageNo: 'pageNo',
+  dateOfRegistration: 'dateOfRegistration',
+  groomFirstName: 'groomFirstName',
+  groomMiddleName: 'groomMiddleName',
+  groomLastName: 'groomLastName',
+  groomDateOfBirth: 'groomDateOfBirth',
+  brideFirstName: 'brideFirstName',
+  brideMiddleName: 'brideMiddleName',
+  brideLastName: 'brideLastName',
+  brideDateOfBirth: 'brideDateOfBirth',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  userId: 'userId'
+} as const
+
+export type MarriageCertificateApplicationScalarFieldEnum = (typeof MarriageCertificateApplicationScalarFieldEnum)[keyof typeof MarriageCertificateApplicationScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -179,12 +291,16 @@ export const BirthRecordOrderByRelevanceFieldEnum = {
   id: 'id',
   registryNo: 'registryNo',
   dateOfRegistration: 'dateOfRegistration',
+  bookNo: 'bookNo',
+  pageNo: 'pageNo',
   childLastName: 'childLastName',
   childFirstName: 'childFirstName',
   childMiddleName: 'childMiddleName',
   dateOfBirth: 'dateOfBirth',
   placeOfBirth: 'placeOfBirth',
+  typeOfBirth: 'typeOfBirth',
   birthOrder: 'birthOrder',
+  timeOfBirth: 'timeOfBirth',
   motherLastName: 'motherLastName',
   motherFirstName: 'motherFirstName',
   motherMiddleName: 'motherMiddleName',
@@ -198,8 +314,100 @@ export const BirthRecordOrderByRelevanceFieldEnum = {
   remarks: 'remarks',
   registrarName: 'registrarName',
   signatureImagePath: 'signatureImagePath',
+  processFeeInfo: 'processFeeInfo',
+  requestorName: 'requestorName',
+  requestPurpose: 'requestPurpose',
+  verifiedBy: 'verifiedBy',
+  verifierPosition: 'verifierPosition',
+  certifyingOfficerName: 'certifyingOfficerName',
+  certifyingOfficerPosition: 'certifyingOfficerPosition',
   userId: 'userId'
 } as const
 
 export type BirthRecordOrderByRelevanceFieldEnum = (typeof BirthRecordOrderByRelevanceFieldEnum)[keyof typeof BirthRecordOrderByRelevanceFieldEnum]
+
+
+export const DeathRecordOrderByRelevanceFieldEnum = {
+  id: 'id',
+  registryNo: 'registryNo',
+  pageNo: 'pageNo',
+  bookNo: 'bookNo',
+  deceasedLastName: 'deceasedLastName',
+  deceasedFirstName: 'deceasedFirstName',
+  deceasedMiddleName: 'deceasedMiddleName',
+  citizenship: 'citizenship',
+  dateOfDeath: 'dateOfDeath',
+  placeOfDeath: 'placeOfDeath',
+  causeOfDeath: 'causeOfDeath',
+  dateOfRegistration: 'dateOfRegistration',
+  requestorName: 'requestorName',
+  requestPurpose: 'requestPurpose',
+  registrarName: 'registrarName',
+  verifiedBy: 'verifiedBy',
+  verifierPosition: 'verifierPosition',
+  certifyingOfficerName: 'certifyingOfficerName',
+  certifyingOfficerPosition: 'certifyingOfficerPosition',
+  processFeeInfo: 'processFeeInfo',
+  remarks: 'remarks',
+  signatureImagePath: 'signatureImagePath',
+  userId: 'userId'
+} as const
+
+export type DeathRecordOrderByRelevanceFieldEnum = (typeof DeathRecordOrderByRelevanceFieldEnum)[keyof typeof DeathRecordOrderByRelevanceFieldEnum]
+
+
+export const MarriageRecordOrderByRelevanceFieldEnum = {
+  id: 'id',
+  registryNo: 'registryNo',
+  bookNo: 'bookNo',
+  pageNo: 'pageNo',
+  dateOfMarriage: 'dateOfMarriage',
+  placeOfMarriage: 'placeOfMarriage',
+  dateOfRegistration: 'dateOfRegistration',
+  husbandLastName: 'husbandLastName',
+  husbandFirstName: 'husbandFirstName',
+  husbandMiddleName: 'husbandMiddleName',
+  husbandNationality: 'husbandNationality',
+  husbandMotherName: 'husbandMotherName',
+  husbandFatherName: 'husbandFatherName',
+  wifeLastName: 'wifeLastName',
+  wifeFirstName: 'wifeFirstName',
+  wifeMiddleName: 'wifeMiddleName',
+  wifeNationality: 'wifeNationality',
+  wifeMotherName: 'wifeMotherName',
+  wifeFatherName: 'wifeFatherName',
+  requestorName: 'requestorName',
+  requestPurpose: 'requestPurpose',
+  registrarName: 'registrarName',
+  verifiedBy: 'verifiedBy',
+  verifierPosition: 'verifierPosition',
+  certifyingOfficerName: 'certifyingOfficerName',
+  certifyingOfficerPosition: 'certifyingOfficerPosition',
+  processFeeInfo: 'processFeeInfo',
+  remarks: 'remarks',
+  signatureImagePath: 'signatureImagePath',
+  userId: 'userId'
+} as const
+
+export type MarriageRecordOrderByRelevanceFieldEnum = (typeof MarriageRecordOrderByRelevanceFieldEnum)[keyof typeof MarriageRecordOrderByRelevanceFieldEnum]
+
+
+export const MarriageCertificateApplicationOrderByRelevanceFieldEnum = {
+  id: 'id',
+  registryNo: 'registryNo',
+  bookNo: 'bookNo',
+  pageNo: 'pageNo',
+  dateOfRegistration: 'dateOfRegistration',
+  groomFirstName: 'groomFirstName',
+  groomMiddleName: 'groomMiddleName',
+  groomLastName: 'groomLastName',
+  groomDateOfBirth: 'groomDateOfBirth',
+  brideFirstName: 'brideFirstName',
+  brideMiddleName: 'brideMiddleName',
+  brideLastName: 'brideLastName',
+  brideDateOfBirth: 'brideDateOfBirth',
+  userId: 'userId'
+} as const
+
+export type MarriageCertificateApplicationOrderByRelevanceFieldEnum = (typeof MarriageCertificateApplicationOrderByRelevanceFieldEnum)[keyof typeof MarriageCertificateApplicationOrderByRelevanceFieldEnum]
 

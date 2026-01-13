@@ -28,6 +28,21 @@ enum Sex {
   Female
 }
 
+enum CivilStatus {
+  Single
+  Married
+  Widowed
+  Divorced
+}
+
+enum DocumentType {
+  BIRTH_CERTIFICATE
+  DEATH_CERTIFICATE
+  MARRIAGE_CERTIFICATE
+  MARRIAGE_CERTIFICATE_APPLICATION
+  OTHER
+}
+
 //////////////////////
 // USER
 //////////////////////
@@ -45,23 +60,62 @@ model User {
   email    String @unique
 
   role     UserRole
-  office   String // e.g. "Civil Registry"
-  metadata Json? // flexible user metadata
+  office   String
+  metadata Json?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  birthRecord BirthRecord[]
+  birthRecord                     BirthRecord[]
+  deathRecords                    DeathRecord[]
+  marriageRecords                 MarriageRecord[]
+  marriageCertificateApplications MarriageCertificateApplication[]
 }
 
 //////////////////////
-// BIRTH CERTIFICATE
+// SUPPORTING DOCUMENTS
+//////////////////////
+
+model SupportingDocument {
+  id String @id @default(cuid())
+
+  filePath    String // Storage path of the file
+  fileName    String // Original filename
+  fileSize    Int? // Size in bytes
+  mimeType    String? // e.g., "image/jpeg"
+  description String? // Optional description
+  type        DocumentType @default(OTHER)
+
+  // Polymorphic relations - only one should be filled
+  birthRecordId                    String?
+  deathRecordId                    String?
+  marriageRecordId                 String?
+  marriageCertificateApplicationId String?
+
+  birthRecord                    BirthRecord?                   @relation(fields: [birthRecordId], references: [id], onDelete: Cascade)
+  deathRecord                    DeathRecord?                   @relation(fields: [deathRecordId], references: [id], onDelete: Cascade)
+  marriageRecord                 MarriageRecord?                @relation(fields: [marriageRecordId], references: [id], onDelete: Cascade)
+  marriageCertificateApplication MarriageCertificateApplication? @relation(fields: [marriageCertificateApplicationId], references: [id], onDelete: Cascade)
+
+  uploadedBy String? // User ID who uploaded
+  uploadedAt DateTime @default(now())
+
+  @@index([birthRecordId])
+  @@index([deathRecordId])
+  @@index([marriageRecordId])
+  @@index([marriageCertificateApplicationId])
+}
+
+//////////////////////
+// BIRTH RECORDS
 //////////////////////
 
 model BirthRecord {
-  id                 String @id @default(cuid())
-  registryNo         String @unique
+  id                 String  @id @default(cuid())
+  registryNo         String  @unique
   dateOfRegistration String
+  bookNo             String?
+  pageNo             String?
 
   // Child Information
   childLastName   String
@@ -71,7 +125,9 @@ model BirthRecord {
   dateOfBirth     String
   placeOfBirth    String?
   isTwin          Boolean @default(false)
+  typeOfBirth     String?
   birthOrder      String?
+  timeOfBirth     String?
 
   // Mother Information
   motherLastName    String?
@@ -89,16 +145,186 @@ model BirthRecord {
   dateOfMarriage  String?
   placeOfMarriage String?
 
-  // Additional Information
-  remarks            String?  @db.Text
+  // Administrative Information
+  remarks            String? @db.Text
   registrarName      String?
-  signatureImagePath String? 
+  signatureImagePath String?
+  processFeeInfo     String? @db.Text
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  user      User?    @relation(fields: [userId], references: [id])
+  requestorName             String?
+  requestPurpose            String?
+  verifiedBy                String
+  verifierPosition          String
+  certifyingOfficerName     String?
+  certifyingOfficerPosition String?
+
+  // Relations
+  supportingDocuments SupportingDocument[]
+
+  createdAt DateTime? @default(now())
+  updatedAt DateTime? @updatedAt
+  user      User?     @relation(fields: [userId], references: [id])
   userId    String?
 
   @@index([registryNo])
   @@index([childLastName, childFirstName])
+}
+
+//////////////////////
+// DEATH RECORDS
+//////////////////////
+
+model DeathRecord {
+  id String @id @default(cuid())
+
+  registryNo String  @unique
+  pageNo     String?
+  bookNo     String?
+
+  // Deceased Information
+  deceasedLastName   String
+  deceasedFirstName  String
+  deceasedMiddleName String?
+  sex                Sex
+  age                Int
+  civilStatus        CivilStatus
+  citizenship        String
+
+  // Death Information
+  dateOfDeath  String
+  placeOfDeath String
+  causeOfDeath String
+
+  // Registration Information
+  dateOfRegistration String
+  requestorName      String?
+  requestPurpose     String?
+
+  // Administrative Information
+  registrarName             String?
+  verifiedBy                String?
+  verifierPosition          String?
+  certifyingOfficerName     String?
+  certifyingOfficerPosition String?
+
+  processFeeInfo String? @db.Text
+
+  remarks            String? @db.Text
+  signatureImagePath String?
+
+  // Relations
+  supportingDocuments SupportingDocument[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user   User?   @relation(fields: [userId], references: [id])
+  userId String?
+
+  @@index([registryNo])
+  @@index([deceasedLastName, deceasedFirstName])
+}
+
+//////////////////////
+// MARRIAGE RECORDS
+//////////////////////
+
+model MarriageRecord {
+  id String @id @default(cuid())
+
+  registryNo String  @unique
+  bookNo     String?
+  pageNo     String?
+
+  dateOfMarriage     String
+  placeOfMarriage    String
+  dateOfRegistration String?
+
+  // Husband Information
+  husbandLastName    String
+  husbandFirstName   String
+  husbandMiddleName  String?
+  husbandAge         Int
+  husbandNationality String
+  husbandCivilStatus CivilStatus
+  husbandMotherName  String?
+  husbandFatherName  String?
+
+  // Wife Information
+  wifeLastName    String
+  wifeFirstName   String
+  wifeMiddleName  String?
+  wifeAge         Int
+  wifeNationality String
+  wifeCivilStatus CivilStatus
+  wifeMotherName  String?
+  wifeFatherName  String?
+
+  // Administrative Information
+  requestorName  String?
+  requestPurpose String?
+
+  registrarName    String?
+  verifiedBy       String?
+  verifierPosition String?
+
+  certifyingOfficerName     String?
+  certifyingOfficerPosition String?
+
+  processFeeInfo String?
+
+  remarks String? @db.Text
+
+  signatureImagePath String?
+
+  // Relations
+  supportingDocuments SupportingDocument[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user   User?   @relation(fields: [userId], references: [id])
+  userId String?
+
+  @@index([registryNo])
+  @@index([husbandLastName, husbandFirstName])
+  @@index([wifeLastName, wifeFirstName])
+}
+
+//////////////////////
+// MARRIAGE CERTIFICATE APPLICATIONS
+//////////////////////
+
+model MarriageCertificateApplication {
+  id String @id @default(cuid())
+
+  registryNo         String
+  bookNo             String?
+  pageNo             String?
+  dateOfRegistration String?
+
+  // Groom Information
+  groomFirstName   String
+  groomMiddleName  String?
+  groomLastName    String
+  groomDateOfBirth String
+
+  // Bride Information
+  brideFirstName   String
+  brideMiddleName  String?
+  brideLastName    String
+  brideDateOfBirth String
+
+  // Relations
+  supportingDocuments SupportingDocument[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user   User?   @relation(fields: [userId], references: [id])
+  userId String?
+
+  @@index([registryNo])
+  @@index([groomLastName, groomFirstName])
+  @@index([brideLastName, brideFirstName])
 }

@@ -95,77 +95,123 @@ export const BirthRecordList: React.FC<BirthRecordListProps> = ({
 
           <CardContent>
             <div className="mb-6 flex flex-col gap-4">
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
-                <Input
-                  placeholder="Child Last Name"
-                  value={filters.childLastName}
-                  onChange={(e) =>
-                    onFilterChange({ ...filters, childLastName: e.target.value })
-                  }
-                />
-                <Input
-                  placeholder="Child First Name"
-                  value={filters.childFirstName}
-                  onChange={(e) =>
-                    onFilterChange({ ...filters, childFirstName: e.target.value })
-                  }
-                />
-                <Input
-                  placeholder="Father Last Name"
-                  value={filters.fatherLastName}
-                  onChange={(e) =>
-                    onFilterChange({ ...filters, fatherLastName: e.target.value })
-                  }
-                />
-                <Input
-                  placeholder="Father First Name"
-                  value={filters.fatherFirstName}
-                  onChange={(e) =>
-                    onFilterChange({
-                      ...filters,
-                      fatherFirstName: e.target.value,
-                    })
-                  }
-                />
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
-                <Input
-                  placeholder="Mother Last Name"
-                  value={filters.motherLastName}
-                  onChange={(e) =>
-                    onFilterChange({ ...filters, motherLastName: e.target.value })
-                  }
-                />
-                <Input
-                  placeholder="Mother First Name"
-                  value={filters.motherFirstName}
-                  onChange={(e) =>
-                    onFilterChange({
-                      ...filters,
-                      motherFirstName: e.target.value,
-                    })
-                  }
-                />
-                <Input
-                  placeholder="Date of Birth"
-                  value={filters.dob}
-                  onChange={(e) =>
-                    onFilterChange({ ...filters, dob: e.target.value })
-                  }
-                />
-                <div className="flex items-center">
-                  <Button
-                    variant="outline"
-                    onClick={onClearFilters}
-                    className="w-full"
-                  >
-                    Clear Filters
-                  </Button>
+              {/* Child Information */}
+              <div>
+                <label className="text-sm font-semibold text-gray-700 mb-2 block">
+                  Child Information
+                </label>
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+                  <Input
+                    placeholder="Last Name"
+                    value={filters.childLastName}
+                    onChange={(e) =>
+                      onFilterChange({ ...filters, childLastName: e.target.value })
+                    }
+                  />
+                  <Input
+                    placeholder="First Name"
+                    value={filters.childFirstName}
+                    onChange={(e) =>
+                      onFilterChange({ ...filters, childFirstName: e.target.value })
+                    }
+                  />
+                  <Input
+                    placeholder="Middle Name"
+                    value={filters.childMiddleName}
+                    onChange={(e) =>
+                      onFilterChange({ ...filters, childMiddleName: e.target.value })
+                    }
+                  />
+                  <Input
+                    placeholder="Date of Birth"
+                    value={filters.dob}
+                    onChange={(e) =>
+                      onFilterChange({ ...filters, dob: e.target.value })
+                    }
+                  />
                 </div>
               </div>
 
-              <div className="flex justify-end">
+              {/* Father Information */}
+              <div>
+                <label className="text-sm font-semibold text-gray-700 mb-2 block">
+                  Father Information
+                </label>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                  <Input
+                    placeholder="Last Name"
+                    value={filters.fatherLastName}
+                    onChange={(e) =>
+                      onFilterChange({ ...filters, fatherLastName: e.target.value })
+                    }
+                  />
+                  <Input
+                    placeholder="First Name"
+                    value={filters.fatherFirstName}
+                    onChange={(e) =>
+                      onFilterChange({
+                        ...filters,
+                        fatherFirstName: e.target.value,
+                      })
+                    }
+                  />
+                  <Input
+                    placeholder="Middle Name"
+                    value={filters.fatherMiddleName}
+                    onChange={(e) =>
+                      onFilterChange({
+                        ...filters,
+                        fatherMiddleName: e.target.value,
+                      })
+                    }
+                  />
+                </div>
+              </div>
+
+              {/* Mother Information */}
+              <div>
+                <label className="text-sm font-semibold text-gray-700 mb-2 block">
+                  Mother Information
+                </label>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                  <Input
+                    placeholder="Last Name"
+                    value={filters.motherLastName}
+                    onChange={(e) =>
+                      onFilterChange({ ...filters, motherLastName: e.target.value })
+                    }
+                  />
+                  <Input
+                    placeholder="First Name"
+                    value={filters.motherFirstName}
+                    onChange={(e) =>
+                      onFilterChange({
+                        ...filters,
+                        motherFirstName: e.target.value,
+                      })
+                    }
+                  />
+                  <Input
+                    placeholder="Middle Name"
+                    value={filters.motherMiddleName}
+                    onChange={(e) =>
+                      onFilterChange({
+                        ...filters,
+                        motherMiddleName: e.target.value,
+                      })
+                    }
+                  />
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex justify-between items-center pt-2">
+                <Button
+                  variant="outline"
+                  onClick={onClearFilters}
+                >
+                  Clear Filters
+                </Button>
                 <Button className="flex gap-2" onClick={onNew}>
                   <Plus className="w-4 h-4" /> New Record
                 </Button>

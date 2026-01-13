@@ -385,7 +385,10 @@ type FieldRefInputType<Model, FieldType> = Model extends never ? never : FieldRe
 
 export const ModelName = {
   User: 'User',
-  BirthRecord: 'BirthRecord'
+  BirthRecord: 'BirthRecord',
+  DeathRecord: 'DeathRecord',
+  MarriageRecord: 'MarriageRecord',
+  MarriageCertificateApplication: 'MarriageCertificateApplication'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -401,7 +404,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "birthRecord"
+    modelProps: "user" | "birthRecord" | "deathRecord" | "marriageRecord" | "marriageCertificateApplication"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -537,6 +540,204 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    DeathRecord: {
+      payload: Prisma.$DeathRecordPayload<ExtArgs>
+      fields: Prisma.DeathRecordFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.DeathRecordFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DeathRecordPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.DeathRecordFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DeathRecordPayload>
+        }
+        findFirst: {
+          args: Prisma.DeathRecordFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DeathRecordPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.DeathRecordFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DeathRecordPayload>
+        }
+        findMany: {
+          args: Prisma.DeathRecordFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DeathRecordPayload>[]
+        }
+        create: {
+          args: Prisma.DeathRecordCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DeathRecordPayload>
+        }
+        createMany: {
+          args: Prisma.DeathRecordCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        delete: {
+          args: Prisma.DeathRecordDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DeathRecordPayload>
+        }
+        update: {
+          args: Prisma.DeathRecordUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DeathRecordPayload>
+        }
+        deleteMany: {
+          args: Prisma.DeathRecordDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.DeathRecordUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        upsert: {
+          args: Prisma.DeathRecordUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DeathRecordPayload>
+        }
+        aggregate: {
+          args: Prisma.DeathRecordAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateDeathRecord>
+        }
+        groupBy: {
+          args: Prisma.DeathRecordGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.DeathRecordGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.DeathRecordCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.DeathRecordCountAggregateOutputType> | number
+        }
+      }
+    }
+    MarriageRecord: {
+      payload: Prisma.$MarriageRecordPayload<ExtArgs>
+      fields: Prisma.MarriageRecordFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.MarriageRecordFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MarriageRecordPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.MarriageRecordFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MarriageRecordPayload>
+        }
+        findFirst: {
+          args: Prisma.MarriageRecordFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MarriageRecordPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.MarriageRecordFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MarriageRecordPayload>
+        }
+        findMany: {
+          args: Prisma.MarriageRecordFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MarriageRecordPayload>[]
+        }
+        create: {
+          args: Prisma.MarriageRecordCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MarriageRecordPayload>
+        }
+        createMany: {
+          args: Prisma.MarriageRecordCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        delete: {
+          args: Prisma.MarriageRecordDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MarriageRecordPayload>
+        }
+        update: {
+          args: Prisma.MarriageRecordUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MarriageRecordPayload>
+        }
+        deleteMany: {
+          args: Prisma.MarriageRecordDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.MarriageRecordUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        upsert: {
+          args: Prisma.MarriageRecordUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MarriageRecordPayload>
+        }
+        aggregate: {
+          args: Prisma.MarriageRecordAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateMarriageRecord>
+        }
+        groupBy: {
+          args: Prisma.MarriageRecordGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.MarriageRecordGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.MarriageRecordCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.MarriageRecordCountAggregateOutputType> | number
+        }
+      }
+    }
+    MarriageCertificateApplication: {
+      payload: Prisma.$MarriageCertificateApplicationPayload<ExtArgs>
+      fields: Prisma.MarriageCertificateApplicationFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.MarriageCertificateApplicationFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MarriageCertificateApplicationPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.MarriageCertificateApplicationFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MarriageCertificateApplicationPayload>
+        }
+        findFirst: {
+          args: Prisma.MarriageCertificateApplicationFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MarriageCertificateApplicationPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.MarriageCertificateApplicationFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MarriageCertificateApplicationPayload>
+        }
+        findMany: {
+          args: Prisma.MarriageCertificateApplicationFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MarriageCertificateApplicationPayload>[]
+        }
+        create: {
+          args: Prisma.MarriageCertificateApplicationCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MarriageCertificateApplicationPayload>
+        }
+        createMany: {
+          args: Prisma.MarriageCertificateApplicationCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        delete: {
+          args: Prisma.MarriageCertificateApplicationDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MarriageCertificateApplicationPayload>
+        }
+        update: {
+          args: Prisma.MarriageCertificateApplicationUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MarriageCertificateApplicationPayload>
+        }
+        deleteMany: {
+          args: Prisma.MarriageCertificateApplicationDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.MarriageCertificateApplicationUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        upsert: {
+          args: Prisma.MarriageCertificateApplicationUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MarriageCertificateApplicationPayload>
+        }
+        aggregate: {
+          args: Prisma.MarriageCertificateApplicationAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateMarriageCertificateApplication>
+        }
+        groupBy: {
+          args: Prisma.MarriageCertificateApplicationGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.MarriageCertificateApplicationGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.MarriageCertificateApplicationCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.MarriageCertificateApplicationCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -597,6 +798,8 @@ export const BirthRecordScalarFieldEnum = {
   id: 'id',
   registryNo: 'registryNo',
   dateOfRegistration: 'dateOfRegistration',
+  bookNo: 'bookNo',
+  pageNo: 'pageNo',
   childLastName: 'childLastName',
   childFirstName: 'childFirstName',
   childMiddleName: 'childMiddleName',
@@ -604,7 +807,9 @@ export const BirthRecordScalarFieldEnum = {
   dateOfBirth: 'dateOfBirth',
   placeOfBirth: 'placeOfBirth',
   isTwin: 'isTwin',
+  typeOfBirth: 'typeOfBirth',
   birthOrder: 'birthOrder',
+  timeOfBirth: 'timeOfBirth',
   motherLastName: 'motherLastName',
   motherFirstName: 'motherFirstName',
   motherMiddleName: 'motherMiddleName',
@@ -618,12 +823,117 @@ export const BirthRecordScalarFieldEnum = {
   remarks: 'remarks',
   registrarName: 'registrarName',
   signatureImagePath: 'signatureImagePath',
+  processFeeInfo: 'processFeeInfo',
+  requestorName: 'requestorName',
+  requestPurpose: 'requestPurpose',
+  verifiedBy: 'verifiedBy',
+  verifierPosition: 'verifierPosition',
+  certifyingOfficerName: 'certifyingOfficerName',
+  certifyingOfficerPosition: 'certifyingOfficerPosition',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   userId: 'userId'
 } as const
 
 export type BirthRecordScalarFieldEnum = (typeof BirthRecordScalarFieldEnum)[keyof typeof BirthRecordScalarFieldEnum]
+
+
+export const DeathRecordScalarFieldEnum = {
+  id: 'id',
+  registryNo: 'registryNo',
+  pageNo: 'pageNo',
+  bookNo: 'bookNo',
+  deceasedLastName: 'deceasedLastName',
+  deceasedFirstName: 'deceasedFirstName',
+  deceasedMiddleName: 'deceasedMiddleName',
+  sex: 'sex',
+  age: 'age',
+  civilStatus: 'civilStatus',
+  citizenship: 'citizenship',
+  dateOfDeath: 'dateOfDeath',
+  placeOfDeath: 'placeOfDeath',
+  causeOfDeath: 'causeOfDeath',
+  dateOfRegistration: 'dateOfRegistration',
+  requestorName: 'requestorName',
+  requestPurpose: 'requestPurpose',
+  registrarName: 'registrarName',
+  verifiedBy: 'verifiedBy',
+  verifierPosition: 'verifierPosition',
+  certifyingOfficerName: 'certifyingOfficerName',
+  certifyingOfficerPosition: 'certifyingOfficerPosition',
+  processFeeInfo: 'processFeeInfo',
+  remarks: 'remarks',
+  signatureImagePath: 'signatureImagePath',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  userId: 'userId'
+} as const
+
+export type DeathRecordScalarFieldEnum = (typeof DeathRecordScalarFieldEnum)[keyof typeof DeathRecordScalarFieldEnum]
+
+
+export const MarriageRecordScalarFieldEnum = {
+  id: 'id',
+  registryNo: 'registryNo',
+  bookNo: 'bookNo',
+  pageNo: 'pageNo',
+  dateOfMarriage: 'dateOfMarriage',
+  placeOfMarriage: 'placeOfMarriage',
+  dateOfRegistration: 'dateOfRegistration',
+  husbandLastName: 'husbandLastName',
+  husbandFirstName: 'husbandFirstName',
+  husbandMiddleName: 'husbandMiddleName',
+  husbandAge: 'husbandAge',
+  husbandNationality: 'husbandNationality',
+  husbandCivilStatus: 'husbandCivilStatus',
+  husbandMotherName: 'husbandMotherName',
+  husbandFatherName: 'husbandFatherName',
+  wifeLastName: 'wifeLastName',
+  wifeFirstName: 'wifeFirstName',
+  wifeMiddleName: 'wifeMiddleName',
+  wifeAge: 'wifeAge',
+  wifeNationality: 'wifeNationality',
+  wifeCivilStatus: 'wifeCivilStatus',
+  wifeMotherName: 'wifeMotherName',
+  wifeFatherName: 'wifeFatherName',
+  requestorName: 'requestorName',
+  requestPurpose: 'requestPurpose',
+  registrarName: 'registrarName',
+  verifiedBy: 'verifiedBy',
+  verifierPosition: 'verifierPosition',
+  certifyingOfficerName: 'certifyingOfficerName',
+  certifyingOfficerPosition: 'certifyingOfficerPosition',
+  processFeeInfo: 'processFeeInfo',
+  remarks: 'remarks',
+  signatureImagePath: 'signatureImagePath',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  userId: 'userId'
+} as const
+
+export type MarriageRecordScalarFieldEnum = (typeof MarriageRecordScalarFieldEnum)[keyof typeof MarriageRecordScalarFieldEnum]
+
+
+export const MarriageCertificateApplicationScalarFieldEnum = {
+  id: 'id',
+  registryNo: 'registryNo',
+  bookNo: 'bookNo',
+  pageNo: 'pageNo',
+  dateOfRegistration: 'dateOfRegistration',
+  groomFirstName: 'groomFirstName',
+  groomMiddleName: 'groomMiddleName',
+  groomLastName: 'groomLastName',
+  groomDateOfBirth: 'groomDateOfBirth',
+  brideFirstName: 'brideFirstName',
+  brideMiddleName: 'brideMiddleName',
+  brideLastName: 'brideLastName',
+  brideDateOfBirth: 'brideDateOfBirth',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  userId: 'userId'
+} as const
+
+export type MarriageCertificateApplicationScalarFieldEnum = (typeof MarriageCertificateApplicationScalarFieldEnum)[keyof typeof MarriageCertificateApplicationScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -684,12 +994,16 @@ export const BirthRecordOrderByRelevanceFieldEnum = {
   id: 'id',
   registryNo: 'registryNo',
   dateOfRegistration: 'dateOfRegistration',
+  bookNo: 'bookNo',
+  pageNo: 'pageNo',
   childLastName: 'childLastName',
   childFirstName: 'childFirstName',
   childMiddleName: 'childMiddleName',
   dateOfBirth: 'dateOfBirth',
   placeOfBirth: 'placeOfBirth',
+  typeOfBirth: 'typeOfBirth',
   birthOrder: 'birthOrder',
+  timeOfBirth: 'timeOfBirth',
   motherLastName: 'motherLastName',
   motherFirstName: 'motherFirstName',
   motherMiddleName: 'motherMiddleName',
@@ -703,10 +1017,102 @@ export const BirthRecordOrderByRelevanceFieldEnum = {
   remarks: 'remarks',
   registrarName: 'registrarName',
   signatureImagePath: 'signatureImagePath',
+  processFeeInfo: 'processFeeInfo',
+  requestorName: 'requestorName',
+  requestPurpose: 'requestPurpose',
+  verifiedBy: 'verifiedBy',
+  verifierPosition: 'verifierPosition',
+  certifyingOfficerName: 'certifyingOfficerName',
+  certifyingOfficerPosition: 'certifyingOfficerPosition',
   userId: 'userId'
 } as const
 
 export type BirthRecordOrderByRelevanceFieldEnum = (typeof BirthRecordOrderByRelevanceFieldEnum)[keyof typeof BirthRecordOrderByRelevanceFieldEnum]
+
+
+export const DeathRecordOrderByRelevanceFieldEnum = {
+  id: 'id',
+  registryNo: 'registryNo',
+  pageNo: 'pageNo',
+  bookNo: 'bookNo',
+  deceasedLastName: 'deceasedLastName',
+  deceasedFirstName: 'deceasedFirstName',
+  deceasedMiddleName: 'deceasedMiddleName',
+  citizenship: 'citizenship',
+  dateOfDeath: 'dateOfDeath',
+  placeOfDeath: 'placeOfDeath',
+  causeOfDeath: 'causeOfDeath',
+  dateOfRegistration: 'dateOfRegistration',
+  requestorName: 'requestorName',
+  requestPurpose: 'requestPurpose',
+  registrarName: 'registrarName',
+  verifiedBy: 'verifiedBy',
+  verifierPosition: 'verifierPosition',
+  certifyingOfficerName: 'certifyingOfficerName',
+  certifyingOfficerPosition: 'certifyingOfficerPosition',
+  processFeeInfo: 'processFeeInfo',
+  remarks: 'remarks',
+  signatureImagePath: 'signatureImagePath',
+  userId: 'userId'
+} as const
+
+export type DeathRecordOrderByRelevanceFieldEnum = (typeof DeathRecordOrderByRelevanceFieldEnum)[keyof typeof DeathRecordOrderByRelevanceFieldEnum]
+
+
+export const MarriageRecordOrderByRelevanceFieldEnum = {
+  id: 'id',
+  registryNo: 'registryNo',
+  bookNo: 'bookNo',
+  pageNo: 'pageNo',
+  dateOfMarriage: 'dateOfMarriage',
+  placeOfMarriage: 'placeOfMarriage',
+  dateOfRegistration: 'dateOfRegistration',
+  husbandLastName: 'husbandLastName',
+  husbandFirstName: 'husbandFirstName',
+  husbandMiddleName: 'husbandMiddleName',
+  husbandNationality: 'husbandNationality',
+  husbandMotherName: 'husbandMotherName',
+  husbandFatherName: 'husbandFatherName',
+  wifeLastName: 'wifeLastName',
+  wifeFirstName: 'wifeFirstName',
+  wifeMiddleName: 'wifeMiddleName',
+  wifeNationality: 'wifeNationality',
+  wifeMotherName: 'wifeMotherName',
+  wifeFatherName: 'wifeFatherName',
+  requestorName: 'requestorName',
+  requestPurpose: 'requestPurpose',
+  registrarName: 'registrarName',
+  verifiedBy: 'verifiedBy',
+  verifierPosition: 'verifierPosition',
+  certifyingOfficerName: 'certifyingOfficerName',
+  certifyingOfficerPosition: 'certifyingOfficerPosition',
+  processFeeInfo: 'processFeeInfo',
+  remarks: 'remarks',
+  signatureImagePath: 'signatureImagePath',
+  userId: 'userId'
+} as const
+
+export type MarriageRecordOrderByRelevanceFieldEnum = (typeof MarriageRecordOrderByRelevanceFieldEnum)[keyof typeof MarriageRecordOrderByRelevanceFieldEnum]
+
+
+export const MarriageCertificateApplicationOrderByRelevanceFieldEnum = {
+  id: 'id',
+  registryNo: 'registryNo',
+  bookNo: 'bookNo',
+  pageNo: 'pageNo',
+  dateOfRegistration: 'dateOfRegistration',
+  groomFirstName: 'groomFirstName',
+  groomMiddleName: 'groomMiddleName',
+  groomLastName: 'groomLastName',
+  groomDateOfBirth: 'groomDateOfBirth',
+  brideFirstName: 'brideFirstName',
+  brideMiddleName: 'brideMiddleName',
+  brideLastName: 'brideLastName',
+  brideDateOfBirth: 'brideDateOfBirth',
+  userId: 'userId'
+} as const
+
+export type MarriageCertificateApplicationOrderByRelevanceFieldEnum = (typeof MarriageCertificateApplicationOrderByRelevanceFieldEnum)[keyof typeof MarriageCertificateApplicationOrderByRelevanceFieldEnum]
 
 
 
@@ -768,6 +1174,20 @@ export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel,
  * Reference to a field of type 'Int'
  */
 export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
+    
+
+
+/**
+ * Reference to a field of type 'CivilStatus'
+ */
+export type EnumCivilStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CivilStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'Float'
+ */
+export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
     
 
 /**
@@ -867,6 +1287,9 @@ export type PrismaClientOptions = ({
 export type GlobalOmitConfig = {
   user?: Prisma.UserOmit
   birthRecord?: Prisma.BirthRecordOmit
+  deathRecord?: Prisma.DeathRecordOmit
+  marriageRecord?: Prisma.MarriageRecordOmit
+  marriageCertificateApplication?: Prisma.MarriageCertificateApplicationOmit
 }
 
 /* Types for Logging */
