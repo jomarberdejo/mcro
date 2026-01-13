@@ -86,7 +86,6 @@ model SupportingDocument {
   description String? // Optional description
   type        DocumentType @default(OTHER)
 
-  // Polymorphic relations - only one should be filled
   birthRecordId                    String?
   deathRecordId                    String?
   marriageRecordId                 String?

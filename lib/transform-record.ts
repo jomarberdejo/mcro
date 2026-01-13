@@ -4,7 +4,7 @@ import { BirthRecord, DeathRecord, MarriageRecord, MarriageCertificateApplicatio
 import { BirthRecordFormInput } from "@/lib/validations/birth-record.schema";
 import { DeathRecordFormInput } from "@/lib/validations/death-record.schema";
 import { MarriageRecordFormInput } from "@/lib/validations/marriage-record.schema";
-import { MarriageCertificateApplicationFormInput } from "@/lib/validations/marriage-certificate-application.schema";
+import { MarriageCertificateApplicationFormInput } from "@/lib/validations/marriage-cert-app.schema";
 
 /**
  * Transform BirthRecord (Prisma) into form input

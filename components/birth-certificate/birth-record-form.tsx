@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useState } from "react";
@@ -21,9 +22,7 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { ArrowLeft, Upload, X, FileImage, Loader2 } from "lucide-react";
-import {
-  BirthRecordFormInput,
-} from "@/lib/validations/birth-record.schema";
+import { BirthRecordFormInput } from "@/lib/validations/birth-record.schema";
 import Image from "next/image";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -48,90 +47,37 @@ export const BirthRecordForm: React.FC<BirthRecordFormProps> = ({
   defaultValues,
   isEditing = false,
 }) => {
-  const {
-    form,
-    signaturePreview,
-    setSignaturePreview,
-    isUploadingSignature,
-    setIsUploadingSignature,
-    onSubmit,
-    handleCancel,
-  } = useBirthRecordForm({ recordId, defaultValues, isEditing });
-
-  const { control, handleSubmit, setValue, watch, formState: { isSubmitting } } = form;
-
-  const { uploadFile, deleteFile } = useFileUpload(
-    setValue,
-    watch
-  );
-
-  const [supportingDocuments, setSupportingDocuments] = useState<SupportingDocument[]>([]);
+  const [supportingDocuments, setSupportingDocuments] = useState<
+    SupportingDocument[]
+  >([]);
   const [isUploadingDoc, setIsUploadingDoc] = useState(false);
+
+  const { form, onSubmit, handleCancel } = useBirthRecordForm({
+    recordId,
+    defaultValues,
+    isEditing,
+  });
+
+  const {
+    control,
+    handleSubmit,
+    setValue,
+    watch,
+    formState: { isSubmitting },
+  } = form;
+
+  const { uploadFile, deleteFile } = useFileUpload();
 
   const isTwinValue = watch("isTwin");
 
-  const handleSignatureUpload = async (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    if (!file.type.startsWith("image/")) {
-      toast.error("Please upload an image file");
-      return;
-    }
-
-    if (file.size > 2 * 1024 * 1024) {
-      toast.error("Image size should be less than 2MB");
-      return;
-    }
-
-    setIsUploadingSignature(true);
-
-    try {
-      const currentSignaturePath = watch("signatureImagePath");
-      if (currentSignaturePath) {
-        await deleteFile(currentSignaturePath);
-      }
-
-      const result = await uploadFile(file, "signature");
-      setSignaturePreview(result.path);
-      setValue("signatureImagePath", result.path);
-      toast.success("Signature uploaded successfully");
-    } catch (error) {
-      console.error("Error uploading signature:", error);
-      toast.error(
-        error instanceof Error ? error.message : "Failed to upload signature"
-      );
-    } finally {
-      setIsUploadingSignature(false);
-    }
-  };
-
-  const removeSignature = async () => {
-    const currentPath = watch("signatureImagePath");
-    if (currentPath) {
-      await deleteFile(currentPath);
-    }
-
-    setSignaturePreview(null);
-    setValue("signatureImagePath", "");
-    const fileInput = document.getElementById(
-      "signatureUpload"
-    ) as HTMLInputElement;
-    if (fileInput) fileInput.value = "";
-  };
-
-  // Supporting documents handlers
   const handleSupportingDocumentsUpload = async (
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
     const files = Array.from(e.target.files || []);
     if (files.length === 0) return;
 
-    // Validate files
     const invalidFiles = files.filter(
-      file => !file.type.startsWith("image/") || file.size > 5 * 1024 * 1024
+      (file) => !file.type.startsWith("image/") || file.size > 5 * 1024 * 1024
     );
 
     if (invalidFiles.length > 0) {
@@ -145,7 +91,6 @@ export const BirthRecordForm: React.FC<BirthRecordFormProps> = ({
       const uploadPromises = files.map(async (file) => {
         const result = await uploadFile(file, "documents");
         const previewUrl = URL.createObjectURL(file);
-        
         return {
           id: result.path,
           path: result.path,
@@ -155,11 +100,14 @@ export const BirthRecordForm: React.FC<BirthRecordFormProps> = ({
       });
 
       const uploadedDocs = await Promise.all(uploadPromises);
-      setSupportingDocuments(prev => [...prev, ...uploadedDocs]);
-      
-      const allPaths = [...supportingDocuments.map(d => d.path), ...uploadedDocs.map(d => d.path)];
+      setSupportingDocuments((prev) => [...prev, ...uploadedDocs]);
+
+      const allPaths = [
+        ...supportingDocuments.map((d) => d.path),
+        ...uploadedDocs.map((d) => d.path),
+      ];
       setValue("supportingDocuments", allPaths);
-      
+
       toast.success(`${uploadedDocs.length} document(s) uploaded successfully`);
     } catch (error) {
       console.error("Error uploading documents:", error);
@@ -168,24 +116,28 @@ export const BirthRecordForm: React.FC<BirthRecordFormProps> = ({
       );
     } finally {
       setIsUploadingDoc(false);
-      // Reset file input
-      const fileInput = document.getElementById("documentsUpload") as HTMLInputElement;
+      const fileInput = document.getElementById(
+        "documentsUpload"
+      ) as HTMLInputElement;
       if (fileInput) fileInput.value = "";
     }
   };
 
   const removeSupportingDocument = async (docId: string) => {
-    const doc = supportingDocuments.find(d => d.id === docId);
+    const doc = supportingDocuments.find((d) => d.id === docId);
     if (!doc) return;
 
     try {
       await deleteFile(doc.path);
       URL.revokeObjectURL(doc.preview);
-      
-      const updatedDocs = supportingDocuments.filter(d => d.id !== docId);
+
+      const updatedDocs = supportingDocuments.filter((d) => d.id !== docId);
       setSupportingDocuments(updatedDocs);
-      setValue("supportingDocuments", updatedDocs.map(d => d.path));
-      
+      setValue(
+        "supportingDocuments",
+        updatedDocs.map((d) => d.path)
+      );
+
       toast.success("Document removed");
     } catch (error) {
       console.error("Error removing document:", error);
@@ -219,8 +171,9 @@ export const BirthRecordForm: React.FC<BirthRecordFormProps> = ({
                     Supporting Documents
                   </h4>
                   <p className="text-sm text-blue-700 mb-3">
-                    Upload supporting documents such as birth certificates, IDs, or other relevant files.
-                    You can upload multiple images at once.
+                    Upload supporting documents such as birth certificates, IDs,
+                    or other relevant files. You can upload multiple images at
+                    once.
                   </p>
 
                   <div className="space-y-3">
@@ -305,9 +258,10 @@ export const BirthRecordForm: React.FC<BirthRecordFormProps> = ({
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
               <FieldGroup>
                 <div className="space-y-5">
-
                   <div className="space-y-4">
-                    <h3 className="font-semibold text-gray-900">Registry Information</h3>
+                    <h3 className="font-semibold text-gray-900">
+                      Registry Information
+                    </h3>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <Controller
@@ -328,7 +282,7 @@ export const BirthRecordForm: React.FC<BirthRecordFormProps> = ({
                               className={cn(
                                 "h-11 text-base transition-all",
                                 fieldState.invalid &&
-                                "border-red-500 focus-visible:ring-red-500"
+                                  "border-red-500 focus-visible:ring-red-500"
                               )}
                               aria-invalid={fieldState.invalid}
                             />
@@ -358,7 +312,7 @@ export const BirthRecordForm: React.FC<BirthRecordFormProps> = ({
                               className={cn(
                                 "h-11 text-base transition-all",
                                 fieldState.invalid &&
-                                "border-red-500 focus-visible:ring-red-500"
+                                  "border-red-500 focus-visible:ring-red-500"
                               )}
                               aria-invalid={fieldState.invalid}
                             />
@@ -388,7 +342,7 @@ export const BirthRecordForm: React.FC<BirthRecordFormProps> = ({
                               className={cn(
                                 "h-11 text-base transition-all",
                                 fieldState.invalid &&
-                                "border-red-500 focus-visible:ring-red-500"
+                                  "border-red-500 focus-visible:ring-red-500"
                               )}
                               aria-invalid={fieldState.invalid}
                             />
@@ -398,8 +352,6 @@ export const BirthRecordForm: React.FC<BirthRecordFormProps> = ({
                           </Field>
                         )}
                       />
-
-
                     </div>
 
                     {/* Date of Registration */}
@@ -422,7 +374,7 @@ export const BirthRecordForm: React.FC<BirthRecordFormProps> = ({
                             className={cn(
                               "h-11 text-base transition-all",
                               fieldState.invalid &&
-                              "border-red-500 focus-visible:ring-red-500"
+                                "border-red-500 focus-visible:ring-red-500"
                             )}
                             aria-invalid={fieldState.invalid}
                           />
@@ -434,12 +386,9 @@ export const BirthRecordForm: React.FC<BirthRecordFormProps> = ({
                     />
                   </div>
 
-
-
-
                   <div className="border-t pt-4">
                     <h3 className="font-semibold mb-3 text-gray-900">
-                      Child Information
+                      Child&apos;s Information
                     </h3>
                     <div className="grid grid-cols-3 gap-4">
                       <Controller
@@ -458,7 +407,7 @@ export const BirthRecordForm: React.FC<BirthRecordFormProps> = ({
                               className={cn(
                                 "h-11 text-base transition-all",
                                 fieldState.invalid &&
-                                "border-red-500 focus-visible:ring-red-500"
+                                  "border-red-500 focus-visible:ring-red-500"
                               )}
                               {...field}
                               aria-invalid={fieldState.invalid}
@@ -485,7 +434,7 @@ export const BirthRecordForm: React.FC<BirthRecordFormProps> = ({
                               className={cn(
                                 "h-11 text-base transition-all",
                                 fieldState.invalid &&
-                                "border-red-500 focus-visible:ring-red-500"
+                                  "border-red-500 focus-visible:ring-red-500"
                               )}
                               {...field}
                               aria-invalid={fieldState.invalid}
@@ -538,7 +487,7 @@ export const BirthRecordForm: React.FC<BirthRecordFormProps> = ({
                                 className={cn(
                                   "w-full h-11 text-base",
                                   fieldState.invalid &&
-                                  "border-red-500 focus:ring-red-500"
+                                    "border-red-500 focus:ring-red-500"
                                 )}
                               >
                                 <SelectValue placeholder="Select sex" />
@@ -571,7 +520,7 @@ export const BirthRecordForm: React.FC<BirthRecordFormProps> = ({
                               className={cn(
                                 "h-11 text-base transition-all",
                                 fieldState.invalid &&
-                                "border-red-500 focus-visible:ring-red-500"
+                                  "border-red-500 focus-visible:ring-red-500"
                               )}
                               {...field}
                               aria-invalid={fieldState.invalid}
@@ -644,7 +593,7 @@ export const BirthRecordForm: React.FC<BirthRecordFormProps> = ({
                                   className={cn(
                                     "h-11 text-base transition-all",
                                     fieldState.invalid &&
-                                    "border-red-500 focus-visible:ring-red-500"
+                                      "border-red-500 focus-visible:ring-red-500"
                                   )}
                                   {...field}
                                   value={field.value ?? ""}
@@ -673,7 +622,7 @@ export const BirthRecordForm: React.FC<BirthRecordFormProps> = ({
                                   className={cn(
                                     "h-11 text-base transition-all",
                                     fieldState.invalid &&
-                                    "border-red-500 focus-visible:ring-red-500"
+                                      "border-red-500 focus-visible:ring-red-500"
                                   )}
                                   {...field}
                                   value={field.value ?? ""}
@@ -702,7 +651,7 @@ export const BirthRecordForm: React.FC<BirthRecordFormProps> = ({
                                   className={cn(
                                     "h-11 text-base transition-all",
                                     fieldState.invalid &&
-                                    "border-red-500 focus-visible:ring-red-500"
+                                      "border-red-500 focus-visible:ring-red-500"
                                   )}
                                   {...field}
                                   value={field.value ?? ""}
@@ -721,7 +670,7 @@ export const BirthRecordForm: React.FC<BirthRecordFormProps> = ({
 
                   <div className="border-t pt-4">
                     <h3 className="font-semibold mb-3 text-gray-900">
-                      Mother Information
+                      Mother&apos;s Information
                     </h3>
                     <div className="grid grid-cols-3 gap-4">
                       <Controller
@@ -807,7 +756,7 @@ export const BirthRecordForm: React.FC<BirthRecordFormProps> = ({
 
                   <div className="border-t pt-4">
                     <h3 className="font-semibold mb-3 text-gray-900">
-                      Father Information
+                      Father&apos;s Information
                     </h3>
                     <div className="grid grid-cols-3 gap-4">
                       <Controller
@@ -956,7 +905,9 @@ export const BirthRecordForm: React.FC<BirthRecordFormProps> = ({
                               Remarks (Optional)
                             </FieldLabel>
                             <p className="text-xs text-gray-500 mb-2">
-                              Press Enter twice between paragraphs. Each paragraph will be automatically indented in the PDF.
+                              Press Enter twice between paragraphs. Each
+                              paragraph will be automatically indented in the
+                              PDF.
                             </p>
                             <Textarea
                               id="remarks"
@@ -1162,80 +1113,8 @@ export const BirthRecordForm: React.FC<BirthRecordFormProps> = ({
                           )}
                         />
                       </div>
-
-                      {/* Signature */}
-                      <div>
-                        <FieldLabel className="mb-2 block text-sm font-semibold text-gray-700">
-                          Signature Image (Optional)
-                        </FieldLabel>
-
-                        <div className="space-y-3">
-                          {!signaturePreview ? (
-                            <div className="flex items-center gap-3">
-                              <Input
-                                id="signatureUpload"
-                                type="file"
-                                accept="image/*"
-                                onChange={handleSignatureUpload}
-                                className="hidden"
-                                disabled={isUploadingSignature}
-                              />
-                              <Button
-                                type="button"
-                                variant="outline"
-                                onClick={() =>
-                                  document.getElementById("signatureUpload")?.click()
-                                }
-                                disabled={isUploadingSignature}
-                              >
-                                {isUploadingSignature ? (
-                                  <>
-                                    <Loader2 className="w-4 h-4 animate-spin mr-2" />
-                                    Uploading...
-                                  </>
-                                ) : (
-                                  <>
-                                    <Upload className="w-4 h-4 mr-2" />
-                                    Upload Signature
-                                  </>
-                                )}
-                              </Button>
-                              <span className="text-sm text-gray-500">
-                                PNG, JPG up to 2MB (transparent background recommended)
-                              </span>
-                            </div>
-                          ) : (
-                            <div className="border rounded-lg p-4 bg-gray-50">
-                              <div className="flex items-start justify-between mb-2">
-                                <FieldLabel className="text-sm font-medium">
-                                  Signature Preview
-                                </FieldLabel>
-                                <Button
-                                  type="button"
-                                  variant="ghost"
-                                  size="sm"
-                                  onClick={removeSignature}
-                                  className="h-8 w-8 p-0"
-                                >
-                                  <X className="w-4 h-4" />
-                                </Button>
-                              </div>
-
-                              <div className="relative w-full max-w-xs h-24 bg-white border rounded flex items-center justify-center">
-                                <Image
-                                  src={signaturePreview}
-                                  alt="Signature preview"
-                                  fill
-                                  className="object-contain p-2"
-                                />
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                      </div>
                     </div>
                   </div>
-
 
                   <div className="flex gap-2 pt-4">
                     <Button

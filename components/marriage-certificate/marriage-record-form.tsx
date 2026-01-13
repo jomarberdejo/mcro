@@ -68,7 +68,7 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
     formState: { isSubmitting },
   } = form;
 
-  const { uploadFile, deleteFile } = useFileUpload(setValue, watch);
+  const { uploadFile, deleteFile } = useFileUpload();
 
   const [supportingDocuments, setSupportingDocuments] = useState<
     SupportingDocument[]

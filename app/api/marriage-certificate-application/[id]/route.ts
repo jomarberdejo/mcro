@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { marriageCertificateApplicationSchema } from "@/lib/validations/marriage-certificate-application.schema";
+import { marriageCertificateApplicationSchema } from "@/lib/validations/marriage-cert-app.schema";
 import { z } from "zod";
 
 export async function GET(

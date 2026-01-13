@@ -2,9 +2,9 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useMarriageCertificateApplications } from "@/hooks/marriage-certificate-application/use-marriage-certificate-application";
+import { useMarriageCertificateApplications } from "@/hooks/marriage-cert-app/use-marriage-cert-app";
 import { filterMarriageCertificateApplications } from "@/utils/birth-records/filterMarriageCertificateApplication";
-import { MarriageCertificateApplicationList } from "@/components/marriage-certificate-application/marriage-certificate-application-list";
+import { MarriageCertificateApplicationList } from "@/components/marriage-cert-app/marriage-cert-app-list";
 
 export interface MarriageCertificateApplicationFilterState {
   registryNo: string;
@@ -42,9 +42,9 @@ const MarriageCertificateApplications: React.FC = () => {
       storageAvailable
       onFilterChange={setFilters}
       onClearFilters={() => setFilters(EMPTY_FILTERS)}
-      onNew={() => router.push("/admin/marriage-certificate-application/new")}
-      onView={(app) => router.push(`/admin/marriage-certificate-application/${app.id}`)}
-      onEdit={(app) => router.push(`/admin/marriage-certificate-application/${app.id}/edit`)}
+      onNew={() => router.push("/admin/marriage-cert-app/new")}
+      onView={(app) => router.push(`/admin/marriage-cert-app/${app.id}`)}
+      onEdit={(app) => router.push(`/admin/marriage-cert-app/${app.id}/edit`)}
       onDelete={deleteApplication}
     />
   );

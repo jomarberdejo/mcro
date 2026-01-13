@@ -21,9 +21,7 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { ArrowLeft, Upload, X, FileImage, Loader2 } from "lucide-react";
-import {
-  DeathRecordFormInput,
-} from "@/lib/validations/death-record.schema";
+import { DeathRecordFormInput } from "@/lib/validations/death-record.schema";
 import Image from "next/image";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -58,14 +56,19 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
     handleCancel,
   } = useDeathRecordForm({ recordId, defaultValues, isEditing });
 
-  const { control, handleSubmit, setValue, watch, formState: { isSubmitting } } = form;
-
-  const { uploadFile, deleteFile } = useFileUpload(
+  const {
+    control,
+    handleSubmit,
     setValue,
-    watch
-  );
+    watch,
+    formState: { isSubmitting },
+  } = form;
 
-  const [supportingDocuments, setSupportingDocuments] = useState<SupportingDocument[]>([]);
+  const { uploadFile, deleteFile } = useFileUpload();
+
+  const [supportingDocuments, setSupportingDocuments] = useState<
+    SupportingDocument[]
+  >([]);
   const [isUploadingDoc, setIsUploadingDoc] = useState(false);
 
   const handleSignatureUpload = async (
@@ -129,7 +132,7 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
 
     // Validate files
     const invalidFiles = files.filter(
-      file => !file.type.startsWith("image/") || file.size > 5 * 1024 * 1024
+      (file) => !file.type.startsWith("image/") || file.size > 5 * 1024 * 1024
     );
 
     if (invalidFiles.length > 0) {
@@ -143,7 +146,7 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
       const uploadPromises = files.map(async (file) => {
         const result = await uploadFile(file, "documents");
         const previewUrl = URL.createObjectURL(file);
-        
+
         return {
           id: result.path,
           path: result.path,
@@ -153,12 +156,15 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
       });
 
       const uploadedDocs = await Promise.all(uploadPromises);
-      setSupportingDocuments(prev => [...prev, ...uploadedDocs]);
-      
+      setSupportingDocuments((prev) => [...prev, ...uploadedDocs]);
+
       // Update form value with paths
-      const allPaths = [...supportingDocuments.map(d => d.path), ...uploadedDocs.map(d => d.path)];
+      const allPaths = [
+        ...supportingDocuments.map((d) => d.path),
+        ...uploadedDocs.map((d) => d.path),
+      ];
       setValue("supportingDocuments", allPaths);
-      
+
       toast.success(`${uploadedDocs.length} document(s) uploaded successfully`);
     } catch (error) {
       console.error("Error uploading documents:", error);
@@ -168,23 +174,28 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
     } finally {
       setIsUploadingDoc(false);
       // Reset file input
-      const fileInput = document.getElementById("documentsUpload") as HTMLInputElement;
+      const fileInput = document.getElementById(
+        "documentsUpload"
+      ) as HTMLInputElement;
       if (fileInput) fileInput.value = "";
     }
   };
 
   const removeSupportingDocument = async (docId: string) => {
-    const doc = supportingDocuments.find(d => d.id === docId);
+    const doc = supportingDocuments.find((d) => d.id === docId);
     if (!doc) return;
 
     try {
       await deleteFile(doc.path);
       URL.revokeObjectURL(doc.preview);
-      
-      const updatedDocs = supportingDocuments.filter(d => d.id !== docId);
+
+      const updatedDocs = supportingDocuments.filter((d) => d.id !== docId);
       setSupportingDocuments(updatedDocs);
-      setValue("supportingDocuments", updatedDocs.map(d => d.path));
-      
+      setValue(
+        "supportingDocuments",
+        updatedDocs.map((d) => d.path)
+      );
+
       toast.success("Document removed");
     } catch (error) {
       console.error("Error removing document:", error);
@@ -218,8 +229,9 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
                     Supporting Documents
                   </h4>
                   <p className="text-sm text-blue-700 mb-3">
-                    Upload supporting documents such as death certificates, IDs, or other relevant files.
-                    You can upload multiple images at once.
+                    Upload supporting documents such as death certificates, IDs,
+                    or other relevant files. You can upload multiple images at
+                    once.
                   </p>
 
                   <div className="space-y-3">
@@ -305,7 +317,9 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
               <FieldGroup>
                 <div className="space-y-5">
                   <div className="space-y-4">
-                    <h3 className="font-semibold text-gray-900">Registry Information</h3>
+                    <h3 className="font-semibold text-gray-900">
+                      Registry Information
+                    </h3>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <Controller
@@ -313,7 +327,10 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
                         control={control}
                         render={({ field, fieldState }) => (
                           <Field>
-                            <FieldLabel htmlFor="registryNo" className="text-sm font-semibold text-gray-700">
+                            <FieldLabel
+                              htmlFor="registryNo"
+                              className="text-sm font-semibold text-gray-700"
+                            >
                               Registry No. *
                             </FieldLabel>
                             <Input
@@ -321,11 +338,14 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
                               {...field}
                               className={cn(
                                 "h-11 text-base transition-all",
-                                fieldState.invalid && "border-red-500 focus-visible:ring-red-500"
+                                fieldState.invalid &&
+                                  "border-red-500 focus-visible:ring-red-500"
                               )}
                               aria-invalid={fieldState.invalid}
                             />
-                            {fieldState.error && <FieldError errors={[fieldState.error]} />}
+                            {fieldState.error && (
+                              <FieldError errors={[fieldState.error]} />
+                            )}
                           </Field>
                         )}
                       />
@@ -335,10 +355,17 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
                         control={control}
                         render={({ field }) => (
                           <Field>
-                            <FieldLabel htmlFor="pageNo" className="text-sm font-semibold text-gray-700">
+                            <FieldLabel
+                              htmlFor="pageNo"
+                              className="text-sm font-semibold text-gray-700"
+                            >
                               Page No.
                             </FieldLabel>
-                            <Input id="pageNo" {...field} className="h-11 text-base transition-all" />
+                            <Input
+                              id="pageNo"
+                              {...field}
+                              className="h-11 text-base transition-all"
+                            />
                           </Field>
                         )}
                       />
@@ -348,10 +375,17 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
                         control={control}
                         render={({ field }) => (
                           <Field>
-                            <FieldLabel htmlFor="bookNo" className="text-sm font-semibold text-gray-700">
+                            <FieldLabel
+                              htmlFor="bookNo"
+                              className="text-sm font-semibold text-gray-700"
+                            >
                               Book No.
                             </FieldLabel>
-                            <Input id="bookNo" {...field} className="h-11 text-base transition-all" />
+                            <Input
+                              id="bookNo"
+                              {...field}
+                              className="h-11 text-base transition-all"
+                            />
                           </Field>
                         )}
                       />
@@ -362,7 +396,10 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
                       control={control}
                       render={({ field, fieldState }) => (
                         <Field>
-                          <FieldLabel htmlFor="dateOfRegistration" className="text-sm font-semibold text-gray-700">
+                          <FieldLabel
+                            htmlFor="dateOfRegistration"
+                            className="text-sm font-semibold text-gray-700"
+                          >
                             Date of Registration *
                           </FieldLabel>
                           <Input
@@ -371,25 +408,33 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
                             {...field}
                             className={cn(
                               "h-11 text-base transition-all",
-                              fieldState.invalid && "border-red-500 focus-visible:ring-red-500"
+                              fieldState.invalid &&
+                                "border-red-500 focus-visible:ring-red-500"
                             )}
                             aria-invalid={fieldState.invalid}
                           />
-                          {fieldState.error && <FieldError errors={[fieldState.error]} />}
+                          {fieldState.error && (
+                            <FieldError errors={[fieldState.error]} />
+                          )}
                         </Field>
                       )}
                     />
                   </div>
 
                   <div className="border-t pt-4">
-                    <h3 className="font-semibold mb-3 text-gray-900">Deceased Information</h3>
+                    <h3 className="font-semibold mb-3 text-gray-900">
+                      Deceased Information
+                    </h3>
                     <div className="grid grid-cols-3 gap-4">
                       <Controller
                         name="deceasedLastName"
                         control={control}
                         render={({ field, fieldState }) => (
                           <Field>
-                            <FieldLabel htmlFor="deceasedLastName" className="text-sm font-semibold text-gray-700">
+                            <FieldLabel
+                              htmlFor="deceasedLastName"
+                              className="text-sm font-semibold text-gray-700"
+                            >
                               Last Name *
                             </FieldLabel>
                             <Input
@@ -397,11 +442,14 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
                               {...field}
                               className={cn(
                                 "h-11 text-base transition-all",
-                                fieldState.invalid && "border-red-500 focus-visible:ring-red-500"
+                                fieldState.invalid &&
+                                  "border-red-500 focus-visible:ring-red-500"
                               )}
                               aria-invalid={fieldState.invalid}
                             />
-                            {fieldState.error && <FieldError errors={[fieldState.error]} />}
+                            {fieldState.error && (
+                              <FieldError errors={[fieldState.error]} />
+                            )}
                           </Field>
                         )}
                       />
@@ -410,7 +458,10 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
                         control={control}
                         render={({ field, fieldState }) => (
                           <Field>
-                            <FieldLabel htmlFor="deceasedFirstName" className="text-sm font-semibold text-gray-700">
+                            <FieldLabel
+                              htmlFor="deceasedFirstName"
+                              className="text-sm font-semibold text-gray-700"
+                            >
                               First Name *
                             </FieldLabel>
                             <Input
@@ -418,11 +469,14 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
                               {...field}
                               className={cn(
                                 "h-11 text-base transition-all",
-                                fieldState.invalid && "border-red-500 focus-visible:ring-red-500"
+                                fieldState.invalid &&
+                                  "border-red-500 focus-visible:ring-red-500"
                               )}
                               aria-invalid={fieldState.invalid}
                             />
-                            {fieldState.error && <FieldError errors={[fieldState.error]} />}
+                            {fieldState.error && (
+                              <FieldError errors={[fieldState.error]} />
+                            )}
                           </Field>
                         )}
                       />
@@ -431,10 +485,17 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
                         control={control}
                         render={({ field }) => (
                           <Field>
-                            <FieldLabel htmlFor="deceasedMiddleName" className="text-sm font-semibold text-gray-700">
+                            <FieldLabel
+                              htmlFor="deceasedMiddleName"
+                              className="text-sm font-semibold text-gray-700"
+                            >
                               Middle Name
                             </FieldLabel>
-                            <Input id="deceasedMiddleName" {...field} className="h-11 text-base transition-all" />
+                            <Input
+                              id="deceasedMiddleName"
+                              {...field}
+                              className="h-11 text-base transition-all"
+                            />
                           </Field>
                         )}
                       />
@@ -446,15 +507,22 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
                         control={control}
                         render={({ field, fieldState }) => (
                           <Field>
-                            <FieldLabel htmlFor="sex" className="text-sm font-semibold text-gray-700">
+                            <FieldLabel
+                              htmlFor="sex"
+                              className="text-sm font-semibold text-gray-700"
+                            >
                               Sex *
                             </FieldLabel>
-                            <Select onValueChange={field.onChange} value={field.value}>
+                            <Select
+                              onValueChange={field.onChange}
+                              value={field.value}
+                            >
                               <SelectTrigger
                                 id="sex"
                                 className={cn(
                                   "w-full h-11 text-base",
-                                  fieldState.invalid && "border-red-500 focus:ring-red-500"
+                                  fieldState.invalid &&
+                                    "border-red-500 focus:ring-red-500"
                                 )}
                               >
                                 <SelectValue placeholder="Select sex" />
@@ -464,7 +532,9 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
                                 <SelectItem value="Female">Female</SelectItem>
                               </SelectContent>
                             </Select>
-                            {fieldState.error && <FieldError errors={[fieldState.error]} />}
+                            {fieldState.error && (
+                              <FieldError errors={[fieldState.error]} />
+                            )}
                           </Field>
                         )}
                       />
@@ -474,21 +544,29 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
                         control={control}
                         render={({ field, fieldState }) => (
                           <Field>
-                            <FieldLabel htmlFor="age" className="text-sm font-semibold text-gray-700">
+                            <FieldLabel
+                              htmlFor="age"
+                              className="text-sm font-semibold text-gray-700"
+                            >
                               Age *
                             </FieldLabel>
                             <Input
                               id="age"
                               type="number"
                               {...field}
-                              onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
+                              onChange={(e) =>
+                                field.onChange(parseInt(e.target.value) || 0)
+                              }
                               className={cn(
                                 "h-11 text-base transition-all",
-                                fieldState.invalid && "border-red-500 focus-visible:ring-red-500"
+                                fieldState.invalid &&
+                                  "border-red-500 focus-visible:ring-red-500"
                               )}
                               aria-invalid={fieldState.invalid}
                             />
-                            {fieldState.error && <FieldError errors={[fieldState.error]} />}
+                            {fieldState.error && (
+                              <FieldError errors={[fieldState.error]} />
+                            )}
                           </Field>
                         )}
                       />
@@ -498,15 +576,22 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
                         control={control}
                         render={({ field, fieldState }) => (
                           <Field>
-                            <FieldLabel htmlFor="civilStatus" className="text-sm font-semibold text-gray-700">
+                            <FieldLabel
+                              htmlFor="civilStatus"
+                              className="text-sm font-semibold text-gray-700"
+                            >
                               Civil Status *
                             </FieldLabel>
-                            <Select onValueChange={field.onChange} value={field.value}>
+                            <Select
+                              onValueChange={field.onChange}
+                              value={field.value}
+                            >
                               <SelectTrigger
                                 id="civilStatus"
                                 className={cn(
                                   "w-full h-11 text-base",
-                                  fieldState.invalid && "border-red-500 focus:ring-red-500"
+                                  fieldState.invalid &&
+                                    "border-red-500 focus:ring-red-500"
                                 )}
                               >
                                 <SelectValue placeholder="Select status" />
@@ -515,11 +600,17 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
                                 <SelectItem value="Single">Single</SelectItem>
                                 <SelectItem value="Married">Married</SelectItem>
                                 <SelectItem value="Widowed">Widowed</SelectItem>
-                                <SelectItem value="Divorced">Divorced</SelectItem>
-                                <SelectItem value="Separated">Separated</SelectItem>
+                                <SelectItem value="Divorced">
+                                  Divorced
+                                </SelectItem>
+                                <SelectItem value="Separated">
+                                  Separated
+                                </SelectItem>
                               </SelectContent>
                             </Select>
-                            {fieldState.error && <FieldError errors={[fieldState.error]} />}
+                            {fieldState.error && (
+                              <FieldError errors={[fieldState.error]} />
+                            )}
                           </Field>
                         )}
                       />
@@ -529,7 +620,10 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
                         control={control}
                         render={({ field, fieldState }) => (
                           <Field>
-                            <FieldLabel htmlFor="citizenship" className="text-sm font-semibold text-gray-700">
+                            <FieldLabel
+                              htmlFor="citizenship"
+                              className="text-sm font-semibold text-gray-700"
+                            >
                               Citizenship *
                             </FieldLabel>
                             <Input
@@ -537,11 +631,14 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
                               {...field}
                               className={cn(
                                 "h-11 text-base transition-all",
-                                fieldState.invalid && "border-red-500 focus-visible:ring-red-500"
+                                fieldState.invalid &&
+                                  "border-red-500 focus-visible:ring-red-500"
                               )}
                               aria-invalid={fieldState.invalid}
                             />
-                            {fieldState.error && <FieldError errors={[fieldState.error]} />}
+                            {fieldState.error && (
+                              <FieldError errors={[fieldState.error]} />
+                            )}
                           </Field>
                         )}
                       />
@@ -549,7 +646,9 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
                   </div>
 
                   <div className="border-t pt-4">
-                    <h3 className="font-semibold mb-3 text-gray-900">Death Details</h3>
+                    <h3 className="font-semibold mb-3 text-gray-900">
+                      Death Details
+                    </h3>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <Controller
@@ -557,7 +656,10 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
                         control={control}
                         render={({ field, fieldState }) => (
                           <Field>
-                            <FieldLabel htmlFor="dateOfDeath" className="text-sm font-semibold text-gray-700">
+                            <FieldLabel
+                              htmlFor="dateOfDeath"
+                              className="text-sm font-semibold text-gray-700"
+                            >
                               Date of Death *
                             </FieldLabel>
                             <Input
@@ -566,11 +668,14 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
                               {...field}
                               className={cn(
                                 "h-11 text-base transition-all",
-                                fieldState.invalid && "border-red-500 focus-visible:ring-red-500"
+                                fieldState.invalid &&
+                                  "border-red-500 focus-visible:ring-red-500"
                               )}
                               aria-invalid={fieldState.invalid}
                             />
-                            {fieldState.error && <FieldError errors={[fieldState.error]} />}
+                            {fieldState.error && (
+                              <FieldError errors={[fieldState.error]} />
+                            )}
                           </Field>
                         )}
                       />
@@ -580,7 +685,10 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
                         control={control}
                         render={({ field, fieldState }) => (
                           <Field>
-                            <FieldLabel htmlFor="placeOfDeath" className="text-sm font-semibold text-gray-700">
+                            <FieldLabel
+                              htmlFor="placeOfDeath"
+                              className="text-sm font-semibold text-gray-700"
+                            >
                               Place of Death *
                             </FieldLabel>
                             <Input
@@ -588,11 +696,14 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
                               {...field}
                               className={cn(
                                 "h-11 text-base transition-all",
-                                fieldState.invalid && "border-red-500 focus-visible:ring-red-500"
+                                fieldState.invalid &&
+                                  "border-red-500 focus-visible:ring-red-500"
                               )}
                               aria-invalid={fieldState.invalid}
                             />
-                            {fieldState.error && <FieldError errors={[fieldState.error]} />}
+                            {fieldState.error && (
+                              <FieldError errors={[fieldState.error]} />
+                            )}
                           </Field>
                         )}
                       />
@@ -604,7 +715,10 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
                         control={control}
                         render={({ field, fieldState }) => (
                           <Field>
-                            <FieldLabel htmlFor="causeOfDeath" className="text-sm font-semibold text-gray-700">
+                            <FieldLabel
+                              htmlFor="causeOfDeath"
+                              className="text-sm font-semibold text-gray-700"
+                            >
                               Cause of Death *
                             </FieldLabel>
                             <Textarea
@@ -614,11 +728,14 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
                               {...field}
                               className={cn(
                                 "text-base",
-                                fieldState.invalid && "border-red-500 focus-visible:ring-red-500"
+                                fieldState.invalid &&
+                                  "border-red-500 focus-visible:ring-red-500"
                               )}
                               aria-invalid={fieldState.invalid}
                             />
-                            {fieldState.error && <FieldError errors={[fieldState.error]} />}
+                            {fieldState.error && (
+                              <FieldError errors={[fieldState.error]} />
+                            )}
                           </Field>
                         )}
                       />
@@ -626,7 +743,9 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
                   </div>
 
                   <div className="border-t pt-4">
-                    <h3 className="font-semibold mb-3 text-gray-900">Additional Information</h3>
+                    <h3 className="font-semibold mb-3 text-gray-900">
+                      Additional Information
+                    </h3>
 
                     <div className="space-y-4">
                       <Controller
@@ -634,7 +753,10 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
                         control={control}
                         render={({ field }) => (
                           <Field>
-                            <FieldLabel htmlFor="remarks" className="text-sm font-semibold text-gray-700">
+                            <FieldLabel
+                              htmlFor="remarks"
+                              className="text-sm font-semibold text-gray-700"
+                            >
                               Remarks (Optional)
                             </FieldLabel>
                             <Textarea
@@ -653,7 +775,10 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
                         control={control}
                         render={({ field }) => (
                           <Field>
-                            <FieldLabel htmlFor="processFeeInfo" className="text-sm font-semibold text-gray-700">
+                            <FieldLabel
+                              htmlFor="processFeeInfo"
+                              className="text-sm font-semibold text-gray-700"
+                            >
                               Registration Fee Details (Optional)
                             </FieldLabel>
                             <Textarea
@@ -670,7 +795,9 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
                   </div>
 
                   <div className="border-t pt-4">
-                    <h3 className="font-semibold mb-3 text-gray-900">Issuance Information</h3>
+                    <h3 className="font-semibold mb-3 text-gray-900">
+                      Issuance Information
+                    </h3>
 
                     <div className="grid grid-cols-2 gap-4">
                       <Controller
@@ -678,7 +805,10 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
                         control={control}
                         render={({ field }) => (
                           <Field>
-                            <FieldLabel htmlFor="requestorName" className="text-sm font-semibold text-gray-700">
+                            <FieldLabel
+                              htmlFor="requestorName"
+                              className="text-sm font-semibold text-gray-700"
+                            >
                               Issued To (Requestor Name)
                             </FieldLabel>
                             <Input
@@ -696,7 +826,10 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
                         control={control}
                         render={({ field }) => (
                           <Field>
-                            <FieldLabel htmlFor="requestPurpose" className="text-sm font-semibold text-gray-700">
+                            <FieldLabel
+                              htmlFor="requestPurpose"
+                              className="text-sm font-semibold text-gray-700"
+                            >
                               Purpose of Request
                             </FieldLabel>
                             <Input
@@ -712,7 +845,9 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
                   </div>
 
                   <div className="border-t pt-4">
-                    <h3 className="font-semibold mb-3 text-gray-900">Certification Details</h3>
+                    <h3 className="font-semibold mb-3 text-gray-900">
+                      Certification Details
+                    </h3>
 
                     <div className="space-y-4">
                       <Controller
@@ -720,7 +855,10 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
                         control={control}
                         render={({ field }) => (
                           <Field>
-                            <FieldLabel htmlFor="registrarName" className="text-sm font-semibold text-gray-700">
+                            <FieldLabel
+                              htmlFor="registrarName"
+                              className="text-sm font-semibold text-gray-700"
+                            >
                               Municipal Civil Registrar Name
                             </FieldLabel>
                             <Input
@@ -739,7 +877,10 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
                           control={control}
                           render={({ field }) => (
                             <Field>
-                              <FieldLabel htmlFor="verifiedBy" className="text-sm font-semibold text-gray-700">
+                              <FieldLabel
+                                htmlFor="verifiedBy"
+                                className="text-sm font-semibold text-gray-700"
+                              >
                                 Verified By
                               </FieldLabel>
                               <Input
@@ -757,7 +898,10 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
                           control={control}
                           render={({ field }) => (
                             <Field>
-                              <FieldLabel htmlFor="verifierPosition" className="text-sm font-semibold text-gray-700">
+                              <FieldLabel
+                                htmlFor="verifierPosition"
+                                className="text-sm font-semibold text-gray-700"
+                              >
                                 Verifier Position
                               </FieldLabel>
                               <Input
@@ -777,7 +921,10 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
                           control={control}
                           render={({ field }) => (
                             <Field>
-                              <FieldLabel htmlFor="certifyingOfficerName" className="text-sm font-semibold text-gray-700">
+                              <FieldLabel
+                                htmlFor="certifyingOfficerName"
+                                className="text-sm font-semibold text-gray-700"
+                              >
                                 Certifying Officer Name (Optional)
                               </FieldLabel>
                               <Input
@@ -786,7 +933,9 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
                                 className="h-11 text-base transition-all"
                                 {...field}
                               />
-                              <p className="text-xs text-gray-500 mt-1">Leave blank if same as MCR</p>
+                              <p className="text-xs text-gray-500 mt-1">
+                                Leave blank if same as MCR
+                              </p>
                             </Field>
                           )}
                         />
@@ -796,7 +945,10 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
                           control={control}
                           render={({ field }) => (
                             <Field>
-                              <FieldLabel htmlFor="certifyingOfficerPosition" className="text-sm font-semibold text-gray-700">
+                              <FieldLabel
+                                htmlFor="certifyingOfficerPosition"
+                                className="text-sm font-semibold text-gray-700"
+                              >
                                 Certifying Officer Position (Optional)
                               </FieldLabel>
                               <Input
@@ -829,7 +981,11 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
                               <Button
                                 type="button"
                                 variant="outline"
-                                onClick={() => document.getElementById("signatureUpload")?.click()}
+                                onClick={() =>
+                                  document
+                                    .getElementById("signatureUpload")
+                                    ?.click()
+                                }
                                 disabled={isUploadingSignature}
                               >
                                 {isUploadingSignature ? (
@@ -845,13 +1001,16 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
                                 )}
                               </Button>
                               <span className="text-sm text-gray-500">
-                                PNG, JPG up to 2MB (transparent background recommended)
+                                PNG, JPG up to 2MB (transparent background
+                                recommended)
                               </span>
                             </div>
                           ) : (
                             <div className="border rounded-lg p-4 bg-gray-50">
                               <div className="flex items-start justify-between mb-2">
-                                <FieldLabel className="text-sm font-medium">Signature Preview</FieldLabel>
+                                <FieldLabel className="text-sm font-medium">
+                                  Signature Preview
+                                </FieldLabel>
                                 <Button
                                   type="button"
                                   variant="ghost"
@@ -911,4 +1070,4 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
       </div>
     </div>
   );
-};  
+};

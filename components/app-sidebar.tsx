@@ -41,8 +41,8 @@ const data = {
       icon: Heart,
     },
     {
-      title: "Marriage Cert Application",
-      url: "/admin/marriage-certificate-application",
+      title: "Application for Marriage Certificate",
+      url: "/admin/marriage-cert-app",
       icon: ClipboardList,
     },
   ],

@@ -1,4 +1,4 @@
-import { MarriageCertificateApplicationFilterState } from "@/app/admin/(pages)/marriage-certificate-application/page";
+import { MarriageCertificateApplicationFilterState } from "@/app/admin/(pages)/marriage-cert-app/page";
 import { MarriageCertificateApplication } from "@/lib/generated/prisma/client";
 
 export function filterMarriageCertificateApplications(

@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import {
   marriageCertificateApplicationSchema,
   MarriageCertificateApplicationFormInput,
-} from "@/lib/validations/marriage-certificate-application.schema";
+} from "@/lib/validations/marriage-cert-app.schema";
 
 interface UseMarriageCertificateApplicationFormProps {
   applicationId?: string;

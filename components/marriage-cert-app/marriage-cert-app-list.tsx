@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Plus, Eye, Edit2, Trash2, ChevronLeft, ChevronRight } from "lucide-react";
 import { MarriageCertificateApplication } from "@/lib/generated/prisma/client";
-import { MarriageCertificateApplicationFilterState } from "@/app/admin/(pages)/marriage-certificate-application/page";
+import { MarriageCertificateApplicationFilterState } from "@/app/admin/(pages)/marriage-cert-app/page";
 
 interface MarriageCertificateApplicationListProps {
   applications: MarriageCertificateApplication[];

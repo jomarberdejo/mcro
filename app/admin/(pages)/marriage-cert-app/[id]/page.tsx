@@ -1,4 +1,4 @@
-import { MarriageCertificateApplicationView } from "@/components/marriage-certificate-application/marriage-certificate-application-view";
+import { MarriageCertificateApplicationView } from "@/components/marriage-cert-app/marriage-cert-app-view";
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 

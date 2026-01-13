@@ -12,12 +12,12 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { ArrowLeft, Upload, X, FileImage, Loader2 } from "lucide-react";
-import { MarriageCertificateApplicationFormInput } from "@/lib/validations/marriage-certificate-application.schema";
+import { MarriageCertificateApplicationFormInput } from "@/lib/validations/marriage-cert-app.schema";
 import Image from "next/image";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { useFileUpload } from "@/hooks/use-file-upload";
-import { useMarriageCertificateApplicationForm } from "@/hooks/marriage-certificate-application/use-marriage-certificate-application-form";
+import { useMarriageCertificateApplicationForm } from "@/hooks/marriage-cert-app/use-marriage-cert-app-form";
 
 interface MarriageCertificateApplicationFormProps {
   applicationId?: string;
@@ -62,7 +62,7 @@ export const MarriageCertificateApplicationForm: React.FC<
   
 
 
-  const { uploadFile, deleteFile } = useFileUpload(setValue, watch);
+  const { uploadFile, deleteFile } = useFileUpload();
   
     const [supportingDocuments, setSupportingDocuments] = useState<
       SupportingDocument[]

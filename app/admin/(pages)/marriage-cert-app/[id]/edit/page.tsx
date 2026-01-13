@@ -1,4 +1,4 @@
-import { MarriageCertificateApplicationForm } from "@/components/marriage-certificate-application/marriage-certificate-application-form";
+import { MarriageCertificateApplicationForm } from "@/components/marriage-cert-app/marriage-cert-app-form";
 import { prisma } from "@/lib/prisma";
 import { transformMarriageCertificateApplication } from "@/lib/transform-record";
 import { notFound } from "next/navigation";
