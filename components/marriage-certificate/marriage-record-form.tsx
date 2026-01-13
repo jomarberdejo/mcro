@@ -46,25 +46,16 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
   defaultValues,
   isEditing = false,
 }) => {
-  const {
-    form,
-    signaturePreview,
-    setSignaturePreview,
-    documentPreview,
-    setDocumentPreview,
-    isProcessing,
-    setIsProcessing,
-    isUploadingSignature,
-    setIsUploadingSignature,
-    onSubmit,
-    handleCancel,
-  } = useMarriageRecordForm({ recordId, defaultValues, isEditing });
+  const { form, isProcessing, onSubmit, handleCancel } = useMarriageRecordForm({
+    recordId,
+    defaultValues,
+    isEditing,
+  });
 
   const {
     control,
     handleSubmit,
     setValue,
-    watch,
     formState: { isSubmitting },
   } = form;
 
@@ -74,58 +65,6 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
     SupportingDocument[]
   >([]);
   const [isUploadingDoc, setIsUploadingDoc] = useState(false);
-
-  const handleSignatureUpload = async (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    if (!file.type.startsWith("image/")) {
-      toast.error("Please upload an image file");
-      return;
-    }
-
-    if (file.size > 2 * 1024 * 1024) {
-      toast.error("Image size should be less than 2MB");
-      return;
-    }
-
-    setIsUploadingSignature(true);
-
-    try {
-      const currentSignaturePath = watch("signatureImagePath");
-      if (currentSignaturePath) {
-        await deleteFile(currentSignaturePath);
-      }
-
-      const result = await uploadFile(file, "signature");
-      setSignaturePreview(result.path);
-      setValue("signatureImagePath", result.path);
-      toast.success("Signature uploaded successfully");
-    } catch (error) {
-      console.error("Error uploading signature:", error);
-      toast.error(
-        error instanceof Error ? error.message : "Failed to upload signature"
-      );
-    } finally {
-      setIsUploadingSignature(false);
-    }
-  };
-
-  const removeSignature = async () => {
-    const currentPath = watch("signatureImagePath");
-    if (currentPath) {
-      await deleteFile(currentPath);
-    }
-
-    setSignaturePreview(null);
-    setValue("signatureImagePath", "");
-    const fileInput = document.getElementById(
-      "signatureUpload"
-    ) as HTMLInputElement;
-    if (fileInput) fileInput.value = "";
-  };
 
   // Supporting documents handlers
   const handleSupportingDocumentsUpload = async (
@@ -574,9 +513,7 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                               id="husbandAge"
                               type="number"
                               {...field}
-                                onChange={(e) =>
-                                field.onChange(e.target.value)
-                              }
+                              onChange={(e) => field.onChange(e.target.value)}
                               className={cn(
                                 "h-11 text-base transition-all",
                                 fieldState.invalid &&
@@ -803,9 +740,7 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                               id="wifeAge"
                               type="number"
                               {...field}
-                              onChange={(e) =>
-                                field.onChange(e.target.value)
-                              }
+                              onChange={(e) => field.onChange(e.target.value)}
                               className={cn(
                                 "h-11 text-base transition-all",
                                 fieldState.invalid &&
@@ -1154,79 +1089,6 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                             </Field>
                           )}
                         />
-                      </div>
-
-                      <div>
-                        <FieldLabel className="mb-2 block text-sm font-semibold text-gray-700">
-                          Signature Image (Optional)
-                        </FieldLabel>
-
-                        <div className="space-y-3">
-                          {!signaturePreview ? (
-                            <div className="flex items-center gap-3">
-                              <Input
-                                id="signatureUpload"
-                                type="file"
-                                accept="image/*"
-                                onChange={handleSignatureUpload}
-                                className="hidden"
-                                disabled={isUploadingSignature}
-                              />
-                              <Button
-                                type="button"
-                                variant="outline"
-                                onClick={() =>
-                                  document
-                                    .getElementById("signatureUpload")
-                                    ?.click()
-                                }
-                                disabled={isUploadingSignature}
-                              >
-                                {isUploadingSignature ? (
-                                  <>
-                                    <Loader2 className="w-4 h-4 animate-spin mr-2" />
-                                    Uploading...
-                                  </>
-                                ) : (
-                                  <>
-                                    <Upload className="w-4 h-4 mr-2" />
-                                    Upload Signature
-                                  </>
-                                )}
-                              </Button>
-                              <span className="text-sm text-gray-500">
-                                PNG, JPG up to 2MB (transparent background
-                                recommended)
-                              </span>
-                            </div>
-                          ) : (
-                            <div className="border rounded-lg p-4 bg-gray-50">
-                              <div className="flex items-start justify-between mb-2">
-                                <FieldLabel className="text-sm font-medium">
-                                  Signature Preview
-                                </FieldLabel>
-                                <Button
-                                  type="button"
-                                  variant="ghost"
-                                  size="sm"
-                                  onClick={removeSignature}
-                                  className="h-8 w-8 p-0"
-                                >
-                                  <X className="w-4 h-4" />
-                                </Button>
-                              </div>
-
-                              <div className="relative w-full max-w-xs h-24 bg-white border rounded flex items-center justify-center">
-                                <Image
-                                  src={signaturePreview}
-                                  alt="Signature preview"
-                                  fill
-                                  className="object-contain p-2"
-                                />
-                              </div>
-                            </div>
-                          )}
-                        </div>
                       </div>
                     </div>
                   </div>
