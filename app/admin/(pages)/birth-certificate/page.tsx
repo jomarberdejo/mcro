@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { BirthFilterState } from "@/types";
 import { BirthRecordList } from "@/components/birth-certificate/birth-record-list";
-import { filterBirthRecords } from "@/utils/birth-records/filterBirthRecords";
+import { filterBirthRecords } from "@/utils/filters/filterBirthRecords";
 import { useBirthRecords } from "@/hooks/birth-certificate/use-birth-record";
 
 const EMPTY_FILTERS: BirthFilterState = {

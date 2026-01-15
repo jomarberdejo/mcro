@@ -12,7 +12,12 @@ export default async function ViewBirthRecordPage({ params }: ViewPageProps) {
 
   const record = await prisma.birthRecord.findUnique({
     where: { id },
+    include: {
+      supportingDocuments: true,
+    }
   });
+
+  console.log(record)
 
   if (!record) {
     notFound();

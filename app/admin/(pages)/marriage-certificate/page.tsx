@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { MarriageFilterState } from "@/types";
 import { MarriageRecordList } from "@/components/marriage-certificate/marriage-record-list";
-import { filterMarriageRecords } from "@/utils/birth-records/filterMarriageRecords";
+import { filterMarriageRecords } from "@/utils/filters/filterMarriageRecords";
 import { useMarriageRecords } from "@/hooks/marriage-certificate/use-marriage-record";
 
 const EMPTY_FILTERS: MarriageFilterState = {

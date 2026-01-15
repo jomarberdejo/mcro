@@ -49,7 +49,7 @@ export function useDeathRecordForm({
       deceasedFirstName: "",
       deceasedMiddleName: "",
       sex: "" as "Male" | "Female",
-      age: 0,
+      age: "",
       civilStatus: "" as "Single" | "Married" | "Widowed" | "Divorced",
       citizenship: "",
       dateOfDeath: "",

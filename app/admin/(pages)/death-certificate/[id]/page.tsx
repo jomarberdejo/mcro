@@ -11,6 +11,9 @@ export default async function ViewDeathRecordPage({ params }: ViewPageProps) {
 
   const record = await prisma.deathRecord.findUnique({
     where: { id },
+    include: {
+      supportingDocuments: true,
+    }
   });
 
   if (!record) {

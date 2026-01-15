@@ -16,12 +16,15 @@ import {
   Image,
 } from "@react-pdf/renderer";
 import { styles } from "@/lib/pdf-styles";
-import { BirthRecord } from "@/lib/generated/prisma/client";
+import { BirthRecord, SupportingDocument } from "@/lib/generated/prisma/client";
+import { SupportingDocumentsPages } from "@/components/supporting-documents";
 
-
+interface BirthRecordWithDocuments extends BirthRecord {
+  supportingDocuments?: SupportingDocument[];
+}
 
 interface BirthCertificatePDFProps {
-  record: BirthRecord;
+  record: BirthRecordWithDocuments;
   pageSize?: 'A4' | 'LEGAL' | 'LETTER';
 }
 
@@ -42,10 +45,13 @@ const BirthCertificatePDF: React.FC<BirthCertificatePDFProps> = ({ record, pageS
     record.fatherMiddleName
   );
 
+  const documents = record.supportingDocuments || [];
+
   return (
     <Document>
+      {/* Main Birth Certificate Page */}
       <Page size={pageSize} style={styles.page}>
-        <View style={styles.headerRow} wrap={false} >
+        <View style={styles.headerRow} wrap={false}>
           <View style={styles.leftColumn}>
             <Image src="/logos/datu-gara-2.png" style={styles.lapuLapuImage} />
           </View>
@@ -177,10 +183,10 @@ const BirthCertificatePDF: React.FC<BirthCertificatePDFProps> = ({ record, pageS
           </Text>
         </View>
 
-        {record.remarks &&
+
+        {record.remarks && (
           <View style={styles.remarksSection}>
             <Text style={styles.remarksTitle}>REMARKS:</Text>
-
             {record.remarks
               .split('\n\n')
               .filter(para => para.trim())
@@ -189,22 +195,19 @@ const BirthCertificatePDF: React.FC<BirthCertificatePDFProps> = ({ record, pageS
                   {paragraph.trim().replace(/\n/g, ' ')}
                 </Text>
               ))}
-
           </View>
-        }
-        <View wrap={false}>
+        )}
 
-          {
-            record.requestorName && record.requestPurpose && (
-              <Text style={styles.footerText}>
-                This certification is issued to {""}
-                <Text style={styles.requestorName}>
-                  {record.requestorName}
-                </Text> {""}
-                {record.requestPurpose}.
-              </Text>
-            )
-          }
+        <View wrap={false}>
+          {record.requestorName && record.requestPurpose && (
+            <Text style={styles.footerText}>
+              This certification is issued to {""}
+              <Text style={styles.requestorName}>
+                {record.requestorName}
+              </Text> {""}
+              {record.requestPurpose}.
+            </Text>
+          )}
         </View>
 
         <View style={styles.signatureRightContainer}>
@@ -220,22 +223,19 @@ const BirthCertificatePDF: React.FC<BirthCertificatePDFProps> = ({ record, pageS
             </Text>
             <Text style={styles.signatureTitle}>Municipal Civil Registrar</Text>
           </View>
-          {
-            record.certifyingOfficerName && record.certifyingOfficerPosition && (
-              <View style={styles.certifyingContainer}>
-                <Text style={styles.certifyingLabel}>
-                  &quot;FOR AND BEHALF OF THE MCR&quot;
+          {record.certifyingOfficerName && record.certifyingOfficerPosition && (
+            <View style={styles.certifyingContainer}>
+              <Text style={styles.certifyingLabel}>
+                &quot;FOR AND BEHALF OF THE MCR&quot;
+              </Text>
+              <View style={styles.signatureRight}>
+                <Text style={styles.signatureName}>
+                  {record.certifyingOfficerName}
                 </Text>
-
-                <View style={styles.signatureRight}>
-                  <Text style={styles.signatureName}>
-                    {record.certifyingOfficerName}
-                  </Text>
-                  <Text style={styles.signatureTitle}>{record.certifyingOfficerPosition}</Text>
-                </View>
+                <Text style={styles.signatureTitle}>{record.certifyingOfficerPosition}</Text>
               </View>
-            )
-          }
+            </View>
+          )}
         </View>
 
         <View>
@@ -256,11 +256,7 @@ const BirthCertificatePDF: React.FC<BirthCertificatePDFProps> = ({ record, pageS
         </View>
 
         <View style={styles.regFeeInfoContainer}>
-          <Text>
-            {
-              record.processFeeInfo
-            }
-          </Text>
+          <Text>{record.processFeeInfo}</Text>
         </View>
 
         <View style={styles.noteContainer}>
@@ -272,12 +268,18 @@ const BirthCertificatePDF: React.FC<BirthCertificatePDFProps> = ({ record, pageS
         </View>
       </Page>
 
-      
+      {/* Supporting Documents Pages */}
+      <SupportingDocumentsPages
+        documents={documents}
+        registryNo={record.registryNo}
+        recordName={childFullName}
+        pageSize={pageSize}
+      />
     </Document>
   );
 };
 
-export const BirthRecordView: React.FC<{ record: BirthRecord }> = ({
+export const BirthRecordView: React.FC<{ record: BirthRecordWithDocuments }> = ({
   record,
 }) => {
   const router = useRouter();
@@ -309,7 +311,7 @@ export const BirthRecordView: React.FC<{ record: BirthRecord }> = ({
       }
 
       toast.success("Record deleted successfully");
-      router.push("/birth-certificate");
+      router.push("/admin/birth-certificate");
       router.refresh();
     } catch (error) {
       console.error("Error deleting record:", error);
@@ -319,6 +321,8 @@ export const BirthRecordView: React.FC<{ record: BirthRecord }> = ({
     }
   };
 
+  const documents = record.supportingDocuments || [];
+
   return (
     <div className="min-h-screen bg-gray-50 p-8">
       <div className="max-w-6xl mx-auto">
@@ -326,6 +330,16 @@ export const BirthRecordView: React.FC<{ record: BirthRecord }> = ({
           <Button variant="ghost" onClick={handleBack}>
             <ArrowLeft className="w-4 h-4 mr-2" /> Back to Records
           </Button>
+
+          {/* Document Count Badge */}
+          {documents.length > 0 && (
+            <div className="flex items-center gap-2 px-4 py-2 bg-blue-100 text-blue-800 rounded-lg">
+              <FileText className="w-4 h-4" />
+              <span className="text-sm font-medium">
+                {documents.length} Supporting Document{documents.length !== 1 ? 's' : ''}
+              </span>
+            </div>
+          )}
 
           {/* Add Paper Size Selector */}
           <div className="flex items-center gap-2">

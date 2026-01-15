@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useMarriageCertificateApplications } from "@/hooks/marriage-cert-app/use-marriage-cert-app";
-import { filterMarriageCertificateApplications } from "@/utils/birth-records/filterMarriageCertificateApplication";
+import { filterMarriageCertificateApplications } from "@/utils/filters/filterMarriageCertificateApplication";
 import { MarriageCertificateApplicationList } from "@/components/marriage-cert-app/marriage-cert-app-list";
 
 export interface MarriageCertificateApplicationFilterState {

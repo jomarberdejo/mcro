@@ -1,5 +1,5 @@
 import { DeathRecord, DeathFilterState } from "@/types";
-import { filterRecords } from "../filter-records";
+import { filterRecords } from "./filter-records";
 
 export function filterDeathRecords(
   records: DeathRecord[],

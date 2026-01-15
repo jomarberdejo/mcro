@@ -1,5 +1,5 @@
 import { BirthRecord, BirthFilterState } from "@/types";
-import { filterRecords } from "../filter-records";
+import { filterRecords } from "./filter-records";
 
 export function filterBirthRecords(
   records: BirthRecord[],

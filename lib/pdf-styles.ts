@@ -216,3 +216,71 @@ export const styles = StyleSheet.create({
     color: "#333",
   },
 });
+
+
+export const documentStyles = StyleSheet.create({
+  documentPage: {
+    padding: 40,
+    backgroundColor: '#fff',
+    flexDirection: 'column',
+  },
+  documentHeader: {
+    marginBottom: 20,
+    borderBottom: '2px solid #333',
+    paddingBottom: 10,
+  },
+  documentHeaderText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 5,
+  },
+  documentSubHeaderText: {
+    fontSize: 12,
+    textAlign: 'center',
+    color: '#666',
+  },
+  documentInfo: {
+    marginBottom: 20,
+    padding: 10,
+    backgroundColor: '#f5f5f5',
+    borderRadius: 4,
+  },
+  documentInfoRow: {
+    flexDirection: 'row',
+    marginBottom: 5,
+  },
+  documentInfoLabel: {
+    fontSize: 10,
+    fontWeight: 'bold',
+    width: 120,
+  },
+  documentInfoValue: {
+    fontSize: 10,
+    flex: 1,
+  },
+  documentImageContainer: {
+    flex: 1,
+    width: '100%',
+    minHeight: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  documentImage: {
+    maxWidth: '100%',
+    maxHeight: '100%',
+    objectFit: 'contain',
+  },
+  documentPageNumber: {
+    position: 'absolute',
+    bottom: 20,
+    right: 40,
+    fontSize: 10,
+    color: '#666',
+  },
+  noDocumentsText: {
+    fontSize: 14,
+    color: '#999',
+    textAlign: 'center',
+  },
+});

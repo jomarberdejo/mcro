@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { DeathFilterState } from "@/types";
 import { DeathRecordList } from "@/components/death-certificate/death-record-list";
 import { useDeathRecords } from "@/hooks/death-certificate/use-death-record";
-import { filterDeathRecords } from "@/utils/birth-records/filterDeathRecords";
+import { filterDeathRecords } from "@/utils/filters/filterDeathRecords";
 
 const EMPTY_FILTERS: DeathFilterState = {
   deceasedLastName: "",

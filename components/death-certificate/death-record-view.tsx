@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useState } from "react";
@@ -16,10 +17,15 @@ import {
   Image,
 } from "@react-pdf/renderer";
 import { styles } from "@/lib/pdf-styles";
-import { DeathRecord } from "@/lib/generated/prisma/client";
+import { DeathRecord, SupportingDocument } from "@/lib/generated/prisma/client";
+import { SupportingDocumentsPages } from "../supporting-documents";
+
+interface DeathRecordWithDocuments extends DeathRecord {
+  supportingDocuments?: SupportingDocument[];
+}
 
 interface DeathCertificatePDFProps {
-  record: DeathRecord;
+  record: DeathRecordWithDocuments;
   pageSize?: 'A4' | 'LEGAL' | 'LETTER';
 }
 
@@ -29,6 +35,8 @@ const DeathCertificatePDF: React.FC<DeathCertificatePDFProps> = ({ record, pageS
     record.deceasedFirstName,
     record.deceasedMiddleName
   );
+
+  const documents = record.supportingDocuments || [];
 
   return (
     <Document>
@@ -129,6 +137,7 @@ const DeathCertificatePDF: React.FC<DeathCertificatePDFProps> = ({ record, pageS
           <Text style={styles.fieldValue}>{record.causeOfDeath}</Text>
         </View>
 
+
         {record.remarks && (
           <View style={styles.remarksSection}>
             <Text style={styles.remarksTitle}>REMARKS:</Text>
@@ -212,11 +221,18 @@ const DeathCertificatePDF: React.FC<DeathCertificatePDFProps> = ({ record, pageS
           </Text>
         </View>
       </Page>
+
+      <SupportingDocumentsPages
+        documents={documents}
+        registryNo={record.registryNo}
+        recordName={deceasedFullName}
+        pageSize={pageSize}
+      />
     </Document>
   );
 };
 
-export const DeathRecordView: React.FC<{ record: DeathRecord }> = ({
+export const DeathRecordView: React.FC<{ record: DeathRecordWithDocuments }> = ({
   record,
 }) => {
   const router = useRouter();
@@ -258,6 +274,8 @@ export const DeathRecordView: React.FC<{ record: DeathRecord }> = ({
     }
   };
 
+  const documents = record.supportingDocuments || [];
+
   return (
     <div className="min-h-screen bg-gray-50 p-8">
       <div className="max-w-6xl mx-auto">
@@ -265,6 +283,16 @@ export const DeathRecordView: React.FC<{ record: DeathRecord }> = ({
           <Button variant="ghost" onClick={handleBack}>
             <ArrowLeft className="w-4 h-4 mr-2" /> Back to Records
           </Button>
+
+          {/* Document Count Badge */}
+          {documents.length > 0 && (
+            <div className="flex items-center gap-2 px-4 py-2 bg-blue-100 text-blue-800 rounded-lg">
+              <FileText className="w-4 h-4" />
+              <span className="text-sm font-medium">
+                {documents.length} Supporting Document{documents.length !== 1 ? 's' : ''}
+              </span>
+            </div>
+          )}
 
           <div className="flex items-center gap-2">
             <label className="text-sm font-medium">Paper Size:</label>

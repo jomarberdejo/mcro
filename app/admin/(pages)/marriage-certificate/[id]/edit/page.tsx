@@ -12,6 +12,9 @@ export default async function EditMarriageRecordPage({ params }: EditPageProps) 
 
   const record = await prisma.marriageRecord.findUnique({
     where: { id },
+    include: {
+      supportingDocuments: true,
+    }
   });
 
   if (!record) {

@@ -14,6 +14,9 @@ export default async function EditBirthRecordPage({ params }: EditPageProps) {
   
   const record = await prisma.birthRecord.findUnique({
     where: { id },
+    include: {
+      supportingDocuments: true,
+    }
   });
 
   if (!record) {

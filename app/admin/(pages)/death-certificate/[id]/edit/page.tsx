@@ -12,6 +12,9 @@ export default async function EditDeathRecordPage({ params }: EditPageProps) {
 
   const record = await prisma.deathRecord.findUnique({
     where: { id },
+    include: {
+      supportingDocuments: true,
+    }
   });
 
   if (!record) {

@@ -1,3 +1,5 @@
+// components/marriage-certificate/marriage-record-view.tsx (or wherever your file is)
+
 "use client";
 
 import React, { useState } from "react";
@@ -16,10 +18,15 @@ import {
   Image,
 } from "@react-pdf/renderer";
 import { styles } from "@/lib/pdf-styles";
-import { MarriageRecord } from "@/lib/generated/prisma/client";
+import { MarriageRecord, SupportingDocument } from "@/lib/generated/prisma/client";
+import { SupportingDocumentsPages } from '@/components/supporting-documents'
+
+interface MarriageRecordWithDocuments extends MarriageRecord {
+  supportingDocuments?: SupportingDocument[];
+}
 
 interface MarriageCertificatePDFProps {
-  record: MarriageRecord;
+  record: MarriageRecordWithDocuments;
   pageSize?: 'A4' | 'LEGAL' | 'LETTER';
 }
 
@@ -34,6 +41,8 @@ const MarriageCertificatePDF: React.FC<MarriageCertificatePDFProps> = ({ record,
     record.wifeFirstName,
     record.wifeMiddleName
   );
+
+  const documents = record.supportingDocuments || [];
 
   return (
     <Document>
@@ -189,6 +198,8 @@ const MarriageCertificatePDF: React.FC<MarriageCertificatePDFProps> = ({ record,
           </View>
         )}
 
+       
+
         {record.remarks && (
           <View style={styles.remarksSection}>
             <Text style={styles.remarksTitle}>REMARKS:</Text>
@@ -272,11 +283,19 @@ const MarriageCertificatePDF: React.FC<MarriageCertificatePDFProps> = ({ record,
           </Text>
         </View>
       </Page>
+
+      {/* Supporting Documents Pages */}
+      <SupportingDocumentsPages
+        documents={documents}
+        registryNo={record.registryNo}
+        recordName={`${husbandFullName} & ${wifeFullName}`}
+        pageSize={pageSize}
+      />
     </Document>
   );
 };
 
-export const MarriageRecordView: React.FC<{ record: MarriageRecord }> = ({
+export const MarriageRecordView: React.FC<{ record: MarriageRecordWithDocuments }> = ({
   record,
 }) => {
   const router = useRouter();
@@ -318,6 +337,8 @@ export const MarriageRecordView: React.FC<{ record: MarriageRecord }> = ({
     }
   };
 
+  const documents = record.supportingDocuments || [];
+
   return (
     <div className="min-h-screen bg-gray-50 p-8">
       <div className="max-w-6xl mx-auto">
@@ -325,6 +346,16 @@ export const MarriageRecordView: React.FC<{ record: MarriageRecord }> = ({
           <Button variant="ghost" onClick={handleBack}>
             <ArrowLeft className="w-4 h-4 mr-2" /> Back to Records
           </Button>
+
+          {/* Document Count Badge */}
+          {documents.length > 0 && (
+            <div className="flex items-center gap-2 px-4 py-2 bg-blue-100 text-blue-800 rounded-lg">
+              <FileText className="w-4 h-4" />
+              <span className="text-sm font-medium">
+                {documents.length} Supporting Document{documents.length !== 1 ? 's' : ''}
+              </span>
+            </div>
+          )}
 
           <div className="flex items-center gap-2">
             <label className="text-sm font-medium">Paper Size:</label>

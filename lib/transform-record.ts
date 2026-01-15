@@ -56,6 +56,12 @@ export function transformBirthRecord(
     certifyingOfficerPosition: record.certifyingOfficerPosition ?? "",
 
     signatureImagePath: record.signatureImagePath ?? "",
+    supportingDocuments: record.supportingDocuments?.map(doc => ({
+      filePath: doc.filePath,
+      fileName: doc.fileName,
+      fileSize: doc.fileSize ?? undefined,
+      mimeType: doc.mimeType ?? undefined,
+    })) ?? [],
   };
 }
 
@@ -103,6 +109,12 @@ export function transformMarriageRecord(
     remarks: record.remarks ?? "",
 
     signatureImagePath: record.signatureImagePath ?? "",
+    supportingDocuments: record.supportingDocuments?.map(doc => ({
+      filePath: doc.filePath,
+      fileName: doc.fileName,
+      fileSize: doc.fileSize ?? undefined,
+      mimeType: doc.mimeType ?? undefined,
+    })) ?? [],
   };
 }
 
@@ -141,6 +153,12 @@ export function transformDeathRecord(
     remarks: record.remarks ?? "",
 
     signatureImagePath: record.signatureImagePath ?? "",
+    supportingDocuments: record.supportingDocuments?.map(doc => ({
+      filePath: doc.filePath,
+      fileName: doc.fileName,
+      fileSize: doc.fileSize ?? undefined,
+      mimeType: doc.mimeType ?? undefined,
+    })) ?? [],
   };
 }
 

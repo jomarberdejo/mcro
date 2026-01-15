@@ -197,7 +197,7 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                               className={cn(
                                 "h-11 text-base transition-all",
                                 fieldState.invalid &&
-                                  "border-red-500 focus-visible:ring-red-500"
+                                "border-red-500 focus-visible:ring-red-500"
                               )}
                               aria-invalid={fieldState.invalid}
                             />
@@ -211,39 +211,58 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                       <Controller
                         name="pageNo"
                         control={control}
-                        render={({ field }) => (
+                        rules={{ required: "Page No. is required" }}
+                        render={({ field, fieldState }) => (
                           <Field>
                             <FieldLabel
                               htmlFor="pageNo"
                               className="text-sm font-semibold text-gray-700"
                             >
-                              Page No.
+                              Page No. *
                             </FieldLabel>
                             <Input
                               id="pageNo"
                               {...field}
-                              className="h-11 text-base transition-all"
+                              className={cn(
+                                "h-11 text-base transition-all",
+                                fieldState.invalid &&
+                                "border-red-500 focus-visible:ring-red-500"
+                              )}
+                              aria-invalid={fieldState.invalid}
                             />
+                            {fieldState.error && (
+                              <FieldError errors={[fieldState.error]} />
+                            )}
                           </Field>
                         )}
                       />
 
+                      {/* Book No */}
                       <Controller
                         name="bookNo"
                         control={control}
-                        render={({ field }) => (
+                        rules={{ required: "Book No. is required" }}
+                        render={({ field, fieldState }) => (
                           <Field>
                             <FieldLabel
                               htmlFor="bookNo"
                               className="text-sm font-semibold text-gray-700"
                             >
-                              Book No.
+                              Book No. *
                             </FieldLabel>
                             <Input
                               id="bookNo"
                               {...field}
-                              className="h-11 text-base transition-all"
+                              className={cn(
+                                "h-11 text-base transition-all",
+                                fieldState.invalid &&
+                                "border-red-500 focus-visible:ring-red-500"
+                              )}
+                              aria-invalid={fieldState.invalid}
                             />
+                            {fieldState.error && (
+                              <FieldError errors={[fieldState.error]} />
+                            )}
                           </Field>
                         )}
                       />
@@ -268,7 +287,7 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                               className={cn(
                                 "h-11 text-base transition-all",
                                 fieldState.invalid &&
-                                  "border-red-500 focus-visible:ring-red-500"
+                                "border-red-500 focus-visible:ring-red-500"
                               )}
                               aria-invalid={fieldState.invalid}
                             />
@@ -296,7 +315,7 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                               className={cn(
                                 "h-11 text-base transition-all",
                                 fieldState.invalid &&
-                                  "border-red-500 focus-visible:ring-red-500"
+                                "border-red-500 focus-visible:ring-red-500"
                               )}
                               aria-invalid={fieldState.invalid}
                             />
@@ -352,7 +371,7 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                               className={cn(
                                 "h-11 text-base transition-all",
                                 fieldState.invalid &&
-                                  "border-red-500 focus-visible:ring-red-500"
+                                "border-red-500 focus-visible:ring-red-500"
                               )}
                               aria-invalid={fieldState.invalid}
                             />
@@ -379,7 +398,7 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                               className={cn(
                                 "h-11 text-base transition-all",
                                 fieldState.invalid &&
-                                  "border-red-500 focus-visible:ring-red-500"
+                                "border-red-500 focus-visible:ring-red-500"
                               )}
                               aria-invalid={fieldState.invalid}
                             />
@@ -423,15 +442,14 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                               Age *
                             </FieldLabel>
                             <Input
-                             
+
                               id="husbandAge"
                               type="number"
                               {...field}
-                              onChange={(e) => field.onChange(e.target.value)}
                               className={cn(
                                 "h-11 text-base transition-all",
                                 fieldState.invalid &&
-                                  "border-red-500 focus-visible:ring-red-500"
+                                "border-red-500 focus-visible:ring-red-500"
                               )}
                               aria-invalid={fieldState.invalid}
                             />
@@ -459,7 +477,7 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                               className={cn(
                                 "h-11 text-base transition-all",
                                 fieldState.invalid &&
-                                  "border-red-500 focus-visible:ring-red-500"
+                                "border-red-500 focus-visible:ring-red-500"
                               )}
                               aria-invalid={fieldState.invalid}
                             />
@@ -490,7 +508,7 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                                 className={cn(
                                   "w-full h-11 text-base",
                                   fieldState.invalid &&
-                                    "border-red-500 focus:ring-red-500"
+                                  "border-red-500 focus:ring-red-500"
                                 )}
                               >
                                 <SelectValue placeholder="Select status" />
@@ -580,7 +598,7 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                               className={cn(
                                 "h-11 text-base transition-all",
                                 fieldState.invalid &&
-                                  "border-red-500 focus-visible:ring-red-500"
+                                "border-red-500 focus-visible:ring-red-500"
                               )}
                               aria-invalid={fieldState.invalid}
                             />
@@ -607,7 +625,7 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                               className={cn(
                                 "h-11 text-base transition-all",
                                 fieldState.invalid &&
-                                  "border-red-500 focus-visible:ring-red-500"
+                                "border-red-500 focus-visible:ring-red-500"
                               )}
                               aria-invalid={fieldState.invalid}
                             />
@@ -654,11 +672,10 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                               id="wifeAge"
                               type="number"
                               {...field}
-                              onChange={(e) => field.onChange(e.target.value)}
                               className={cn(
                                 "h-11 text-base transition-all",
                                 fieldState.invalid &&
-                                  "border-red-500 focus-visible:ring-red-500"
+                                "border-red-500 focus-visible:ring-red-500"
                               )}
                               aria-invalid={fieldState.invalid}
                             />
@@ -686,7 +703,7 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                               className={cn(
                                 "h-11 text-base transition-all",
                                 fieldState.invalid &&
-                                  "border-red-500 focus-visible:ring-red-500"
+                                "border-red-500 focus-visible:ring-red-500"
                               )}
                               aria-invalid={fieldState.invalid}
                             />
@@ -717,7 +734,7 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                                 className={cn(
                                   "w-full h-11 text-base",
                                   fieldState.invalid &&
-                                    "border-red-500 focus:ring-red-500"
+                                  "border-red-500 focus:ring-red-500"
                                 )}
                               >
                                 <SelectValue placeholder="Select status" />
