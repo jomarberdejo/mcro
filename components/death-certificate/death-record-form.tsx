@@ -92,7 +92,7 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
                       <Input
                         id="documentsUpload"
                         type="file"
-                        accept="image/*"
+                        accept="image/png,image/jpeg,image/jpg"
                         multiple
                         onChange={handleSupportingDocumentsUpload}
                         className="hidden"

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { birthRecordSchema } from "@/lib/validations/birth-record.schema";
+import { marriageRecordSchema } from "@/lib/validations/marriage-record.schema";
 import { z } from "zod";
 import { unlink } from "fs/promises";
 import path from "path";
@@ -13,7 +13,7 @@ export async function GET(
   try {
     const { id } = await params;
     
-    const record = await prisma.birthRecord.findUnique({
+    const record = await prisma.marriageRecord.findUnique({
       where: { id },
       include: {
         supportingDocuments: true,
@@ -22,16 +22,16 @@ export async function GET(
 
     if (!record) {
       return NextResponse.json(
-        { error: "Birth record not found" },
+        { error: "Death record not found" },
         { status: 404 }
       );
     }
 
     return NextResponse.json(record, { status: 200 });
   } catch (error) {
-    console.error("Error fetching birth record:", error);
+    console.error("Error fetching marriage record:", error);
     return NextResponse.json(
-      { error: "Failed to fetch birth record" },
+      { error: "Failed to fetch marriage record" },
       { status: 500 }
     );
   }
@@ -44,18 +44,19 @@ export async function PUT(
   try {
     const { id } = await params;
     const body = await request.json();
-    const validatedData = birthRecordSchema.parse(body);
+    const validatedData = marriageRecordSchema.parse(body);
 
     const { supportingDocuments, ...recordData } = validatedData;
 
-    const existingRecord = await prisma.birthRecord.findUnique({
+    // Check if record exists and get old signature path
+    const existingRecord = await prisma.marriageRecord.findUnique({
       where: { id },
       select: { signatureImagePath: true },
     });
 
     if (!existingRecord) {
       return NextResponse.json(
-        { error: "Birth record not found" },
+        { error: "Death record not found" },
         { status: 404 }
       );
     }
@@ -77,10 +78,10 @@ export async function PUT(
     }
 
     await prisma.supportingDocument.deleteMany({
-      where: { birthRecordId: id },
+      where: { deathRecordId: id },
     });
 
-    const record = await prisma.birthRecord.update({
+    const record = await prisma.marriageRecord.update({
       where: { id },
       data: {
         ...recordData,
@@ -90,7 +91,7 @@ export async function PUT(
             fileName: doc.fileName,
             fileSize: doc.fileSize,
             mimeType: doc.mimeType,
-            type: 'BIRTH_CERTIFICATE',
+            type: 'DEATH_CERTIFICATE',
           })) || [],
         },
       },
@@ -114,10 +115,10 @@ export async function PUT(
         { status: 500 }
       );
     }
-    
-    console.error("Error updating birth record:", error);
+
+    console.error("Error updating marriage record:", error);
     return NextResponse.json(
-      { error: "Failed to update birth record" },
+      { error: "Failed to update marriage record" },
       { status: 500 }
     );
   }
@@ -130,7 +131,7 @@ export async function DELETE(
   try {
     const { id } = await params;
     
-    const record = await prisma.birthRecord.findUnique({
+    const record = await prisma.marriageRecord.findUnique({
       where: { id },
       include: {
         supportingDocuments: true,
@@ -139,7 +140,7 @@ export async function DELETE(
 
     if (!record) {
       return NextResponse.json(
-        { error: "Birth record not found" },
+        { error: "Marriage record not found" },
         { status: 404 }
       );
     }
@@ -172,21 +173,22 @@ export async function DELETE(
     }
     */
 
-    await prisma.birthRecord.delete({
+    // Delete record (supporting documents will be cascade deleted)
+    await prisma.marriageRecord.delete({
       where: { id },
     });
 
     return NextResponse.json(
       { 
-        message: "Birth record deleted successfully",
+        message: "Marriage record deleted successfully",
         deletedDocuments: record.supportingDocuments.length,
       },
       { status: 200 }
     );
   } catch (error) {
-    console.error("Error deleting birth record:", error);
+    console.error("Error deleting marriage record:", error);
     return NextResponse.json(
-      { error: "Failed to delete birth record" },
+      { error: "Failed to delete marriage record" },
       { status: 500 }
     );
   }

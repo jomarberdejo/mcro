@@ -26,7 +26,6 @@ interface SupportingDocumentsPDFProps {
   pageSize?: "A4" | "LEGAL" | "LETTER";
 }
 
-// PDF Styles for supporting documents
 const documentStyles = StyleSheet.create({
   page: {
     padding: 40,
@@ -367,7 +366,7 @@ export const MarriageCertificateApplicationView: React.FC<{
                       className="border rounded-lg p-4 hover:bg-gray-50 transition-colors"
                     >
                       <div className="flex items-start gap-4">
-                        <div className="flex-shrink-0">
+                        <div className="shrink-0">
                           {doc.mimeType?.startsWith('image/') ? (
                             <ImageIcon className="w-8 h-8 text-blue-500" />
                           ) : (

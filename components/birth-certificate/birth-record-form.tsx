@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, { useState } from "react";
@@ -47,103 +46,18 @@ export const BirthRecordForm: React.FC<BirthRecordFormProps> = ({
   defaultValues,
   isEditing = false,
 }) => {
-  const [supportingDocuments, setSupportingDocuments] = useState<
-    SupportingDocument[]
-  >([]);
-  const [isUploadingDoc, setIsUploadingDoc] = useState(false);
+   const {
+    form,
+    supportingDocuments,
+    isUploadingDoc,
+    handleSupportingDocumentsUpload,
+    removeSupportingDocument,
+    onSubmit,
+    handleCancel,
+  } = useBirthRecordForm({ recordId, defaultValues, isEditing });
 
-  const { form, onSubmit, handleCancel } = useBirthRecordForm({
-    recordId,
-    defaultValues,
-    isEditing,
-  });
-
-  const {
-    control,
-    handleSubmit,
-    setValue,
-    watch,
-    formState: { isSubmitting },
-  } = form;
-
-  const { uploadFile, deleteFile } = useFileUpload();
-
+  const { control, handleSubmit, watch, formState: { isSubmitting } } = form;
   const isTwinValue = watch("isTwin");
-
-  const handleSupportingDocumentsUpload = async (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const files = Array.from(e.target.files || []);
-    if (files.length === 0) return;
-
-    const invalidFiles = files.filter(
-      (file) => !file.type.startsWith("image/") || file.size > 5 * 1024 * 1024
-    );
-
-    if (invalidFiles.length > 0) {
-      toast.error("All files must be images under 5MB");
-      return;
-    }
-
-    setIsUploadingDoc(true);
-
-    try {
-      const uploadPromises = files.map(async (file) => {
-        const result = await uploadFile(file, "documents");
-        const previewUrl = URL.createObjectURL(file);
-        return {
-          id: result.path,
-          path: result.path,
-          preview: previewUrl,
-          name: file.name,
-        };
-      });
-
-      const uploadedDocs = await Promise.all(uploadPromises);
-      setSupportingDocuments((prev) => [...prev, ...uploadedDocs]);
-
-      const allPaths = [
-        ...supportingDocuments.map((d) => d.path),
-        ...uploadedDocs.map((d) => d.path),
-      ];
-      setValue("supportingDocuments", allPaths);
-
-      toast.success(`${uploadedDocs.length} document(s) uploaded successfully`);
-    } catch (error) {
-      console.error("Error uploading documents:", error);
-      toast.error(
-        error instanceof Error ? error.message : "Failed to upload documents"
-      );
-    } finally {
-      setIsUploadingDoc(false);
-      const fileInput = document.getElementById(
-        "documentsUpload"
-      ) as HTMLInputElement;
-      if (fileInput) fileInput.value = "";
-    }
-  };
-
-  const removeSupportingDocument = async (docId: string) => {
-    const doc = supportingDocuments.find((d) => d.id === docId);
-    if (!doc) return;
-
-    try {
-      await deleteFile(doc.path);
-      URL.revokeObjectURL(doc.preview);
-
-      const updatedDocs = supportingDocuments.filter((d) => d.id !== docId);
-      setSupportingDocuments(updatedDocs);
-      setValue(
-        "supportingDocuments",
-        updatedDocs.map((d) => d.path)
-      );
-
-      toast.success("Document removed");
-    } catch (error) {
-      console.error("Error removing document:", error);
-      toast.error("Failed to remove document");
-    }
-  };
 
   return (
     <div className="min-h-screen bg-gray-50 p-8">
@@ -181,7 +95,7 @@ export const BirthRecordForm: React.FC<BirthRecordFormProps> = ({
                       <Input
                         id="documentsUpload"
                         type="file"
-                        accept="image/*"
+                        accept="image/png,image/jpeg,image/jpg"
                         multiple
                         onChange={handleSupportingDocumentsUpload}
                         className="hidden"

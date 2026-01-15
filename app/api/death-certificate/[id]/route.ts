@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { birthRecordSchema } from "@/lib/validations/birth-record.schema";
+import { deathRecordSchema } from "@/lib/validations/death-record.schema";
 import { z } from "zod";
 import { unlink } from "fs/promises";
 import path from "path";
@@ -13,7 +13,7 @@ export async function GET(
   try {
     const { id } = await params;
     
-    const record = await prisma.birthRecord.findUnique({
+    const record = await prisma.deathRecord.findUnique({
       where: { id },
       include: {
         supportingDocuments: true,
@@ -22,16 +22,16 @@ export async function GET(
 
     if (!record) {
       return NextResponse.json(
-        { error: "Birth record not found" },
+        { error: "Death record not found" },
         { status: 404 }
       );
     }
 
     return NextResponse.json(record, { status: 200 });
   } catch (error) {
-    console.error("Error fetching birth record:", error);
+    console.error("Error fetching death record:", error);
     return NextResponse.json(
-      { error: "Failed to fetch birth record" },
+      { error: "Failed to fetch death record" },
       { status: 500 }
     );
   }
@@ -44,22 +44,25 @@ export async function PUT(
   try {
     const { id } = await params;
     const body = await request.json();
-    const validatedData = birthRecordSchema.parse(body);
+    const validatedData = deathRecordSchema.parse(body);
 
+    // Destructure to separate supportingDocuments
     const { supportingDocuments, ...recordData } = validatedData;
 
-    const existingRecord = await prisma.birthRecord.findUnique({
+    // Check if record exists and get old signature path
+    const existingRecord = await prisma.deathRecord.findUnique({
       where: { id },
       select: { signatureImagePath: true },
     });
 
     if (!existingRecord) {
       return NextResponse.json(
-        { error: "Birth record not found" },
+        { error: "Death record not found" },
         { status: 404 }
       );
     }
 
+    // Delete old signature file if it changed
     if (validatedData.signatureImagePath) {
       if (
         existingRecord.signatureImagePath &&
@@ -76,11 +79,13 @@ export async function PUT(
       }
     }
 
+    // Delete existing supporting documents
     await prisma.supportingDocument.deleteMany({
-      where: { birthRecordId: id },
+      where: { deathRecordId: id },
     });
 
-    const record = await prisma.birthRecord.update({
+    // Update record with new supporting documents
+    const record = await prisma.deathRecord.update({
       where: { id },
       data: {
         ...recordData,
@@ -90,7 +95,7 @@ export async function PUT(
             fileName: doc.fileName,
             fileSize: doc.fileSize,
             mimeType: doc.mimeType,
-            type: 'BIRTH_CERTIFICATE',
+            type: 'DEATH_CERTIFICATE',
           })) || [],
         },
       },
@@ -115,9 +120,9 @@ export async function PUT(
       );
     }
     
-    console.error("Error updating birth record:", error);
+    console.error("Error updating death record:", error);
     return NextResponse.json(
-      { error: "Failed to update birth record" },
+      { error: "Failed to update death record" },
       { status: 500 }
     );
   }
@@ -130,7 +135,7 @@ export async function DELETE(
   try {
     const { id } = await params;
     
-    const record = await prisma.birthRecord.findUnique({
+    const record = await prisma.deathRecord.findUnique({
       where: { id },
       include: {
         supportingDocuments: true,
@@ -139,11 +144,12 @@ export async function DELETE(
 
     if (!record) {
       return NextResponse.json(
-        { error: "Birth record not found" },
+        { error: "Death record not found" },
         { status: 404 }
       );
     }
 
+    // Delete signature file if exists
     if (record.signatureImagePath) {
       const filePath = path.join(
         process.cwd(),
@@ -172,21 +178,22 @@ export async function DELETE(
     }
     */
 
-    await prisma.birthRecord.delete({
+    // Delete record (supporting documents will be cascade deleted)
+    await prisma.deathRecord.delete({
       where: { id },
     });
 
     return NextResponse.json(
       { 
-        message: "Birth record deleted successfully",
+        message: "Death record deleted successfully",
         deletedDocuments: record.supportingDocuments.length,
       },
       { status: 200 }
     );
   } catch (error) {
-    console.error("Error deleting birth record:", error);
+    console.error("Error deleting death record:", error);
     return NextResponse.json(
-      { error: "Failed to delete birth record" },
+      { error: "Failed to delete death record" },
       { status: 500 }
     );
   }

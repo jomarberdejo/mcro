@@ -84,7 +84,7 @@ export const MarriageCertificateApplicationForm: React.FC<
                       <Input
                         id="documentsUpload"
                         type="file"
-                        accept="image/*"
+                        accept="image/png,image/jpeg,image/jpg"
                         multiple
                         onChange={handleSupportingDocumentsUpload}
                         className="hidden"
@@ -158,7 +158,6 @@ export const MarriageCertificateApplicationForm: React.FC<
               </div>
             </div>
 
-
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
               <FieldGroup>
                 <div className="space-y-5">
@@ -185,7 +184,7 @@ export const MarriageCertificateApplicationForm: React.FC<
                               className={cn(
                                 "h-11 text-base transition-all",
                                 fieldState.invalid &&
-                                "border-red-500 focus-visible:ring-red-500"
+                                  "border-red-500 focus-visible:ring-red-500"
                               )}
                               aria-invalid={fieldState.invalid}
                             />
@@ -281,7 +280,7 @@ export const MarriageCertificateApplicationForm: React.FC<
                               className={cn(
                                 "h-11 text-base transition-all",
                                 fieldState.invalid &&
-                                "border-red-500 focus-visible:ring-red-500"
+                                  "border-red-500 focus-visible:ring-red-500"
                               )}
                               aria-invalid={fieldState.invalid}
                             />
@@ -308,7 +307,7 @@ export const MarriageCertificateApplicationForm: React.FC<
                               className={cn(
                                 "h-11 text-base transition-all",
                                 fieldState.invalid &&
-                                "border-red-500 focus-visible:ring-red-500"
+                                  "border-red-500 focus-visible:ring-red-500"
                               )}
                               aria-invalid={fieldState.invalid}
                             />
@@ -358,7 +357,7 @@ export const MarriageCertificateApplicationForm: React.FC<
                               className={cn(
                                 "h-11 text-base transition-all",
                                 fieldState.invalid &&
-                                "border-red-500 focus-visible:ring-red-500"
+                                  "border-red-500 focus-visible:ring-red-500"
                               )}
                               aria-invalid={fieldState.invalid}
                             />
@@ -393,7 +392,7 @@ export const MarriageCertificateApplicationForm: React.FC<
                               className={cn(
                                 "h-11 text-base transition-all",
                                 fieldState.invalid &&
-                                "border-red-500 focus-visible:ring-red-500"
+                                  "border-red-500 focus-visible:ring-red-500"
                               )}
                               aria-invalid={fieldState.invalid}
                             />
@@ -420,7 +419,7 @@ export const MarriageCertificateApplicationForm: React.FC<
                               className={cn(
                                 "h-11 text-base transition-all",
                                 fieldState.invalid &&
-                                "border-red-500 focus-visible:ring-red-500"
+                                  "border-red-500 focus-visible:ring-red-500"
                               )}
                               aria-invalid={fieldState.invalid}
                             />
@@ -470,7 +469,7 @@ export const MarriageCertificateApplicationForm: React.FC<
                               className={cn(
                                 "h-11 text-base transition-all",
                                 fieldState.invalid &&
-                                "border-red-500 focus-visible:ring-red-500"
+                                  "border-red-500 focus-visible:ring-red-500"
                               )}
                               aria-invalid={fieldState.invalid}
                             />

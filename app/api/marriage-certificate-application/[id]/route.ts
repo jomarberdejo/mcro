@@ -13,7 +13,7 @@ export async function GET(
     const application = await prisma.marriageCertificateApplication.findUnique({
       where: { id },
       include: {
-        supportingDocuments: true, // Include supporting documents
+        supportingDocuments: true, 
       },
     });
 
@@ -58,12 +58,10 @@ export async function PUT(
       );
     }
 
-    // Delete existing supporting documents
     await prisma.supportingDocument.deleteMany({
       where: { marriageCertificateApplicationId: id },
     });
 
-    // Update application with new documents
     const application = await prisma.marriageCertificateApplication.update({
       where: { id },
       data: {

@@ -2,7 +2,6 @@
 
 import React, { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -23,9 +22,7 @@ import {
 import { ArrowLeft, Upload, X, FileImage, Loader2 } from "lucide-react";
 import { MarriageRecordFormInput } from "@/lib/validations/marriage-record.schema";
 import Image from "next/image";
-import { toast } from "sonner";
 import { cn } from "@/lib/utils";
-import { useFileUpload } from "@/hooks/use-file-upload";
 import { useMarriageRecordForm } from "@/hooks/marriage-certificate/use-marriage-form";
 
 interface MarriageRecordFormProps {
@@ -46,105 +43,21 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
   defaultValues,
   isEditing = false,
 }) => {
-  const { form, isProcessing, onSubmit, handleCancel } = useMarriageRecordForm({
-    recordId,
-    defaultValues,
-    isEditing,
-  });
+  const {
+    form,
+    supportingDocuments,
+    isUploadingDoc,
+    handleSupportingDocumentsUpload,
+    removeSupportingDocument,
+    onSubmit,
+    handleCancel,
+  } = useMarriageRecordForm({ recordId, defaultValues, isEditing });
 
   const {
     control,
     handleSubmit,
-    setValue,
     formState: { isSubmitting },
   } = form;
-
-  const { uploadFile, deleteFile } = useFileUpload();
-
-  const [supportingDocuments, setSupportingDocuments] = useState<
-    SupportingDocument[]
-  >([]);
-  const [isUploadingDoc, setIsUploadingDoc] = useState(false);
-
-  // Supporting documents handlers
-  const handleSupportingDocumentsUpload = async (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const files = Array.from(e.target.files || []);
-    if (files.length === 0) return;
-
-    // Validate files
-    const invalidFiles = files.filter(
-      (file) => !file.type.startsWith("image/") || file.size > 5 * 1024 * 1024
-    );
-
-    if (invalidFiles.length > 0) {
-      toast.error("All files must be images under 5MB");
-      return;
-    }
-
-    setIsUploadingDoc(true);
-
-    try {
-      const uploadPromises = files.map(async (file) => {
-        const result = await uploadFile(file, "documents");
-        const previewUrl = URL.createObjectURL(file);
-
-        return {
-          id: result.path,
-          path: result.path,
-          preview: previewUrl,
-          name: file.name,
-        };
-      });
-
-      const uploadedDocs = await Promise.all(uploadPromises);
-      setSupportingDocuments((prev) => [...prev, ...uploadedDocs]);
-
-      // Update form value with paths
-      const allPaths = [
-        ...supportingDocuments.map((d) => d.path),
-        ...uploadedDocs.map((d) => d.path),
-      ];
-      setValue("supportingDocuments", allPaths);
-
-      toast.success(`${uploadedDocs.length} document(s) uploaded successfully`);
-    } catch (error) {
-      console.error("Error uploading documents:", error);
-      toast.error(
-        error instanceof Error ? error.message : "Failed to upload documents"
-      );
-    } finally {
-      setIsUploadingDoc(false);
-      // Reset file input
-      const fileInput = document.getElementById(
-        "documentsUpload"
-      ) as HTMLInputElement;
-      if (fileInput) fileInput.value = "";
-    }
-  };
-
-  const removeSupportingDocument = async (docId: string) => {
-    const doc = supportingDocuments.find((d) => d.id === docId);
-    if (!doc) return;
-
-    try {
-      await deleteFile(doc.path);
-      URL.revokeObjectURL(doc.preview);
-
-      const updatedDocs = supportingDocuments.filter((d) => d.id !== docId);
-      setSupportingDocuments(updatedDocs);
-      setValue(
-        "supportingDocuments",
-        updatedDocs.map((d) => d.path)
-      );
-
-      toast.success("Document removed");
-    } catch (error) {
-      console.error("Error removing document:", error);
-      toast.error("Failed to remove document");
-    }
-  };
 
   return (
     <div className="min-h-screen bg-gray-50 p-8">
@@ -184,7 +97,7 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                       <Input
                         id="documentsUpload"
                         type="file"
-                        accept="image/*"
+                        accept="image/png,image/jpeg,image/jpg"
                         multiple
                         onChange={handleSupportingDocumentsUpload}
                         className="hidden"
@@ -510,6 +423,7 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                               Age *
                             </FieldLabel>
                             <Input
+                             
                               id="husbandAge"
                               type="number"
                               {...field}
@@ -1097,7 +1011,7 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                     <Button
                       type="submit"
                       className="h-12 flex-1 text-base font-semibold"
-                      disabled={isSubmitting || isProcessing}
+                      disabled={isSubmitting}
                     >
                       {isSubmitting ? (
                         <span className="flex items-center gap-2">
