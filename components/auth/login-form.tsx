@@ -17,6 +17,7 @@ import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LoginFormData, loginSchema } from "@/constants/schema";
 import Image from "next/image";
+import { toast } from "sonner";
 
 export function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
@@ -39,11 +40,22 @@ export function LoginForm() {
 
   const onSubmit = async (data: LoginFormData) => {
     try {
-      console.log("Login data:", data);
-
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      router.push("/admin/birth-certificate");
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      })
+      if (res.ok) {
+        toast.success("Login successful");
+        router.push("/admin/birth-certificate");
+      } else {
+        const errorData = await res.json();
+        toast.error("Login failed", {
+          description: errorData.error || "Login failed, try again.",
+        });
+      }
     } catch (error) {
       console.error("Login error:", error);
     }
