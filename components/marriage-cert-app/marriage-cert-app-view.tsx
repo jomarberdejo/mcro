@@ -2,10 +2,9 @@
 
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Download, Edit2, Trash2, FileText } from "lucide-react";
+import { ArrowLeft, Download, Edit2, Trash2, FileText, Image as ImageIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { getFullName } from "@/utils";
 import {
   Document,
   Page,
@@ -14,173 +13,219 @@ import {
   PDFViewer,
   PDFDownloadLink,
   Image,
+  StyleSheet,
 } from "@react-pdf/renderer";
-import { styles } from "@/lib/pdf-styles";
-import { MarriageCertificateApplication } from "@/lib/generated/prisma/client";
+import { MarriageCertificateApplication, SupportingDocument } from "@/lib/generated/prisma/client";
 
-interface MarriageCertificateApplicationPDFProps {
-  application: MarriageCertificateApplication;
+interface MarriageCertificateApplicationWithDocuments extends MarriageCertificateApplication {
+  supportingDocuments?: SupportingDocument[];
+}
+
+interface SupportingDocumentsPDFProps {
+  application: MarriageCertificateApplicationWithDocuments;
   pageSize?: "A4" | "LEGAL" | "LETTER";
 }
 
-const MarriageCertificateApplicationPDF: React.FC<
-  MarriageCertificateApplicationPDFProps
-> = ({ application, pageSize = "A4" }) => {
-  const groomFullName = getFullName(
-    application.groomLastName,
-    application.groomFirstName,
-    application.groomMiddleName
-  );
-  const brideFullName = getFullName(
-    application.brideLastName,
-    application.brideFirstName,
-    application.brideMiddleName
-  );
+// PDF Styles for supporting documents
+const documentStyles = StyleSheet.create({
+  page: {
+    padding: 40,
+    backgroundColor: '#fff',
+    flexDirection: 'column',
+  },
+  header: {
+    marginBottom: 20,
+    borderBottom: '2px solid #333',
+    paddingBottom: 10,
+  },
+  headerText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 5,
+  },
+  subHeaderText: {
+    fontSize: 12,
+    textAlign: 'center',
+    color: '#666',
+  },
+  documentInfo: {
+    marginBottom: 20,
+    padding: 10,
+    backgroundColor: '#f5f5f5',
+    borderRadius: 4,
+  },
+  infoRow: {
+    flexDirection: 'row',
+    marginBottom: 5,
+  },
+  infoLabel: {
+    fontSize: 10,
+    fontWeight: 'bold',
+    width: 120,
+  },
+  infoValue: {
+    fontSize: 10,
+    flex: 1,
+  },
+  imageContainer: {
+    flex: 1,
+    width: '100%',
+    minHeight: 0, // Prevent overflow
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  documentImage: {
+    maxWidth: '100%',
+    maxHeight: '100%',
+    objectFit: 'contain',
+  },
+  noDocumentsContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  noDocumentsText: {
+    fontSize: 14,
+    color: '#999',
+    textAlign: 'center',
+  },
+  pageNumber: {
+    position: 'absolute',
+    bottom: 20,
+    right: 40,
+    fontSize: 10,
+    color: '#666',
+  },
+});
+
+const SupportingDocumentsPDF: React.FC<SupportingDocumentsPDFProps> = ({ 
+  application, 
+  pageSize = "A4" 
+}) => {
+  const documents = application.supportingDocuments || [];
+
+  // If no documents, show a message
+  if (documents.length === 0) {
+    return (
+      <Document>
+        <Page size={pageSize} style={documentStyles.page}>
+          <View style={documentStyles.header}>
+            <Text style={documentStyles.headerText}>
+              Supporting Documents
+            </Text>
+            <Text style={documentStyles.subHeaderText}>
+              Registry No: {application.registryNo}
+            </Text>
+          </View>
+          <View style={documentStyles.noDocumentsContainer}>
+            <Text style={documentStyles.noDocumentsText}>
+              No supporting documents attached to this application.
+            </Text>
+          </View>
+        </Page>
+      </Document>
+    );
+  }
 
   return (
     <Document>
-      <Page size={pageSize} style={styles.page}>
-        <View style={styles.headerRow} wrap={false}>
-          <View style={styles.leftColumn}>
-            <Image src="/logos/datu-gara-2.png" style={styles.lapuLapuImage} />
-          </View>
-
-          <View style={styles.centerColumn}>
-            <Text style={styles.formNumber}>
-              Marriage Certificate Application Form
+      {documents.map((doc, index) => (
+        <Page key={doc.id} size={pageSize} style={documentStyles.page}>
+          {/* Header */}
+          <View style={documentStyles.header}>
+            <Text style={documentStyles.headerText}>
+              Supporting Document {index + 1} of {documents.length}
             </Text>
-            <Text style={styles.formNumber}>(Application-available)</Text>
-            <Text style={styles.headerTitle}>Republic of the Philippines</Text>
-            <Text style={styles.headerTitle}>Province of Leyte</Text>
-            <Text style={styles.headerTitleBold}>Municipality of Carigara</Text>
-            <Text style={styles.headerTitleLarge}>
-              OFFICE OF THE MUNICIPAL CIVIL REGISTRAR
+            <Text style={documentStyles.subHeaderText}>
+              Registry No: {application.registryNo}
             </Text>
           </View>
 
-          <View style={styles.rightColumn}>
-            <View style={styles.logoContainer}>
-              <Image src="/logos/mcro.png" style={styles.logo} />
-              <Image src="/logos/lgu-carigara.png" style={styles.logo} />
-              <Image src="/logos/bagong-pilipinas.png" style={styles.logo} />
+          {/* Document Information */}
+          <View style={documentStyles.documentInfo}>
+            <View style={documentStyles.infoRow}>
+              <Text style={documentStyles.infoLabel}>File Name:</Text>
+              <Text style={documentStyles.infoValue}>{doc.fileName}</Text>
             </View>
+
+            {doc.fileSize && (
+              <View style={documentStyles.infoRow}>
+                <Text style={documentStyles.infoLabel}>File Size:</Text>
+                <Text style={documentStyles.infoValue}>
+                  {(doc.fileSize / 1024).toFixed(2)} KB
+                </Text>
+              </View>
+            )}
+
+            {doc.mimeType && (
+              <View style={documentStyles.infoRow}>
+                <Text style={documentStyles.infoLabel}>Type:</Text>
+                <Text style={documentStyles.infoValue}>{doc.mimeType}</Text>
+              </View>
+            )}
+
+            {doc.description && (
+              <View style={documentStyles.infoRow}>
+                <Text style={documentStyles.infoLabel}>Description:</Text>
+                <Text style={documentStyles.infoValue}>{doc.description}</Text>
+              </View>
+            )}
+
+            {doc.uploadedAt && (
+              <View style={documentStyles.infoRow}>
+                <Text style={documentStyles.infoLabel}>Uploaded:</Text>
+                <Text style={documentStyles.infoValue}>
+                  {new Date(doc.uploadedAt).toLocaleString()}
+                </Text>
+              </View>
+            )}
           </View>
-        </View>
 
-        {application.dateOfRegistration && (
-          <Text style={styles.dateRight}>{application.dateOfRegistration}</Text>
-        )}
-
-        <Text style={styles.concernStatement}>TO WHOM IT MAY CONCERN:</Text>
-
-        <Text style={styles.bodyText}>
-          We certify that the following application for marriage certificate has
-          been received and recorded in our Registry of Marriage Applications
-          {application.pageNo && application.bookNo && (
-            <>
-              {" "}on page{" "}
-              <Text style={{ fontWeight: "bold" }}>{application.pageNo}</Text> of
-              Book No.{" "}
-              <Text style={{ fontWeight: "bold" }}>{application.bookNo}</Text>
-            </>
-          )}
-          :
-        </Text>
-
-        <View style={styles.fieldRow}>
-          <Text style={styles.fieldLabel}>Registry No.</Text>
-          <Text style={styles.fieldColon}>:</Text>
-          <Text style={styles.fieldValue}>{application.registryNo}</Text>
-        </View>
-
-        {application.dateOfRegistration && (
-          <View style={styles.fieldRow}>
-            <Text style={styles.fieldLabel}>Date of Registration</Text>
-            <Text style={styles.fieldColon}>:</Text>
-            <Text style={styles.fieldValue}>{application.dateOfRegistration}</Text>
+          {/* Document Image */}
+          <View style={documentStyles.imageContainer}>
+            {doc.mimeType?.startsWith('image/') ? (
+              <Image 
+                src={doc.filePath} 
+                style={documentStyles.documentImage}
+              />
+            ) : (
+              <Text style={documentStyles.noDocumentsText}>
+                Document preview not available for this file type.
+                {'\n'}File: {doc.fileName}
+              </Text>
+            )}
           </View>
-        )}
 
-        {application.bookNo && (
-          <View style={styles.fieldRow}>
-            <Text style={styles.fieldLabel}>Book No.</Text>
-            <Text style={styles.fieldColon}>:</Text>
-            <Text style={styles.fieldValue}>{application.bookNo}</Text>
-          </View>
-        )}
-
-        {application.pageNo && (
-          <View style={styles.fieldRow}>
-            <Text style={styles.fieldLabel}>Page No.</Text>
-            <Text style={styles.fieldColon}>:</Text>
-            <Text style={styles.fieldValue}>{application.pageNo}</Text>
-          </View>
-        )}
-
-        <View style={styles.fieldRow}>
-          <Text style={styles.fieldLabel}>Name of Groom</Text>
-          <Text style={styles.fieldColon}>:</Text>
-          <Text style={styles.fieldValueBold}>{groomFullName}</Text>
-        </View>
-
-        <View style={styles.fieldRow}>
-          <Text style={styles.fieldLabel}>Date of Birth (Groom)</Text>
-          <Text style={styles.fieldColon}>:</Text>
-          <Text style={styles.fieldValue}>{application.groomDateOfBirth}</Text>
-        </View>
-
-        <View style={styles.fieldRow}>
-          <Text style={styles.fieldLabel}>Name of Bride</Text>
-          <Text style={styles.fieldColon}>:</Text>
-          <Text style={styles.fieldValueBold}>{brideFullName}</Text>
-        </View>
-
-        <View style={styles.fieldRow}>
-          <Text style={styles.fieldLabel}>Date of Birth (Bride)</Text>
-          <Text style={styles.fieldColon}>:</Text>
-          <Text style={styles.fieldValue}>{application.brideDateOfBirth}</Text>
-        </View>
-
-        <View style={{ marginTop: 30 }}>
-          <Text style={styles.footerText}>
-            This application was submitted and recorded in the registry.
+          {/* Page Number */}
+          <Text style={documentStyles.pageNumber}>
+            Page {index + 1} of {documents.length}
           </Text>
-        </View>
-
-        <View style={styles.noteContainer}>
-          <Text style={styles.noteHighlight}>Note:</Text>
-          <Text style={styles.noteText}>
-            This is an application document. The actual marriage certificate will
-            be issued upon completion of requirements and verification. A mark,
-            erasure or alteration of any entry invalidates this application.
-          </Text>
-        </View>
-      </Page>
+        </Page>
+      ))}
     </Document>
   );
 };
 
 export const MarriageCertificateApplicationView: React.FC<{
-  application: MarriageCertificateApplication;
+  application: MarriageCertificateApplicationWithDocuments;
 }> = ({ application }) => {
   const router = useRouter();
   const [showPDF, setShowPDF] = useState(true);
-  const [isDeleting, setIsDeleting] = useState(false);
   const [pageSize, setPageSize] = useState<"A4" | "LEGAL" | "LETTER">("A4");
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const handleBack = () => {
-    router.push("/admin/marriage-certificate-application");
+    router.push("/admin/marriage-cert-app");
   };
 
   const handleEdit = () => {
-    router.push(
-      `/admin/marriage-certificate-application/${application.id}/edit`
-    );
+    router.push(`/admin/marriage-cert-app/${application.id}/edit`);
   };
 
   const handleDelete = async () => {
     if (
-      !confirm("Are you sure you want to delete this application?")
+      !confirm("Are you sure you want to delete this application and all its supporting documents?")
     ) {
       return;
     }
@@ -199,7 +244,7 @@ export const MarriageCertificateApplicationView: React.FC<{
       }
 
       toast.success("Application deleted successfully");
-      router.push("/admin/marriage-certificate-application");
+      router.push("/admin/marriage-cert-app");
       router.refresh();
     } catch (error) {
       console.error("Error deleting application:", error);
@@ -209,15 +254,28 @@ export const MarriageCertificateApplicationView: React.FC<{
     }
   };
 
+  const documents = application.supportingDocuments || [];
+
   return (
     <div className="min-h-screen bg-gray-50 p-8">
       <div className="max-w-6xl mx-auto">
-        <div className="mb-4 flex gap-2 items-center">
+        {/* Header Controls */}
+        <div className="mb-4 flex gap-2 items-center flex-wrap">
           <Button variant="ghost" onClick={handleBack}>
             <ArrowLeft className="w-4 h-4 mr-2" /> Back to Applications
           </Button>
 
-          {/* Add Paper Size Selector */}
+          <div className="flex-1" />
+
+          {/* Document Count Badge */}
+          <div className="flex items-center gap-2 px-4 py-2 bg-blue-100 text-blue-800 rounded-lg">
+            <FileText className="w-4 h-4" />
+            <span className="text-sm font-medium">
+              {documents.length} Document{documents.length !== 1 ? 's' : ''}
+            </span>
+          </div>
+
+          {/* Paper Size Selector */}
           <div className="flex items-center gap-2">
             <label className="text-sm font-medium">Paper Size:</label>
             <select
@@ -231,14 +289,15 @@ export const MarriageCertificateApplicationView: React.FC<{
             </select>
           </div>
 
+          {/* Download PDF */}
           <PDFDownloadLink
             document={
-              <MarriageCertificateApplicationPDF
+              <SupportingDocumentsPDF
                 application={application}
                 pageSize={pageSize}
               />
             }
-            fileName={`marriage-certificate-application-${application.registryNo}.pdf`}
+            fileName={`supporting-documents-${application.registryNo}.pdf`}
           >
             {({ loading }) => (
               <Button disabled={loading}>
@@ -248,10 +307,12 @@ export const MarriageCertificateApplicationView: React.FC<{
             )}
           </PDFDownloadLink>
 
+          {/* Edit Button */}
           <Button variant="ghost" onClick={handleEdit}>
             <Edit2 className="w-4 h-4 mr-2" /> Edit
           </Button>
 
+          {/* Delete Button */}
           <Button
             variant="destructive"
             onClick={handleDelete}
@@ -261,19 +322,21 @@ export const MarriageCertificateApplicationView: React.FC<{
             {isDeleting ? "Deleting..." : "Delete"}
           </Button>
 
+          {/* Toggle Preview */}
           <Button variant="outline" onClick={() => setShowPDF(!showPDF)}>
             <FileText className="w-4 h-4 mr-2" />
             {showPDF ? "Hide" : "Show"} Preview
           </Button>
         </div>
 
+        {/* PDF Preview */}
         {showPDF && (
           <div
             className="bg-white shadow-lg rounded-lg overflow-hidden"
             style={{ height: "800px" }}
           >
             <PDFViewer width="100%" height="100%">
-              <MarriageCertificateApplicationPDF
+              <SupportingDocumentsPDF
                 application={application}
                 pageSize={pageSize}
               />
@@ -281,11 +344,71 @@ export const MarriageCertificateApplicationView: React.FC<{
           </div>
         )}
 
+        {/* Hidden State */}
         {!showPDF && (
-          <div className="bg-white shadow-lg rounded-lg p-8 text-center">
-            <FileText className="w-16 h-16 mx-auto mb-4 text-gray-400" />
-            <p className="text-gray-600 mb-4">PDF preview is hidden</p>
-            <Button onClick={() => setShowPDF(true)}>Show Preview</Button>
+          <div className="bg-white shadow-lg rounded-lg p-8">
+            {/* Documents List */}
+            <div className="mb-6">
+              <h2 className="text-xl font-bold mb-4">Supporting Documents</h2>
+              <p className="text-sm text-gray-600 mb-4">
+                Registry No: <span className="font-semibold">{application.registryNo}</span>
+              </p>
+              
+              {documents.length === 0 ? (
+                <div className="text-center py-12">
+                  <FileText className="w-16 h-16 mx-auto mb-4 text-gray-400" />
+                  <p className="text-gray-600">No supporting documents attached</p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {documents.map((doc, index) => (
+                    <div 
+                      key={doc.id} 
+                      className="border rounded-lg p-4 hover:bg-gray-50 transition-colors"
+                    >
+                      <div className="flex items-start gap-4">
+                        <div className="flex-shrink-0">
+                          {doc.mimeType?.startsWith('image/') ? (
+                            <ImageIcon className="w-8 h-8 text-blue-500" />
+                          ) : (
+                            <FileText className="w-8 h-8 text-gray-500" />
+                          )}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <h3 className="font-medium text-gray-900 mb-1">
+                            Document {index + 1}: {doc.fileName}
+                          </h3>
+                          {doc.description && (
+                            <p className="text-sm text-gray-600 mb-2">{doc.description}</p>
+                          )}
+                          <div className="flex flex-wrap gap-4 text-xs text-gray-500">
+                            {doc.fileSize && (
+                              <span>Size: {(doc.fileSize / 1024).toFixed(2)} KB</span>
+                            )}
+                            {doc.mimeType && (
+                              <span>Type: {doc.mimeType}</span>
+                            )}
+                            {doc.uploadedAt && (
+                              <span>
+                                Uploaded: {new Date(doc.uploadedAt).toLocaleDateString()}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Show Preview Button */}
+            <div className="text-center">
+              <Button onClick={() => setShowPDF(true)}>
+                <FileText className="w-4 h-4 mr-2" />
+                Show PDF Preview
+              </Button>
+            </div>
           </div>
         )}
       </div>

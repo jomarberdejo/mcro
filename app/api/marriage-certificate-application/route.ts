@@ -21,6 +21,9 @@ export async function GET(request: NextRequest) {
           }
         : undefined,
       orderBy: { createdAt: "desc" },
+      include: {
+        supportingDocuments: true, 
+      },
     });
 
     return NextResponse.json(applications, { status: 200 });
@@ -38,19 +41,47 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const validatedData = marriageCertificateApplicationSchema.parse(body);
 
+    const { supportingDocuments, ...applicationData } = validatedData;
+
     const application = await prisma.marriageCertificateApplication.create({
-      data: validatedData,
+      data: {
+        ...applicationData,
+        supportingDocuments: {
+          create: supportingDocuments.map((doc) => ({
+            filePath: doc.filePath,
+            fileName: doc.fileName,
+            fileSize: doc.fileSize,
+            mimeType: doc.mimeType,
+            type: 'MARRIAGE_CERTIFICATE_APPLICATION',
+          })),
+        },
+      },
+      include: {
+        supportingDocuments: true,
+      },
     });
 
     return NextResponse.json(application, { status: 201 });
   } catch (error) {
+    console.error("Error creating marriage certificate application:", error);
+    
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: "Validation failed", details: error.message },
+        { 
+          error: "Validation failed", 
+          details: error.issues 
+        },
         { status: 400 }
       );
     }
-    console.error("Error creating marriage certificate application:", error);
+    
+    if (error instanceof Error) {
+      return NextResponse.json(
+        { error: error.message },
+        { status: 500 }
+      );
+    }
+    
     return NextResponse.json(
       { error: "Failed to create application" },
       { status: 500 }

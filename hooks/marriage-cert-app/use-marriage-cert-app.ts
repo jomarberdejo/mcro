@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { toast } from "sonner";
 import { MarriageCertificateApplication } from "@/lib/generated/prisma/client";
-import { deleteMarriageCertificateApplication, fetchMarriageCertificateApplications } from "@/services/marriage-certificate-applicationt";
+import { deleteMarriageCertificateApplication, fetchMarriageCertificateApplications } from "@/services/marriage-cert-app";
 
 export function useMarriageCertificateApplications() {
   const [applications, setApplications] = useState<MarriageCertificateApplication[]>([]);

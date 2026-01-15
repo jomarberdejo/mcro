@@ -20,6 +20,9 @@ export async function GET(request: NextRequest) {
             ],
           }
         : undefined,
+      include: {
+        supportingDocuments: true, // Include supporting documents
+      },
       orderBy: { createdAt: "desc" },
     });
 
@@ -38,18 +41,44 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const validatedData = marriageRecordSchema.parse(body);
 
+    // Destructure to separate supportingDocuments
+    const { supportingDocuments, ...recordData } = validatedData;
+
+    // Create record with nested document creation
     const record = await prisma.marriageRecord.create({
-      data: validatedData,
+      data: {
+        ...recordData,
+        supportingDocuments: {
+          create: supportingDocuments.map((doc) => ({
+            filePath: doc.filePath,
+            fileName: doc.fileName,
+            fileSize: doc.fileSize,
+            mimeType: doc.mimeType,
+            type: 'MARRIAGE_CERTIFICATE',
+          })),
+        },
+      },
+      include: {
+        supportingDocuments: true,
+      },
     });
 
     return NextResponse.json(record, { status: 201 });
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: "Validation failed", details: error.message },
+        { error: "Validation failed", details: error.issues },
         { status: 400 }
       );
     }
+    
+    if (error instanceof Error) {
+      return NextResponse.json(
+        { error: error.message },
+        { status: 500 }
+      );
+    }
+    
     console.error("Error creating marriage record:", error);
     return NextResponse.json(
       { error: "Failed to create marriage record" },
@@ -57,3 +86,4 @@ export async function POST(request: NextRequest) {
     );
   }
 }
+

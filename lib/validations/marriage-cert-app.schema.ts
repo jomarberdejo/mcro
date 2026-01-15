@@ -1,4 +1,7 @@
 import { z } from "zod";
+import { supportingDocumentSchema } from "./schema";
+
+
 
 export const marriageCertificateApplicationSchema = z.object({
   registryNo: z.string().min(1, "Registry number is required"),
@@ -15,6 +18,7 @@ export const marriageCertificateApplicationSchema = z.object({
   brideMiddleName: z.string().default(""),
   brideLastName: z.string().min(1, "Bride's last name is required"),
   brideDateOfBirth: z.string().min(1, "Bride's date of birth is required"),
+  supportingDocuments: z.array(supportingDocumentSchema).default([])
 });
 
 export type MarriageCertificateApplicationFormInput = z.input<typeof marriageCertificateApplicationSchema>;

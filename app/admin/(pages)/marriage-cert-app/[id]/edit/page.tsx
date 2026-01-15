@@ -12,6 +12,9 @@ export default async function EditMarriageCertificateApplicationPage({ params }:
 
   const application = await prisma.marriageCertificateApplication.findUnique({
     where: { id },
+    include: {
+      supportingDocuments: true,
+    }
   });
 
   if (!application) {

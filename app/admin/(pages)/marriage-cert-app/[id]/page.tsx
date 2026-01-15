@@ -11,8 +11,11 @@ export default async function ViewMarriageCertAppPage({ params }: ViewPageProps)
 
   const record = await prisma.marriageCertificateApplication.findUnique({
     where: { id },
-  });
+    include: {
+      supportingDocuments: true,
+    }
 
+  });
   if (!record) {
     notFound();
   }

@@ -1,4 +1,7 @@
 import { z } from "zod";
+import { supportingDocumentSchema } from "./schema";
+
+
 
 export const deathRecordSchema = z.object({
   registryNo: z.string().min(1, "Registry number is required"),
@@ -37,6 +40,7 @@ export const deathRecordSchema = z.object({
   processFeeInfo: z.string().default(""),
   remarks: z.string().default(""),
   signatureImagePath: z.string().default(""),
+   supportingDocuments: z.array(supportingDocumentSchema).default([])
 });
 
 export type DeathRecordFormInput = z.input<typeof deathRecordSchema>;

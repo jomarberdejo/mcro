@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { Controller } from "react-hook-form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -14,9 +14,7 @@ import {
 import { ArrowLeft, Upload, X, FileImage, Loader2 } from "lucide-react";
 import { MarriageCertificateApplicationFormInput } from "@/lib/validations/marriage-cert-app.schema";
 import Image from "next/image";
-import { toast } from "sonner";
 import { cn } from "@/lib/utils";
-import { useFileUpload } from "@/hooks/use-file-upload";
 import { useMarriageCertificateApplicationForm } from "@/hooks/marriage-cert-app/use-marriage-cert-app-form";
 
 interface MarriageCertificateApplicationFormProps {
@@ -25,114 +23,28 @@ interface MarriageCertificateApplicationFormProps {
   isEditing?: boolean;
 }
 
-interface SupportingDocument {
-  id: string;
-  path: string;
-  preview: string;
-  name: string;
-}
-
 export const MarriageCertificateApplicationForm: React.FC<
   MarriageCertificateApplicationFormProps
 > = ({ applicationId, defaultValues, isEditing = false }) => {
-  const { form, onSubmit, handleCancel } =
-    useMarriageCertificateApplicationForm({
-      applicationId,
-      defaultValues,
-      isEditing,
-    });
+  const {
+    form,
+    onSubmit,
+    handleCancel,
+    supportingDocuments,
+    isUploadingDoc,
+    handleSupportingDocumentsUpload,
+    removeSupportingDocument,
+  } = useMarriageCertificateApplicationForm({
+    applicationId,
+    defaultValues,
+    isEditing,
+  });
 
   const {
     control,
     handleSubmit,
-    setValue,
     formState: { isSubmitting },
   } = form;
-
-  const { uploadFile, deleteFile } = useFileUpload();
-
-  const [supportingDocuments, setSupportingDocuments] = useState<
-    SupportingDocument[]
-  >([]);
-  const [isUploadingDoc, setIsUploadingDoc] = useState(false);
-
-  const handleSupportingDocumentsUpload = async (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const files = Array.from(e.target.files || []);
-    if (files.length === 0) return;
-
-    const invalidFiles = files.filter(
-      (file) => !file.type.startsWith("image/") || file.size > 5 * 1024 * 1024
-    );
-
-    if (invalidFiles.length > 0) {
-      toast.error("All files must be images under 5MB");
-      return;
-    }
-
-    setIsUploadingDoc(true);
-
-    try {
-      const uploadPromises = files.map(async (file) => {
-        const result = await uploadFile(file, "documents");
-        const previewUrl = URL.createObjectURL(file);
-
-        return {
-          id: result.path,
-          path: result.path,
-          preview: previewUrl,
-          name: file.name,
-        };
-      });
-
-      const uploadedDocs = await Promise.all(uploadPromises);
-      setSupportingDocuments((prev) => [...prev, ...uploadedDocs]);
-
-      // Update form value with paths
-      const allPaths = [
-        ...supportingDocuments.map((d) => d.path),
-        ...uploadedDocs.map((d) => d.path),
-      ];
-      setValue("supportingDocuments", allPaths);
-
-      toast.success(`${uploadedDocs.length} document(s) uploaded successfully`);
-    } catch (error) {
-      console.error("Error uploading documents:", error);
-      toast.error(
-        error instanceof Error ? error.message : "Failed to upload documents"
-      );
-    } finally {
-      setIsUploadingDoc(false);
-      // Reset file input
-      const fileInput = document.getElementById(
-        "documentsUpload"
-      ) as HTMLInputElement;
-      if (fileInput) fileInput.value = "";
-    }
-  };
-
-  const removeSupportingDocument = async (docId: string) => {
-    const doc = supportingDocuments.find((d) => d.id === docId);
-    if (!doc) return;
-
-    try {
-      await deleteFile(doc.path);
-      URL.revokeObjectURL(doc.preview);
-
-      const updatedDocs = supportingDocuments.filter((d) => d.id !== docId);
-      setSupportingDocuments(updatedDocs);
-      setValue(
-        "supportingDocuments",
-        updatedDocs.map((d) => d.path)
-      );
-
-      toast.success("Document removed");
-    } catch (error) {
-      console.error("Error removing document:", error);
-      toast.error("Failed to remove document");
-    }
-  };
 
   return (
     <div className="min-h-screen bg-gray-50 p-8">
@@ -246,6 +158,7 @@ export const MarriageCertificateApplicationForm: React.FC<
               </div>
             </div>
 
+
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
               <FieldGroup>
                 <div className="space-y-5">
@@ -272,7 +185,7 @@ export const MarriageCertificateApplicationForm: React.FC<
                               className={cn(
                                 "h-11 text-base transition-all",
                                 fieldState.invalid &&
-                                  "border-red-500 focus-visible:ring-red-500"
+                                "border-red-500 focus-visible:ring-red-500"
                               )}
                               aria-invalid={fieldState.invalid}
                             />
@@ -368,7 +281,7 @@ export const MarriageCertificateApplicationForm: React.FC<
                               className={cn(
                                 "h-11 text-base transition-all",
                                 fieldState.invalid &&
-                                  "border-red-500 focus-visible:ring-red-500"
+                                "border-red-500 focus-visible:ring-red-500"
                               )}
                               aria-invalid={fieldState.invalid}
                             />
@@ -395,7 +308,7 @@ export const MarriageCertificateApplicationForm: React.FC<
                               className={cn(
                                 "h-11 text-base transition-all",
                                 fieldState.invalid &&
-                                  "border-red-500 focus-visible:ring-red-500"
+                                "border-red-500 focus-visible:ring-red-500"
                               )}
                               aria-invalid={fieldState.invalid}
                             />
@@ -445,7 +358,7 @@ export const MarriageCertificateApplicationForm: React.FC<
                               className={cn(
                                 "h-11 text-base transition-all",
                                 fieldState.invalid &&
-                                  "border-red-500 focus-visible:ring-red-500"
+                                "border-red-500 focus-visible:ring-red-500"
                               )}
                               aria-invalid={fieldState.invalid}
                             />
@@ -480,7 +393,7 @@ export const MarriageCertificateApplicationForm: React.FC<
                               className={cn(
                                 "h-11 text-base transition-all",
                                 fieldState.invalid &&
-                                  "border-red-500 focus-visible:ring-red-500"
+                                "border-red-500 focus-visible:ring-red-500"
                               )}
                               aria-invalid={fieldState.invalid}
                             />
@@ -507,7 +420,7 @@ export const MarriageCertificateApplicationForm: React.FC<
                               className={cn(
                                 "h-11 text-base transition-all",
                                 fieldState.invalid &&
-                                  "border-red-500 focus-visible:ring-red-500"
+                                "border-red-500 focus-visible:ring-red-500"
                               )}
                               aria-invalid={fieldState.invalid}
                             />
@@ -557,7 +470,7 @@ export const MarriageCertificateApplicationForm: React.FC<
                               className={cn(
                                 "h-11 text-base transition-all",
                                 fieldState.invalid &&
-                                  "border-red-500 focus-visible:ring-red-500"
+                                "border-red-500 focus-visible:ring-red-500"
                               )}
                               aria-invalid={fieldState.invalid}
                             />

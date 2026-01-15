@@ -1,16 +1,16 @@
 // lib/transform-records.ts
 
-import { BirthRecord, DeathRecord, MarriageRecord, MarriageCertificateApplication } from "./generated/prisma/client";
 import { BirthRecordFormInput } from "@/lib/validations/birth-record.schema";
 import { DeathRecordFormInput } from "@/lib/validations/death-record.schema";
 import { MarriageRecordFormInput } from "@/lib/validations/marriage-record.schema";
 import { MarriageCertificateApplicationFormInput } from "@/lib/validations/marriage-cert-app.schema";
+import { BirthRecordWithDocuments, DeathRecordWithDocuments, MarriageRecordWithDocuments, MarriageCertificateApplicationWithDocuments } from "./types";
 
 /**
  * Transform BirthRecord (Prisma) into form input
  */
 export function transformBirthRecord(
-  record: BirthRecord
+  record: BirthRecordWithDocuments
 ): Partial<BirthRecordFormInput> {
   return {
     registryNo: record.registryNo ?? "",
@@ -63,7 +63,7 @@ export function transformBirthRecord(
  * Transform MarriageRecord (Prisma) into form input
  */
 export function transformMarriageRecord(
-  record: MarriageRecord
+  record: MarriageRecordWithDocuments
 ): Partial<MarriageRecordFormInput> {
   return {
     registryNo: record.registryNo ?? "",
@@ -110,7 +110,7 @@ export function transformMarriageRecord(
  * Transform DeathRecord (Prisma) into form input
  */
 export function transformDeathRecord(
-  record: DeathRecord
+  record: DeathRecordWithDocuments
 ): Partial<DeathRecordFormInput> {
   return {
     registryNo: record.registryNo ?? "",
@@ -148,7 +148,7 @@ export function transformDeathRecord(
  * Transform MarriageCertificateApplication (Prisma) into form input
  */
 export function transformMarriageCertificateApplication(
-  application: MarriageCertificateApplication
+  application: MarriageCertificateApplicationWithDocuments
 ): Partial<MarriageCertificateApplicationFormInput> {
   return {
     registryNo: application.registryNo ?? "",
@@ -165,5 +165,11 @@ export function transformMarriageCertificateApplication(
     brideMiddleName: application.brideMiddleName ?? "",
     brideLastName: application.brideLastName ?? "",
     brideDateOfBirth: application.brideDateOfBirth ?? "",
+    supportingDocuments: application.supportingDocuments?.map(doc => ({
+      filePath: doc.filePath,
+      fileName: doc.fileName,
+      fileSize: doc.fileSize ?? undefined,
+      mimeType: doc.mimeType ?? undefined,
+    })) ?? [],
   };
 }
