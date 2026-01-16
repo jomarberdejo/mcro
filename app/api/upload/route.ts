@@ -32,8 +32,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Create uploads directory if it doesn't exist
-    const uploadDir = path.join(process.cwd(), "public", "uploads", type);
+    // Create uploads directory at project root (not in public)
+    const uploadDir = path.join(process.cwd(), "uploads", type);
     if (!existsSync(uploadDir)) {
       await mkdir(uploadDir, { recursive: true });
     }
@@ -45,18 +45,16 @@ export async function POST(request: NextRequest) {
     const filename = `${timestamp}-${randomString}${extension}`;
     const filepath = path.join(uploadDir, filename);
 
-    // Convert file to buffer and write to disk
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
     await writeFile(filepath, buffer);
 
-    // Return the public URL path
-    const publicPath = `/uploads/${type}/${filename}`;
+    const apiPath = `/api/files/${type}/${filename}`;
 
     return NextResponse.json(
       { 
         success: true, 
-        path: publicPath,
+        path: apiPath,
         filename 
       },
       { status: 200 }

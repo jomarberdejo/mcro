@@ -1,8 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
-import { useForm, Controller } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import React from "react";
+import { Controller } from "react-hook-form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -23,9 +22,7 @@ import {
 import { ArrowLeft, Upload, X, FileImage, Loader2 } from "lucide-react";
 import { BirthRecordFormInput } from "@/lib/validations/birth-record.schema";
 import Image from "next/image";
-import { toast } from "sonner";
 import { cn } from "@/lib/utils";
-import { useFileUpload } from "@/hooks/use-file-upload";
 import { useBirthRecordForm } from "@/hooks/birth-certificate/use-birth-record-form";
 
 interface BirthRecordFormProps {
@@ -34,19 +31,13 @@ interface BirthRecordFormProps {
   isEditing?: boolean;
 }
 
-interface SupportingDocument {
-  id: string;
-  path: string;
-  preview: string;
-  name: string;
-}
 
 export const BirthRecordForm: React.FC<BirthRecordFormProps> = ({
   recordId,
   defaultValues,
   isEditing = false,
 }) => {
-   const {
+  const {
     form,
     supportingDocuments,
     isUploadingDoc,
@@ -56,7 +47,12 @@ export const BirthRecordForm: React.FC<BirthRecordFormProps> = ({
     handleCancel,
   } = useBirthRecordForm({ recordId, defaultValues, isEditing });
 
-  const { control, handleSubmit, watch, formState: { isSubmitting } } = form;
+  const {
+    control,
+    handleSubmit,
+    watch,
+    formState: { isSubmitting },
+  } = form;
   const isTwinValue = watch("isTwin");
 
   return (

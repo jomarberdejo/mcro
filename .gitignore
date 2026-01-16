@@ -45,3 +45,6 @@ next-env.d.ts
 qc
 query
 taskkill
+
+# User uploads
+/uploads

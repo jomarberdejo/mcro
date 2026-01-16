@@ -12,14 +12,14 @@ import {
 import { Input } from "@/components/ui/input";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Eye, EyeOff, Lock, User, ShieldCheck, Copyright } from "lucide-react";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LoginFormData, loginSchema } from "@/constants/schema";
 import Image from "next/image";
 import { toast } from "sonner";
 
-export function LoginForm() {
+function LoginFormContent() {
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -53,6 +53,7 @@ export function LoginForm() {
       if (res.ok) {
         toast.success("Login successful");
         
+        // Redirect to the intended page or default
         const destination = redirect && redirect.startsWith("/admin")
           ? redirect
           : "/admin/birth-certificate";
@@ -249,5 +250,17 @@ export function LoginForm() {
         </CardContent>
       </Card>
     </div>
+  );
+}
+
+export function LoginForm() {
+  return (
+    <Suspense fallback={
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-600 border-t-transparent" />
+      </div>
+    }>
+      <LoginFormContent />
+    </Suspense>
   );
 }

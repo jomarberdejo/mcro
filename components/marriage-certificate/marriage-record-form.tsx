@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
-import { useForm, Controller } from "react-hook-form";
+import React from "react";
+import { Controller } from "react-hook-form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -31,12 +31,6 @@ interface MarriageRecordFormProps {
   isEditing?: boolean;
 }
 
-interface SupportingDocument {
-  id: string;
-  path: string;
-  preview: string;
-  name: string;
-}
 
 export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
   recordId,
@@ -543,7 +537,7 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                               htmlFor="husbandFatherName"
                               className="text-sm font-semibold text-gray-700"
                             >
-                              Father's Name
+                              Father&apos;s Name
                             </FieldLabel>
                             <Input
                               id="husbandFatherName"
@@ -563,7 +557,7 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                               htmlFor="husbandMotherName"
                               className="text-sm font-semibold text-gray-700"
                             >
-                              Mother's Name
+                              Mother&apos;s Name
                             </FieldLabel>
                             <Input
                               id="husbandMotherName"
@@ -769,7 +763,7 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                               htmlFor="wifeFatherName"
                               className="text-sm font-semibold text-gray-700"
                             >
-                              Father's Name
+                              Father&apos;s Name
                             </FieldLabel>
                             <Input
                               id="wifeFatherName"
@@ -789,7 +783,7 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                               htmlFor="wifeMotherName"
                               className="text-sm font-semibold text-gray-700"
                             >
-                              Mother's Name
+                              Mother&apos;s Name
                             </FieldLabel>
                             <Input
                               id="wifeMotherName"

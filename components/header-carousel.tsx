@@ -4,7 +4,7 @@ import React from "react";
 import { Splide, SplideSlide } from "@splidejs/react-splide";
 import { AutoScroll } from "@splidejs/splide-extension-auto-scroll";
 import "@splidejs/splide/dist/css/splide.min.css";
-import { Building2, ClipboardList, Cross, FileText, Heart } from "lucide-react";
+import {  ClipboardList, Cross, FileText, Heart } from "lucide-react";
 
 export const HeaderCarousel = () => {
   return (

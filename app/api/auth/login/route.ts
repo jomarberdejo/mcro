@@ -31,7 +31,6 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    // Check if user exists
     if (!user) {
       return NextResponse.json(
         { error: "Invalid username or password" },
@@ -39,7 +38,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Verify password
     const isPasswordValid = await bcrypt.compare(password, user.password);
 
     if (!isPasswordValid) {
@@ -70,14 +68,13 @@ export async function POST(request: NextRequest) {
       { status: 200 }
     );
 
-    // Set HTTP-only cookie
     response.cookies.set({
       name: "session",
       value: token,
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
-      maxAge: 60 * 60 * 24 * 7, // 7 days
+      maxAge: 60 * 60 * 24 * 7,
       path: "/",
     });
 

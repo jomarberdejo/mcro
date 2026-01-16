@@ -50,7 +50,10 @@ export async function PUT(
 
     const existingRecord = await prisma.birthRecord.findUnique({
       where: { id },
-      select: { signatureImagePath: true },
+      select: { 
+        signatureImagePath: true,
+        supportingDocuments: true,
+      },
     });
 
     if (!existingRecord) {
@@ -67,8 +70,9 @@ export async function PUT(
       ) {
         const oldFilePath = path.join(
           process.cwd(),
-          "public",
-          existingRecord.signatureImagePath
+          "uploads",
+          "signature",
+          path.basename(existingRecord.signatureImagePath)
         );
         if (existsSync(oldFilePath)) {
           await unlink(oldFilePath).catch(console.error);
@@ -76,22 +80,51 @@ export async function PUT(
       }
     }
 
-    await prisma.supportingDocument.deleteMany({
-      where: { birthRecordId: id },
-    });
+    const existingDocPaths = new Set(
+      existingRecord.supportingDocuments.map(doc => doc.filePath)
+    );
+    
+    const newDocPaths = new Set(
+      supportingDocuments?.map(doc => doc.filePath) || []
+    );
+
+    const docsToDelete = existingRecord.supportingDocuments.filter(
+      doc => !newDocPaths.has(doc.filePath)
+    );
+
+    const docsToCreate = supportingDocuments?.filter(
+      doc => !existingDocPaths.has(doc.filePath)
+    ) || [];
+
+    for (const doc of docsToDelete) {
+      const docFilePath = path.join(
+        process.cwd(),
+        "uploads",
+        "documents",
+        path.basename(doc.filePath)
+      );
+      if (existsSync(docFilePath)) {
+        await unlink(docFilePath).catch(console.error);
+      }
+    }
 
     const record = await prisma.birthRecord.update({
       where: { id },
       data: {
         ...recordData,
         supportingDocuments: {
-          create: supportingDocuments?.map((doc) => ({
+          deleteMany: {
+            id: {
+              in: docsToDelete.map(doc => doc.id),
+            },
+          },
+          create: docsToCreate.map((doc) => ({
             filePath: doc.filePath,
             fileName: doc.fileName,
             fileSize: doc.fileSize,
             mimeType: doc.mimeType,
             type: 'BIRTH_CERTIFICATE',
-          })) || [],
+          })),
         },
       },
       include: {
@@ -147,30 +180,32 @@ export async function DELETE(
     if (record.signatureImagePath) {
       const filePath = path.join(
         process.cwd(),
-        "public",
-        record.signatureImagePath
+        "uploads",
+        "signature",
+        path.basename(record.signatureImagePath)
       );
       if (existsSync(filePath)) {
         await unlink(filePath).catch(console.error);
       }
     }
 
-    // Optional: Delete supporting document files from storage
-    // Uncomment if you want to delete files from disk/cloud storage
-    /*
     if (record.supportingDocuments.length > 0) {
       for (const doc of record.supportingDocuments) {
         try {
-          const docFilePath = path.join(process.cwd(), 'public', doc.filePath);
+          const docFilePath = path.join(
+            process.cwd(),
+            "uploads",
+            "documents",
+            path.basename(doc.filePath)
+          );
           if (existsSync(docFilePath)) {
-            await unlink(docFilePath);
+            await unlink(docFilePath).catch(console.error);
           }
         } catch (fileError) {
           console.error(`Failed to delete file: ${doc.filePath}`, fileError);
         }
       }
     }
-    */
 
     await prisma.birthRecord.delete({
       where: { id },

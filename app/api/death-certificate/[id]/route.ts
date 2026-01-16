@@ -46,13 +46,14 @@ export async function PUT(
     const body = await request.json();
     const validatedData = deathRecordSchema.parse(body);
 
-    // Destructure to separate supportingDocuments
     const { supportingDocuments, ...recordData } = validatedData;
 
-    // Check if record exists and get old signature path
     const existingRecord = await prisma.deathRecord.findUnique({
       where: { id },
-      select: { signatureImagePath: true },
+      select: { 
+        signatureImagePath: true,
+        supportingDocuments: true,
+      },
     });
 
     if (!existingRecord) {
@@ -62,7 +63,6 @@ export async function PUT(
       );
     }
 
-    // Delete old signature file if it changed
     if (validatedData.signatureImagePath) {
       if (
         existingRecord.signatureImagePath &&
@@ -70,8 +70,9 @@ export async function PUT(
       ) {
         const oldFilePath = path.join(
           process.cwd(),
-          "public",
-          existingRecord.signatureImagePath
+          "uploads",
+          "signature",
+          path.basename(existingRecord.signatureImagePath)
         );
         if (existsSync(oldFilePath)) {
           await unlink(oldFilePath).catch(console.error);
@@ -79,24 +80,51 @@ export async function PUT(
       }
     }
 
-    // Delete existing supporting documents
-    await prisma.supportingDocument.deleteMany({
-      where: { deathRecordId: id },
-    });
+    const existingDocPaths = new Set(
+      existingRecord.supportingDocuments.map(doc => doc.filePath)
+    );
+    
+    const newDocPaths = new Set(
+      supportingDocuments?.map(doc => doc.filePath) || []
+    );
 
-    // Update record with new supporting documents
+    const docsToDelete = existingRecord.supportingDocuments.filter(
+      doc => !newDocPaths.has(doc.filePath)
+    );
+
+    const docsToCreate = supportingDocuments?.filter(
+      doc => !existingDocPaths.has(doc.filePath)
+    ) || [];
+
+    for (const doc of docsToDelete) {
+      const docFilePath = path.join(
+        process.cwd(),
+        "uploads",
+        "documents",
+        path.basename(doc.filePath)
+      );
+      if (existsSync(docFilePath)) {
+        await unlink(docFilePath).catch(console.error);
+      }
+    }
+
     const record = await prisma.deathRecord.update({
       where: { id },
       data: {
         ...recordData,
         supportingDocuments: {
-          create: supportingDocuments?.map((doc) => ({
+          deleteMany: {
+            id: {
+              in: docsToDelete.map(doc => doc.id),
+            },
+          },
+          create: docsToCreate.map((doc) => ({
             filePath: doc.filePath,
             fileName: doc.fileName,
             fileSize: doc.fileSize,
             mimeType: doc.mimeType,
             type: 'DEATH_CERTIFICATE',
-          })) || [],
+          })),
         },
       },
       include: {
@@ -178,7 +206,6 @@ export async function DELETE(
     }
     */
 
-    // Delete record (supporting documents will be cascade deleted)
     await prisma.deathRecord.delete({
       where: { id },
     });

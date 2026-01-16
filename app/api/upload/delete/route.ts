@@ -5,28 +5,43 @@ import { existsSync } from "fs";
 
 export async function DELETE(request: NextRequest) {
   try {
-    const { filePath } = await request.json();
+    const body = await request.json();
+    const { type, filename } = body;
 
-    if (!filePath) {
+    if (!type || !filename) {
       return NextResponse.json(
-        { error: "No file path provided" },
+        { error: "Type and filename are required" },
         { status: 400 }
       );
     }
 
-    const fullPath = path.join(process.cwd(), "public", filePath);
+    // Security: Prevent directory traversal
+    if (filename.includes("..") || type.includes("..")) {
+      return NextResponse.json(
+        { error: "Invalid path" },
+        { status: 400 }
+      );
+    }
 
-    if (!existsSync(fullPath)) {
+    // Construct file path
+    const filepath = path.join(process.cwd(), "uploads", type, filename);
+
+    // Check if file exists
+    if (!existsSync(filepath)) {
       return NextResponse.json(
         { error: "File not found" },
         { status: 404 }
       );
     }
 
-    await unlink(fullPath);
+    // Delete the file
+    await unlink(filepath);
 
     return NextResponse.json(
-      { success: true, message: "File deleted successfully" },
+      { 
+        success: true, 
+        message: "File deleted successfully" 
+      },
       { status: 200 }
     );
   } catch (error) {

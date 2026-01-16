@@ -1,5 +1,3 @@
-// components/marriage-certificate/marriage-record-view.tsx (or wherever your file is)
-
 "use client";
 
 import React, { useState } from "react";
@@ -16,10 +14,14 @@ import {
   PDFViewer,
   PDFDownloadLink,
   Image,
+  StyleSheet,
 } from "@react-pdf/renderer";
 import { styles } from "@/lib/pdf-styles";
-import { MarriageRecord, SupportingDocument } from "@/lib/generated/prisma/client";
-import { SupportingDocumentsPages } from '@/components/supporting-documents'
+import {
+  MarriageRecord,
+  SupportingDocument,
+} from "@/lib/generated/prisma/client";
+import { SupportingDocumentsPages } from "@/components/supporting-documents";
 
 interface MarriageRecordWithDocuments extends MarriageRecord {
   supportingDocuments?: SupportingDocument[];
@@ -27,10 +29,85 @@ interface MarriageRecordWithDocuments extends MarriageRecord {
 
 interface MarriageCertificatePDFProps {
   record: MarriageRecordWithDocuments;
-  pageSize?: 'A4' | 'LEGAL' | 'LETTER';
+  pageSize?: "A4" | "LEGAL" | "LETTER";
 }
 
-const MarriageCertificatePDF: React.FC<MarriageCertificatePDFProps> = ({ record, pageSize = "A4" }) => {
+export const marriageStyles = StyleSheet.create({
+  ...styles,
+
+  marriageColumnsContainer: {
+    flexDirection: "row",
+    marginTop: 15,
+    marginBottom: 15,
+    paddingLeft: 30,
+    paddingRight: 30,
+  },
+  marriageColumn: {
+    width: "50%",
+    paddingHorizontal: 10,
+  },
+  marriageColumnTitle: {
+    fontSize: 11,
+    fontWeight: "bold",
+    marginBottom: 8,
+    textAlign: "center",
+    textTransform: "uppercase",
+    color: "#333",
+    borderBottom: "1px solid #000",
+    paddingBottom: 4,
+  },
+  marriageFieldRow: {
+    flexDirection: "row",
+    marginBottom: 4,
+    alignItems: "flex-start",
+  },
+  marriageFieldLabel: {
+    width: "45%",
+    fontSize: 10,
+    color: "#333",
+  },
+  marriageFieldColon: {
+    width: "5%",
+    fontSize: 10,
+  },
+  marriageFieldValue: {
+    width: "50%",
+    fontSize: 10,
+  },
+  marriageFieldValueBold: {
+    width: "50%",
+    fontSize: 10,
+    fontWeight: "bold",
+    textTransform: "uppercase",
+  },
+  registryInfoContainer: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  registryInfoFieldRow: {
+    flexDirection: "row",
+    marginBottom: 4,
+  },
+  registryInfoFieldLabel: {
+    width: "18%",
+    fontSize: 10,
+    color: "#333",
+  },
+  registryInfoFieldColon: {
+    fontSize: 10,
+    width: "3%",
+  },
+  registryInfoFieldValue: {
+    fontSize: 10,
+    width: "25%",
+  },
+});
+
+const MarriageCertificatePDF: React.FC<MarriageCertificatePDFProps> = ({
+  record,
+  pageSize = "A4",
+}) => {
   const husbandFullName = getFullName(
     record.husbandLastName,
     record.husbandFirstName,
@@ -72,143 +149,198 @@ const MarriageCertificatePDF: React.FC<MarriageCertificatePDFProps> = ({ record,
           </View>
         </View>
 
-        <Text style={styles.dateRight}>{record.dateOfRegistration || record.dateOfMarriage}</Text>
+        <Text style={styles.dateRight}>
+          {record.dateOfRegistration || record.dateOfMarriage}
+        </Text>
 
         <Text style={styles.concernStatement}>TO WHOM IT MAY CONCERN:</Text>
 
         <Text style={styles.bodyText}>
-          We certify that among others, the following facts of marriage appear in
-          our Registry of Marriages on page{" "}
-          <Text style={{ fontWeight: "bold" }}>{record.pageNo}</Text> of Book No.{" "}
-          <Text style={{ fontWeight: "bold" }}>{record.bookNo}:</Text>
+          We certify that among others, the following facts of marriage appear
+          in our Registry of Marriages on page{" "}
+          <Text style={{ fontWeight: "bold" }}>{record.pageNo}</Text> of Book
+          No. <Text style={{ fontWeight: "bold" }}>{record.bookNo}:</Text>
         </Text>
 
-        <View style={styles.fieldRow}>
-          <Text style={styles.fieldLabel}>Registry No.</Text>
-          <Text style={styles.fieldColon}>:</Text>
-          <Text style={styles.fieldValue}>{record.registryNo}</Text>
-        </View>
+        <View style={marriageStyles.marriageColumnsContainer}>
+          <View style={marriageStyles.marriageColumn}>
+            <Text style={marriageStyles.marriageColumnTitle}>HUSBAND</Text>
 
-        {record.dateOfRegistration && (
-          <View style={styles.fieldRow}>
-            <Text style={styles.fieldLabel}>Date of Registration</Text>
-            <Text style={styles.fieldColon}>:</Text>
-            <Text style={styles.fieldValue}>{record.dateOfRegistration}</Text>
+            <View style={marriageStyles.marriageFieldRow}>
+              <Text style={marriageStyles.marriageFieldLabel}>Name</Text>
+              <Text style={marriageStyles.marriageFieldColon}>:</Text>
+              <Text style={marriageStyles.marriageFieldValueBold}>
+                {husbandFullName}
+              </Text>
+            </View>
+
+            <View style={marriageStyles.marriageFieldRow}>
+              <Text style={marriageStyles.marriageFieldLabel}>Age</Text>
+              <Text style={marriageStyles.marriageFieldColon}>:</Text>
+              <Text style={marriageStyles.marriageFieldValue}>
+                {record.husbandAge}
+              </Text>
+            </View>
+
+            <View style={marriageStyles.marriageFieldRow}>
+              <Text style={marriageStyles.marriageFieldLabel}>Nationality</Text>
+              <Text style={marriageStyles.marriageFieldColon}>:</Text>
+              <Text style={marriageStyles.marriageFieldValue}>
+                {record.husbandNationality}
+              </Text>
+            </View>
+
+            <View style={marriageStyles.marriageFieldRow}>
+              <Text style={marriageStyles.marriageFieldLabel}>
+                Civil Status
+              </Text>
+              <Text style={marriageStyles.marriageFieldColon}>:</Text>
+              <Text style={marriageStyles.marriageFieldValue}>
+                {record.husbandCivilStatus}
+              </Text>
+            </View>
+
+            {record.husbandMotherName && (
+              <View style={marriageStyles.marriageFieldRow}>
+                <Text style={marriageStyles.marriageFieldLabel}>
+                  Mother&apos;s Name
+                </Text>
+                <Text style={marriageStyles.marriageFieldColon}>:</Text>
+                <Text style={marriageStyles.marriageFieldValue}>
+                  {record.husbandMotherName}
+                </Text>
+              </View>
+            )}
+
+            {record.husbandFatherName && (
+              <View style={marriageStyles.marriageFieldRow}>
+                <Text style={marriageStyles.marriageFieldLabel}>
+                  Father&apos;s Name
+                </Text>
+                <Text style={marriageStyles.marriageFieldColon}>:</Text>
+                <Text style={marriageStyles.marriageFieldValue}>
+                  {record.husbandFatherName}
+                </Text>
+              </View>
+            )}
           </View>
-        )}
 
-        <View style={styles.fieldRow}>
-          <Text style={styles.fieldLabel}>Date of Marriage</Text>
-          <Text style={styles.fieldColon}>:</Text>
-          <Text style={styles.fieldValue}>{record.dateOfMarriage}</Text>
-        </View>
+          <View style={marriageStyles.marriageColumn}>
+            <Text style={marriageStyles.marriageColumnTitle}>WIFE</Text>
 
-        <View style={styles.fieldRow}>
-          <Text style={styles.fieldLabel}>Place of Marriage</Text>
-          <Text style={styles.fieldColon}>:</Text>
-          <Text style={styles.fieldValue}>{record.placeOfMarriage}</Text>
-        </View>
+            <View style={marriageStyles.marriageFieldRow}>
+              <Text style={marriageStyles.marriageFieldLabel}>Name</Text>
+              <Text style={marriageStyles.marriageFieldColon}>:</Text>
+              <Text style={marriageStyles.marriageFieldValueBold}>
+                {wifeFullName}
+              </Text>
+            </View>
 
-        <View style={{ marginTop: 10 }}>
-          <Text style={styles.sectionTitle}>HUSBAND INFORMATION</Text>
-        </View>
+            <View style={marriageStyles.marriageFieldRow}>
+              <Text style={marriageStyles.marriageFieldLabel}>Age</Text>
+              <Text style={marriageStyles.marriageFieldColon}>:</Text>
+              <Text style={marriageStyles.marriageFieldValue}>
+                {record.wifeAge}
+              </Text>
+            </View>
 
-        <View style={styles.fieldRow}>
-          <Text style={styles.fieldLabel}>Name</Text>
-          <Text style={styles.fieldColon}>:</Text>
-          <Text style={styles.fieldValueBold}>{husbandFullName}</Text>
-        </View>
+            <View style={marriageStyles.marriageFieldRow}>
+              <Text style={marriageStyles.marriageFieldLabel}>Nationality</Text>
+              <Text style={marriageStyles.marriageFieldColon}>:</Text>
+              <Text style={marriageStyles.marriageFieldValue}>
+                {record.wifeNationality}
+              </Text>
+            </View>
 
-        <View style={styles.fieldRow}>
-          <Text style={styles.fieldLabel}>Age</Text>
-          <Text style={styles.fieldColon}>:</Text>
-          <Text style={styles.fieldValue}>{record.husbandAge}</Text>
-        </View>
+            <View style={marriageStyles.marriageFieldRow}>
+              <Text style={marriageStyles.marriageFieldLabel}>
+                Civil Status
+              </Text>
+              <Text style={marriageStyles.marriageFieldColon}>:</Text>
+              <Text style={marriageStyles.marriageFieldValue}>
+                {record.wifeCivilStatus}
+              </Text>
+            </View>
 
-        <View style={styles.fieldRow}>
-          <Text style={styles.fieldLabel}>Nationality</Text>
-          <Text style={styles.fieldColon}>:</Text>
-          <Text style={styles.fieldValue}>{record.husbandNationality}</Text>
-        </View>
+            {record.wifeMotherName && (
+              <View style={marriageStyles.marriageFieldRow}>
+                <Text style={marriageStyles.marriageFieldLabel}>
+                  Mother&apos;s Name
+                </Text>
+                <Text style={marriageStyles.marriageFieldColon}>:</Text>
+                <Text style={marriageStyles.marriageFieldValue}>
+                  {record.wifeMotherName}
+                </Text>
+              </View>
+            )}
 
-        <View style={styles.fieldRow}>
-          <Text style={styles.fieldLabel}>Civil Status</Text>
-          <Text style={styles.fieldColon}>:</Text>
-          <Text style={styles.fieldValue}>{record.husbandCivilStatus}</Text>
-        </View>
-
-        {record.husbandFatherName && (
-          <View style={styles.fieldRow}>
-            <Text style={styles.fieldLabel}>Father's Name</Text>
-            <Text style={styles.fieldColon}>:</Text>
-            <Text style={styles.fieldValue}>{record.husbandFatherName}</Text>
+            {record.wifeFatherName && (
+              <View style={marriageStyles.marriageFieldRow}>
+                <Text style={marriageStyles.marriageFieldLabel}>
+                  Father&apos;s Name
+                </Text>
+                <Text style={marriageStyles.marriageFieldColon}>:</Text>
+                <Text style={marriageStyles.marriageFieldValue}>
+                  {record.wifeFatherName}
+                </Text>
+              </View>
+            )}
           </View>
-        )}
+        </View>
 
-        {record.husbandMotherName && (
-          <View style={styles.fieldRow}>
-            <Text style={styles.fieldLabel}>Mother's Name</Text>
-            <Text style={styles.fieldColon}>:</Text>
-            <Text style={styles.fieldValue}>{record.husbandMotherName}</Text>
+        <View style={marriageStyles.registryInfoContainer}>
+          <View style={marriageStyles.registryInfoFieldRow}>
+            <Text style={marriageStyles.registryInfoFieldLabel}>
+              LCR Registry No.
+            </Text>
+            <Text style={marriageStyles.registryInfoFieldColon}>:</Text>
+            <Text style={marriageStyles.registryInfoFieldValue}>
+              {record.registryNo}
+            </Text>
           </View>
-        )}
 
-        {/* Wife Information */}
-        <View style={{ marginTop: 10 }}>
-          <Text style={styles.sectionTitle}>WIFE INFORMATION</Text>
-        </View>
+          {record.dateOfRegistration && (
+            <View style={marriageStyles.registryInfoFieldRow}>
+              <Text style={marriageStyles.registryInfoFieldLabel}>
+                Date of Registration
+              </Text>
+              <Text style={marriageStyles.registryInfoFieldColon}>:</Text>
+              <Text style={marriageStyles.registryInfoFieldValue}>
+                {record.dateOfRegistration}
+              </Text>
+            </View>
+          )}
 
-        <View style={styles.fieldRow}>
-          <Text style={styles.fieldLabel}>Name</Text>
-          <Text style={styles.fieldColon}>:</Text>
-          <Text style={styles.fieldValueBold}>{wifeFullName}</Text>
-        </View>
-
-        <View style={styles.fieldRow}>
-          <Text style={styles.fieldLabel}>Age</Text>
-          <Text style={styles.fieldColon}>:</Text>
-          <Text style={styles.fieldValue}>{record.wifeAge}</Text>
-        </View>
-
-        <View style={styles.fieldRow}>
-          <Text style={styles.fieldLabel}>Nationality</Text>
-          <Text style={styles.fieldColon}>:</Text>
-          <Text style={styles.fieldValue}>{record.wifeNationality}</Text>
-        </View>
-
-        <View style={styles.fieldRow}>
-          <Text style={styles.fieldLabel}>Civil Status</Text>
-          <Text style={styles.fieldColon}>:</Text>
-          <Text style={styles.fieldValue}>{record.wifeCivilStatus}</Text>
-        </View>
-
-        {record.wifeFatherName && (
-          <View style={styles.fieldRow}>
-            <Text style={styles.fieldLabel}>Father's Name</Text>
-            <Text style={styles.fieldColon}>:</Text>
-            <Text style={styles.fieldValue}>{record.wifeFatherName}</Text>
+          <View style={marriageStyles.registryInfoFieldRow}>
+            <Text style={marriageStyles.registryInfoFieldLabel}>
+              Date of Marriage
+            </Text>
+            <Text style={marriageStyles.registryInfoFieldColon}>:</Text>
+            <Text style={marriageStyles.registryInfoFieldValue}>
+              {record.dateOfMarriage}
+            </Text>
           </View>
-        )}
 
-        {record.wifeMotherName && (
-          <View style={styles.fieldRow}>
-            <Text style={styles.fieldLabel}>Mother's Name</Text>
-            <Text style={styles.fieldColon}>:</Text>
-            <Text style={styles.fieldValue}>{record.wifeMotherName}</Text>
+          <View style={marriageStyles.registryInfoFieldRow}>
+            <Text style={marriageStyles.registryInfoFieldLabel}>
+              Place of Marriage
+            </Text>
+            <Text style={marriageStyles.registryInfoFieldColon}>:</Text>
+            <Text style={marriageStyles.registryInfoFieldValue}>
+              {record.placeOfMarriage}
+            </Text>
           </View>
-        )}
-
-       
+        </View>
 
         {record.remarks && (
           <View style={styles.remarksSection}>
             <Text style={styles.remarksTitle}>REMARKS:</Text>
             {record.remarks
-              .split('\n\n')
-              .filter(para => para.trim())
+              .split("\n\n")
+              .filter((para) => para.trim())
               .map((paragraph, index) => (
                 <Text key={index} style={styles.remarksText}>
-                  {paragraph.trim().replace(/\n/g, ' ')}
+                  {paragraph.trim().replace(/\n/g, " ")}
                 </Text>
               ))}
           </View>
@@ -218,9 +350,7 @@ const MarriageCertificatePDF: React.FC<MarriageCertificatePDFProps> = ({ record,
           {record.requestorName && record.requestPurpose && (
             <Text style={styles.footerText}>
               This certification is issued to{" "}
-              <Text style={styles.requestorName}>
-                {record.requestorName}
-              </Text>{" "}
+              <Text style={styles.requestorName}>{record.requestorName}</Text>{" "}
               {record.requestPurpose}.
             </Text>
           )}
@@ -234,9 +364,7 @@ const MarriageCertificatePDF: React.FC<MarriageCertificatePDFProps> = ({ record,
             />
           )}
           <View style={styles.signatureRight}>
-            <Text style={styles.signatureName}>
-              {record.registrarName}
-            </Text>
+            <Text style={styles.signatureName}>{record.registrarName}</Text>
             <Text style={styles.signatureTitle}>Municipal Civil Registrar</Text>
           </View>
           {record.certifyingOfficerName && record.certifyingOfficerPosition && (
@@ -248,7 +376,9 @@ const MarriageCertificatePDF: React.FC<MarriageCertificatePDFProps> = ({ record,
                 <Text style={styles.signatureName}>
                   {record.certifyingOfficerName}
                 </Text>
-                <Text style={styles.signatureTitle}>{record.certifyingOfficerPosition}</Text>
+                <Text style={styles.signatureTitle}>
+                  {record.certifyingOfficerPosition}
+                </Text>
               </View>
             </View>
           )}
@@ -294,14 +424,13 @@ const MarriageCertificatePDF: React.FC<MarriageCertificatePDFProps> = ({ record,
     </Document>
   );
 };
-
-export const MarriageRecordView: React.FC<{ record: MarriageRecordWithDocuments }> = ({
-  record,
-}) => {
+export const MarriageRecordView: React.FC<{
+  record: MarriageRecordWithDocuments;
+}> = ({ record }) => {
   const router = useRouter();
   const [showPDF, setShowPDF] = useState(true);
   const [isDeleting, setIsDeleting] = useState(false);
-  const [pageSize, setPageSize] = useState<'A4' | 'LEGAL' | 'LETTER'>('A4');
+  const [pageSize, setPageSize] = useState<"A4" | "LEGAL" | "LETTER">("A4");
 
   const handleBack = () => {
     router.push("/admin/marriage-certificate");
@@ -352,7 +481,8 @@ export const MarriageRecordView: React.FC<{ record: MarriageRecordWithDocuments 
             <div className="flex items-center gap-2 px-4 py-2 bg-blue-100 text-blue-800 rounded-lg">
               <FileText className="w-4 h-4" />
               <span className="text-sm font-medium">
-                {documents.length} Supporting Document{documents.length !== 1 ? 's' : ''}
+                {documents.length} Supporting Document
+                {documents.length !== 1 ? "s" : ""}
               </span>
             </div>
           )}
@@ -361,17 +491,21 @@ export const MarriageRecordView: React.FC<{ record: MarriageRecordWithDocuments 
             <label className="text-sm font-medium">Paper Size:</label>
             <select
               value={pageSize}
-              onChange={(e) => setPageSize(e.target.value as any)}
+              onChange={(e) =>
+                setPageSize(e.target.value as "A4" | "LEGAL" | "LETTER")
+              }
               className="border rounded px-3 py-2 text-sm"
             >
-              <option value="A4">A4 (8.3" × 11.7")</option>
-              <option value="LEGAL">Legal (8.5" × 14")</option>
-              <option value="LETTER">Letter (8.5" × 11")</option>
+              <option value="A4">A4 (8.3&quot; × 11.7&quot;)</option>
+              <option value="LEGAL">Legal (8.5&quot; × 14&quot;)</option>
+              <option value="LETTER">Letter (8.5&quot; × 11&quot;)</option>
             </select>
           </div>
 
           <PDFDownloadLink
-            document={<MarriageCertificatePDF record={record} pageSize={pageSize} />}
+            document={
+              <MarriageCertificatePDF record={record} pageSize={pageSize} />
+            }
             fileName={`marriage-certificate-${record.registryNo}.pdf`}
           >
             {({ loading }) => (

@@ -298,12 +298,12 @@ export const DeathRecordView: React.FC<{ record: DeathRecordWithDocuments }> = (
             <label className="text-sm font-medium">Paper Size:</label>
             <select
               value={pageSize}
-              onChange={(e) => setPageSize(e.target.value as any)}
+              onChange={(e) => setPageSize(e.target.value as "A4" | "LEGAL" | "LETTER")}
               className="border rounded px-3 py-2 text-sm"
             >
-              <option value="A4">A4 (8.3" × 11.7")</option>
-              <option value="LEGAL">Legal (8.5" × 14")</option>
-              <option value="LETTER">Letter (8.5" × 11")</option>
+              <option value="A4">A4 (8.3&quot; × 11.7&quot;)</option>
+              <option value="LEGAL">Legal (8.5&quot; × 14&quot;)</option>
+              <option value="LETTER">Letter (8.5&quot; × 11&quot;)</option>
             </select>
           </div>
 

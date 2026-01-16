@@ -2,7 +2,7 @@ import { StyleSheet } from "@react-pdf/renderer";
 
 export const styles = StyleSheet.create({
   page: {
-    padding: 30, // Reduced from 40
+    padding: 30, 
     fontFamily: "Times-Roman",
     fontSize: 10,
   },
@@ -10,8 +10,8 @@ export const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "flex-start",
-    marginBottom: 10, // Reduced from 15
-    paddingBottom: 8, // Reduced from 10
+    marginBottom: 10, 
+    paddingBottom: 8, 
     borderBottom: "1px solid #000",
   },
   leftColumn: {
@@ -26,8 +26,8 @@ export const styles = StyleSheet.create({
     alignItems: "flex-end",
   },
   lapuLapuImage: {
-    width: 70, // Reduced from 80
-    height: 70, // Reduced from 80
+    width: 70, 
+    height: 70, 
     opacity: 0.4,
   },
   formNumber: {
@@ -57,35 +57,34 @@ export const styles = StyleSheet.create({
     alignItems: "center",
   },
   logo: {
-    width: 55, // Reduced from 60
-    height: 55, // Reduced from 60
+    width: 55, 
+    height: 55, 
   },
   dateRight: {
     textAlign: "right",
     fontSize: 10,
-    marginTop: 8, // Reduced from 10
-    marginBottom: 12, // Reduced from 20
+    marginTop: 8, 
+    marginBottom: 12, 
   },
   concernStatement: {
     fontSize: 11,
-    marginBottom: 10, // Reduced from 15
+    marginBottom: 10, 
   },
   bodyText: {
     fontSize: 10,
-    lineHeight: 1.4, // Reduced from 1.5
+    lineHeight: 1.4,
     textAlign: "justify",
-    marginBottom: 12, // Reduced from 15
+    marginBottom: 12, 
     textIndent: 30,
   },
   bookReference: {
     fontSize: 10,
-    marginBottom: 15, // Reduced from 20
+    marginBottom: 15, 
   },
-  // Field rows - label and value on same line
   fieldRow: {
     flexDirection: "row",
-    marginBottom: 4, // Reduced from 6
-    alignItems: "flex-start",
+    marginBottom: 4, 
+    alignItems: "center",
     paddingLeft: 30,
   },
   fieldLabel: {
@@ -107,31 +106,29 @@ export const styles = StyleSheet.create({
     fontWeight: "bold",
     textTransform: "uppercase",
   },
-  // Remarks section
   remarksSection: {
-    marginTop: 12, // Reduced from 20
+    marginTop: 12, 
     paddingLeft: 30,
-    marginBottom: 8, // Add this
+    marginBottom: 8, 
   },
   remarksTitle: {
     fontSize: 11,
     fontWeight: "bold",
-    marginBottom: 8, // Reduced from 10
+    marginBottom: 8,
     color: "#666",
   },
   remarksText: {
     fontSize: 9,
-    lineHeight: 1.4, // Reduced from 1.5
+    lineHeight: 1.4, 
     textAlign: "justify",
-    marginBottom: 6, // Reduced from 10
+    marginBottom: 6, 
     textTransform: "uppercase",
     textIndent: 30,
   },
-  // Footer
   footerText: {
     fontSize: 10,
-    marginTop: 8, // Reduced from 10
-    marginBottom: 8, // Reduced from 10
+    marginTop: 8, 
+    marginBottom: 8, 
     textIndent: 30,
   },
   requestorName: {
@@ -141,20 +138,20 @@ export const styles = StyleSheet.create({
   signatureRightContainer: {
     alignItems: "center",
     marginLeft: "auto",
-    marginTop: 10, // Reduced from default
+    marginTop: 10, 
     paddingRight: 30,
   },
   signatureLeftContainer: {
-    marginTop: 8, // Reduced from default
+    marginTop: 8, 
     alignItems: "center",
     marginRight: "auto",
     paddingLeft: 50,
   },
   certifyingContainer: {
-    marginVertical: 5, // Reduced from default
+    marginVertical: 5, 
   },
   certifyingLabel: {
-    marginBottom: 10, // Reduced from 10
+    marginBottom: 10, 
     fontSize: 9,
   },
   signatureRight: {
@@ -169,8 +166,8 @@ export const styles = StyleSheet.create({
     alignItems: "center",
   },
   signatureImage: {
-    width: 100, // Reduced from 120
-    height: 35, // Reduced from 40
+    width: 100, 
+    height: 35,
     marginBottom: -15,
     objectFit: "contain",
   },
@@ -185,12 +182,12 @@ export const styles = StyleSheet.create({
   },
   verifiedLabel: {
     fontSize: 10,
-    marginTop: 8, // Reduced from default
+    marginTop: 8, 
     marginBottom: 5,
   },
   regFeeInfoContainer: {
-    marginTop: 8, // Reduced from 10
-    marginBottom: 8, // Reduced from 10
+    marginTop: 8, 
+    marginBottom: 8, 
   },
   noteContainer: {
     display: "flex",

@@ -20,7 +20,6 @@
     SidebarMenuItem,
     useSidebar,
   } from "@/components/ui/sidebar";
-  import { useRouter } from "next/navigation";
   import { useAuthContext } from "@/providers/auth-provider";
   import { toast } from "sonner";
 
@@ -34,7 +33,6 @@
     };
   }) {
     const { isMobile } = useSidebar();
-    const router = useRouter();
     const { logout } = useAuthContext();
 
     const handleLogout = async () => {

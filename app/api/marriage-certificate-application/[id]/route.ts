@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { marriageCertificateApplicationSchema } from "@/lib/validations/marriage-cert-app.schema";
 import { z } from "zod";
+import { unlink } from "fs/promises";
+import path from "path";
+import { existsSync } from "fs";
 
 export async function GET(
   request: NextRequest,
@@ -43,12 +46,13 @@ export async function PUT(
     const body = await request.json();
     const validatedData = marriageCertificateApplicationSchema.parse(body);
 
-    // Destructure to separate supportingDocuments
     const { supportingDocuments, ...applicationData } = validatedData;
 
-    // Check if application exists
     const existingApplication = await prisma.marriageCertificateApplication.findUnique({
       where: { id },
+      select: {
+        supportingDocuments: true,
+      },
     });
 
     if (!existingApplication) {
@@ -58,16 +62,45 @@ export async function PUT(
       );
     }
 
-    await prisma.supportingDocument.deleteMany({
-      where: { marriageCertificateApplicationId: id },
-    });
+    const existingDocPaths = new Set(
+      existingApplication.supportingDocuments.map(doc => doc.filePath)
+    );
+    
+    const newDocPaths = new Set(
+      supportingDocuments?.map(doc => doc.filePath) || []
+    );
+
+    const docsToDelete = existingApplication.supportingDocuments.filter(
+      doc => !newDocPaths.has(doc.filePath)
+    );
+
+    const docsToCreate = supportingDocuments?.filter(
+      doc => !existingDocPaths.has(doc.filePath)
+    ) || [];
+
+    for (const doc of docsToDelete) {
+      const docFilePath = path.join(
+        process.cwd(),
+        "uploads",
+        "documents",
+        path.basename(doc.filePath)
+      );
+      if (existsSync(docFilePath)) {
+        await unlink(docFilePath).catch(console.error);
+      }
+    }
 
     const application = await prisma.marriageCertificateApplication.update({
       where: { id },
       data: {
         ...applicationData,
         supportingDocuments: {
-          create: supportingDocuments.map((doc) => ({
+          deleteMany: {
+            id: {
+              in: docsToDelete.map(doc => doc.id),
+            },
+          },
+          create: docsToCreate.map((doc) => ({
             filePath: doc.filePath,
             fileName: doc.fileName,
             fileSize: doc.fileSize,
@@ -126,25 +159,24 @@ export async function DELETE(
       );
     }
 
-    // Optional: Delete physical files from storage
-    // Uncomment if you want to delete files from disk/cloud storage
-    /*
     if (application.supportingDocuments.length > 0) {
-      const fs = require('fs').promises;
-      const path = require('path');
-      
       for (const doc of application.supportingDocuments) {
         try {
-          const filePath = path.join(process.cwd(), 'public', doc.filePath);
-          await fs.unlink(filePath);
+          const docFilePath = path.join(
+            process.cwd(),
+            "uploads",
+            "documents",
+            path.basename(doc.filePath)
+          );
+          if (existsSync(docFilePath)) {
+            await unlink(docFilePath).catch(console.error);
+          }
         } catch (fileError) {
           console.error(`Failed to delete file: ${doc.filePath}`, fileError);
         }
       }
     }
-    */
 
-    // Delete application (supporting documents will be cascade deleted)
     await prisma.marriageCertificateApplication.delete({
       where: { id },
     });

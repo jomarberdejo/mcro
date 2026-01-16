@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Page, Text, View, Image, StyleSheet } from "@react-pdf/renderer";
+import { Page, Text, View, Image } from "@react-pdf/renderer";
 import { SupportingDocument } from "@/lib/generated/prisma/client";
 import { documentStyles } from "@/lib/pdf-styles";
 
