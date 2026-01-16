@@ -11,6 +11,9 @@ export default function AdminLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
+  console.log("SERVER ADMIN");
+  
   return (
     <SidebarProvider>
       <AppSidebar />
