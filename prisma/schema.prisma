@@ -146,7 +146,6 @@ model BirthRecord {
   certifyingOfficerName     String?
   certifyingOfficerPosition String?
 
-  // Relations
   supportingDocuments SupportingDocument[]
 
   createdAt DateTime? @default(now())

@@ -10,7 +10,7 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Eye, EyeOff, Lock, User, ShieldCheck, Copyright } from "lucide-react";
 import { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
@@ -22,6 +22,8 @@ import { toast } from "sonner";
 export function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirect = searchParams.get("redirect");
 
   const form = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
@@ -46,10 +48,16 @@ export function LoginForm() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(data),
-      })
+      });
+
       if (res.ok) {
         toast.success("Login successful");
-        router.push("/admin/birth-certificate");
+        
+        const destination = redirect && redirect.startsWith("/admin")
+          ? redirect
+          : "/admin/birth-certificate";
+        
+        router.push(destination);
       } else {
         const errorData = await res.json();
         toast.error("Login failed", {
@@ -58,6 +66,9 @@ export function LoginForm() {
       }
     } catch (error) {
       console.error("Login error:", error);
+      toast.error("An error occurred", {
+        description: "Please try again later.",
+      });
     }
   };
 
@@ -85,12 +96,6 @@ export function LoginForm() {
                   height={300}
                   priority
                 />
-                {/* <div className="space-y-2 text-center">
-                  <h3 className="text-lg font-semibold">Civil Registration System</h3>
-                  <p className="text-sm text-blue-100">
-                    Secure access to vital statistics and civil registration records
-                  </p>
-                </div> */}
               </div>
             </div>
 

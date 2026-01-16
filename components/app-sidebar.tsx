@@ -62,6 +62,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     alt="MCRO Logo"
                     width={24}
                     height={24}
+                    className="h-auto w-auto"
                   />
                 </div>
                 <div className="grid flex-1 text-left text-sm leading-tight">
