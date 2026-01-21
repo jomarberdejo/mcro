@@ -38,6 +38,14 @@ const DeathCertificatePDF: React.FC<DeathCertificatePDFProps> = ({ record, pageS
 
   const documents = record.supportingDocuments || [];
 
+   const formattedDate = record.createdAt
+  ? record.createdAt.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    })
+  : "";
+
   return (
     <Document>
       <Page size={pageSize} style={styles.page}>
@@ -66,7 +74,7 @@ const DeathCertificatePDF: React.FC<DeathCertificatePDFProps> = ({ record, pageS
           </View>
         </View>
 
-        <Text style={styles.dateRight}>{record.dateOfRegistration}</Text>
+        <Text style={styles.dateRight}>{formattedDate}</Text>
 
         <Text style={styles.concernStatement}>TO WHOM IT MAY CONCERN:</Text>
 

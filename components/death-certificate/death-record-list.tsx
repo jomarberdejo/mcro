@@ -12,7 +12,6 @@ export const DeathRecordList: React.FC<DeathRecordListProps> = ({
   storageAvailable,
   onFilterChange,
   onClearFilters,
-  onNew,
   onView,
   onEdit,
   onDelete,
@@ -45,7 +44,7 @@ export const DeathRecordList: React.FC<DeathRecordListProps> = ({
   const getPageNumbers = () => {
     const pageNumbers = [];
     const maxVisiblePages = 5;
-    
+
     if (totalPages <= maxVisiblePages) {
       for (let i = 1; i <= totalPages; i++) {
         pageNumbers.push(i);
@@ -53,16 +52,16 @@ export const DeathRecordList: React.FC<DeathRecordListProps> = ({
     } else {
       let start = Math.max(1, currentPage - 2);
       const end = Math.min(totalPages, start + maxVisiblePages - 1);
-      
+
       if (end - start + 1 < maxVisiblePages) {
         start = end - maxVisiblePages + 1;
       }
-      
+
       for (let i = start; i <= end; i++) {
         pageNumbers.push(i);
       }
     }
-    
+
     return pageNumbers;
   };
 
@@ -75,7 +74,7 @@ export const DeathRecordList: React.FC<DeathRecordListProps> = ({
               <CardTitle className="text-xl font-semibold">
                 Death Records
               </CardTitle>
-              
+
               <div className="flex items-center gap-2">
                 <span className="text-sm text-gray-600">Show:</span>
                 <select
@@ -132,7 +131,6 @@ export const DeathRecordList: React.FC<DeathRecordListProps> = ({
                 </div>
               </div>
 
-              {/* Action Buttons */}
               <div className="flex justify-between items-center pt-2">
                 <Button
                   variant="outline"
@@ -140,9 +138,7 @@ export const DeathRecordList: React.FC<DeathRecordListProps> = ({
                 >
                   Clear Filters
                 </Button>
-                <Button className="flex gap-2" onClick={onNew}>
-                  <Plus className="w-4 h-4" /> New Record
-                </Button>
+
               </div>
             </div>
 
@@ -242,7 +238,7 @@ export const DeathRecordList: React.FC<DeathRecordListProps> = ({
                 <div className="text-sm text-gray-600">
                   Page {currentPage} of {totalPages}
                 </div>
-                
+
                 <div className="flex items-center gap-2">
                   <Button
                     variant="outline"

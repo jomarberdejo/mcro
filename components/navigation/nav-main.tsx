@@ -42,56 +42,42 @@ export function NavMain({
       <SidebarGroupLabel>Main</SidebarGroupLabel>
       <SidebarMenu>
         {items.map((item) => {
-          const isMainActive = pathname === item.url || pathname.startsWith(item.url + '/')
           const hasActiveSubItem = item.items?.some(subItem => pathname === subItem.url)
           
           return (
             <Collapsible 
               key={item.title} 
               asChild 
-              defaultOpen={isMainActive || hasActiveSubItem}
+              defaultOpen={hasActiveSubItem}
             >
               <SidebarMenuItem>
-                <SidebarMenuButton 
-                  asChild 
-                  tooltip={item.title}
-                  isActive={isMainActive}
-                >
-                  <Link href={item.url}>
+                <CollapsibleTrigger asChild>
+                  <SidebarMenuButton tooltip={item.title}>
                     <item.icon />
                     <span>{item.title}</span>
-                  </Link>
-                </SidebarMenuButton>
-                {item.items?.length ? (
-                  <>
-                    <CollapsibleTrigger asChild>
-                      <SidebarMenuAction className="data-[state=open]:rotate-90">
-                        <ChevronRight />
-                        <span className="sr-only">Toggle</span>
-                      </SidebarMenuAction>
-                    </CollapsibleTrigger>
-                    <CollapsibleContent>
-                      <SidebarMenuSub>
-                        {item.items?.map((subItem) => {
-                          const isSubActive = pathname === subItem.url
-                          
-                          return (
-                            <SidebarMenuSubItem key={subItem.title}>
-                              <SidebarMenuSubButton 
-                                asChild
-                                isActive={isSubActive}
-                              >
-                                <Link href={subItem.url}>
-                                  <span>{subItem.title}</span>
-                                </Link>
-                              </SidebarMenuSubButton>
-                            </SidebarMenuSubItem>
-                          )
-                        })}
-                      </SidebarMenuSub>
-                    </CollapsibleContent>
-                  </>
-                ) : null}
+                    <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                  </SidebarMenuButton>
+                </CollapsibleTrigger>
+                <CollapsibleContent>
+                  <SidebarMenuSub>
+                    {item.items?.map((subItem) => {
+                      const isSubActive = pathname === subItem.url
+                      
+                      return (
+                        <SidebarMenuSubItem key={subItem.title}>
+                          <SidebarMenuSubButton 
+                            asChild
+                            isActive={isSubActive}
+                          >
+                            <Link href={subItem.url}>
+                              <span>{subItem.title}</span>
+                            </Link>
+                          </SidebarMenuSubButton>
+                        </SidebarMenuSubItem>
+                      )
+                    })}
+                  </SidebarMenuSub>
+                </CollapsibleContent>
               </SidebarMenuItem>
             </Collapsible>
           )

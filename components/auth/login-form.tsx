@@ -18,12 +18,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { LoginFormData, loginSchema } from "@/constants/schema";
 import Image from "next/image";
 import { toast } from "sonner";
+import { Separator } from "../ui/separator";
 
 function LoginFormContent() {
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const redirect = searchParams.get("redirect");
+  const searchParams = useSearchParams()
 
   const form = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
@@ -52,13 +52,14 @@ function LoginFormContent() {
 
       if (res.ok) {
         toast.success("Login successful");
-        
-        // Redirect to the intended page or default
-        const destination = redirect && redirect.startsWith("/admin")
-          ? redirect
-          : "/admin/birth-certificate";
-        
-        router.push(destination);
+
+        const redirectTo = searchParams.get("redirect");
+
+        if (redirectTo && redirectTo.startsWith("/admin")) {
+          router.push(redirectTo);
+        } else {
+          router.push("/admin/birth-certificate");
+        }
       } else {
         const errorData = await res.json();
         toast.error("Login failed", {
@@ -75,60 +76,25 @@ function LoginFormContent() {
 
   return (
     <div className="flex flex-col gap-6">
-      <Card className="w-full overflow-hidden border-0 shadow-2xl p-0">
-        <CardContent className="grid p-0 md:grid-cols-2">
-          <div className="relative hidden flex-col justify-between bg-linear-to-br from-blue-600 via-blue-700 to-blue-800 p-10 text-white md:flex">
-            <div className="space-y-6">
-              <div className="flex items-center gap-4">
-                <div>
-                  <h2 className="text-2xl font-bold">
-                    Municipal Civil Registrar
-                  </h2>
-                  <p className="text-sm text-blue-100">LGU Carigara</p>
-                </div>
-              </div>
-
-              <div className="space-y-4 rounded-lg bg-white/10 p-6 backdrop-blur-sm">
-                <Image
-                  src="/logos/mcro.png"
-                  alt="Municipal Civil Registrar Office Logo"
-                  className="mx-auto object-contain brightness-0 invert"
-                  width={300}
-                  height={300}
-                  priority
-                />
-              </div>
-            </div>
-
-            <div className="space-y-2 mt-4 text-sm text-blue-100">
-              <p className="flex items-center gap-2">
-                <ShieldCheck className="h-4 w-4" />
-                Authorized Personnel Only
-              </p>
-              <div className="opacity-75 flex items-center gap-1">
-                <Copyright size={10} className="mt-px" />
-                <p className="text-xs">
-                  {new Date().getFullYear()} LGU Carigara. All rights reserved.
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white">
+      <Card className="w-full overflow-hidden max-w-sm mx-auto border-0 shadow-2xl p-0">
+        <CardContent>
+          <div className="py-4
+          ">
             <form
               onSubmit={handleSubmit(onSubmit)}
-              className="flex min-h-[500px] flex-col justify-center p-8 md:p-12"
+              className="flex flex-col justify-center p-2"
             >
-              <div className="mx-auto w-full max-w-md space-y-8">
-                <div className="flex flex-col items-center gap-4 md:hidden">
-                  <div className="rounded-full bg-blue-600 p-3">
-                    <ShieldCheck className="h-8 w-8 text-white" />
-                  </div>
-                  <div className="text-center">
-                    <h2 className="text-xl font-bold text-gray-900">
-                      Municipal Civil Registrar
-                    </h2>
-                    <p className="text-sm text-gray-600">LGU Carigara</p>
+              <div className="mx-auto space-y-2 max-w-[400px] w-full">
+                <div className="flex flex-col items-center gap-4">
+                  <div className="rounded-lg bg-white/10 backdrop-blur-sm">
+                    <Image
+                      src="/logos/mcro.png"
+                      alt="Municipal Civil Registrar Office Logo"
+                      className="mx-auto object-contain"
+                      width={150}
+                      height={150}
+                      priority
+                    />
                   </div>
                 </div>
 
@@ -137,9 +103,11 @@ function LoginFormContent() {
                     Welcome Back
                   </h1>
                   <p className="text-base text-gray-600">
-                    Please sign in to access the civil registration system
+                    Please sign in to continue.
                   </p>
                 </div>
+
+                <Separator className="my-4"/>
 
                 <FieldGroup>
                   <div className="space-y-5">
@@ -165,7 +133,7 @@ function LoginFormContent() {
                               className={cn(
                                 "h-12 pl-10 text-base transition-all",
                                 fieldState.invalid &&
-                                  "border-red-500 focus-visible:ring-red-500"
+                                "border-red-500 focus-visible:ring-red-500"
                               )}
                               {...field}
                               aria-invalid={fieldState.invalid}
@@ -200,7 +168,7 @@ function LoginFormContent() {
                               className={cn(
                                 "h-12 pl-10 pr-10 text-base transition-all",
                                 fieldState.invalid &&
-                                  "border-red-500 focus-visible:ring-red-500"
+                                "border-red-500 focus-visible:ring-red-500"
                               )}
                               {...field}
                               aria-invalid={fieldState.invalid}

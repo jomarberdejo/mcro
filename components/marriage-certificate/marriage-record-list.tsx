@@ -12,7 +12,6 @@ export const MarriageRecordList: React.FC<MarriageRecordListProps> = ({
   storageAvailable,
   onFilterChange,
   onClearFilters,
-  onNew,
   onView,
   onEdit,
   onDelete,
@@ -185,9 +184,6 @@ export const MarriageRecordList: React.FC<MarriageRecordListProps> = ({
                   onClick={onClearFilters}
                 >
                   Clear Filters
-                </Button>
-                <Button className="flex gap-2" onClick={onNew}>
-                  <Plus className="w-4 h-4" /> New Record
                 </Button>
               </div>
             </div>

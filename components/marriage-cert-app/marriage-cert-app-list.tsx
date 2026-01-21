@@ -14,7 +14,6 @@ interface MarriageCertificateApplicationListProps {
   storageAvailable: boolean;
   onFilterChange: (filters: MarriageCertificateApplicationFilterState) => void;
   onClearFilters: () => void;
-  onNew: () => void;
   onView: (application: MarriageCertificateApplication) => void;
   onEdit: (application: MarriageCertificateApplication) => void;
   onDelete: (id: string) => void;
@@ -28,7 +27,6 @@ export const MarriageCertificateApplicationList: React.FC<
   storageAvailable,
   onFilterChange,
   onClearFilters,
-  onNew,
   onView,
   onEdit,
   onDelete,
@@ -94,7 +92,7 @@ export const MarriageCertificateApplicationList: React.FC<
           <CardHeader>
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
               <CardTitle className="text-xl font-semibold">
-                Marriage Certificate Applications
+                Application for Marriage License
               </CardTitle>
 
               <div className="flex items-center gap-2">
@@ -204,9 +202,7 @@ export const MarriageCertificateApplicationList: React.FC<
                 <Button variant="outline" onClick={onClearFilters}>
                   Clear Filters
                 </Button>
-                <Button className="flex gap-2" onClick={onNew}>
-                  <Plus className="w-4 h-4" /> New Application
-                </Button>
+               
               </div>
             </div>
 

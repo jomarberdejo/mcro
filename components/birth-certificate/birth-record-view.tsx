@@ -47,36 +47,52 @@ const BirthCertificatePDF: React.FC<BirthCertificatePDFProps> = ({ record, pageS
 
   const documents = record.supportingDocuments || [];
 
+
+  const formattedDate = record.createdAt
+    ? record.createdAt.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    })
+    : "";
+
+
   return (
     <Document>
-      {/* Main Birth Certificate Page */}
       <Page size={pageSize} style={styles.page}>
-        <View style={styles.headerRow} wrap={false}>
-          <View style={styles.leftColumn}>
-            <Image src="/logos/datu-gara-2.png" style={styles.lapuLapuImage} />
-          </View>
+        <Image
+          src="/logos/datu-gara-3.png"
+          style={styles.pageBackgroundLogo}
+        />
 
-          <View style={styles.centerColumn}>
-            <Text style={styles.formNumber}>Civil Registry Form No. 1A</Text>
-            <Text style={styles.formNumber}>(Birth-available)</Text>
-            <Text style={styles.headerTitle}>Republic of the Philippines</Text>
-            <Text style={styles.headerTitle}>Province of Leyte</Text>
-            <Text style={styles.headerTitleBold}>Municipality of Carigara</Text>
-            <Text style={styles.headerTitleLarge}>
-              OFFICE OF THE MUNICIPAL CIVIL REGISTRAR
-            </Text>
-          </View>
+        <View>
+          <View  wrap={false} style={styles.headerRow}>
 
-          <View style={styles.rightColumn}>
-            <View style={styles.logoContainer}>
+            <View style={styles.leftLogoColumn}>
               <Image src="/logos/mcro.png" style={styles.logo} />
               <Image src="/logos/lgu-carigara.png" style={styles.logo} />
-              <Image src="/logos/bagong-pilipinas.png" style={styles.logo} />
+            </View>
+
+            <View style={styles.centerColumn}>
+              <Text style={styles.formNumber}>Civil Registry Form No. 1A</Text>
+              <Text style={styles.formNumber}>(Birth-available)</Text>
+              <Text style={styles.headerTitle}>Republic of the Philippines</Text>
+              <Text style={styles.headerTitle}>Province of Leyte</Text>
+              <Text style={styles.headerTitleBold}>Municipality of Carigara</Text>
+
+            </View>
+
+            <View style={styles.rightLogoColumn}>
+              <Image src="/logos/bagong-pilipinas.png" style={styles.logoSingle} />
             </View>
           </View>
+
+          <Text style={styles.headerTitleLarge}>
+            OFFICE OF THE MUNICIPAL CIVIL REGISTRAR
+          </Text>
         </View>
 
-        <Text style={styles.dateRight}>{record.dateOfRegistration}</Text>
+        <Text style={styles.dateRight}>{formattedDate}</Text>
 
         <Text style={styles.concernStatement}>TO WHOM IT MAY CONCERN:</Text>
 
@@ -268,11 +284,8 @@ const BirthCertificatePDF: React.FC<BirthCertificatePDFProps> = ({ record, pageS
         </View>
       </Page>
 
-      {/* Supporting Documents Pages */}
       <SupportingDocumentsPages
         documents={documents}
-        registryNo={record.registryNo}
-        recordName={childFullName}
         pageSize={pageSize}
       />
     </Document>

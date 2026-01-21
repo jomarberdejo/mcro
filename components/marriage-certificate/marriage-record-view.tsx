@@ -121,6 +121,14 @@ const MarriageCertificatePDF: React.FC<MarriageCertificatePDFProps> = ({
 
   const documents = record.supportingDocuments || [];
 
+   const formattedDate = record.createdAt
+  ? record.createdAt.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    })
+  : "";
+
   return (
     <Document>
       <Page size={pageSize} style={styles.page}>
@@ -150,7 +158,7 @@ const MarriageCertificatePDF: React.FC<MarriageCertificatePDFProps> = ({
         </View>
 
         <Text style={styles.dateRight}>
-          {record.dateOfRegistration || record.dateOfMarriage}
+          {formattedDate}
         </Text>
 
         <Text style={styles.concernStatement}>TO WHOM IT MAY CONCERN:</Text>

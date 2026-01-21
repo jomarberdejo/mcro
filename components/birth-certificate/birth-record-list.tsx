@@ -12,7 +12,6 @@ export const BirthRecordList: React.FC<BirthRecordListProps> = ({
   storageAvailable,
   onFilterChange,
   onClearFilters,
-  onNew,
   onView,
   onEdit,
   onDelete,
@@ -39,13 +38,13 @@ export const BirthRecordList: React.FC<BirthRecordListProps> = ({
   const handleRecordsPerPageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const value = parseInt(e.target.value);
     setRecordsPerPage(value);
-    setCurrentPage(1); 
+    setCurrentPage(1);
   };
 
   const getPageNumbers = () => {
     const pageNumbers = [];
     const maxVisiblePages = 5;
-    
+
     if (totalPages <= maxVisiblePages) {
       for (let i = 1; i <= totalPages; i++) {
         pageNumbers.push(i);
@@ -53,16 +52,16 @@ export const BirthRecordList: React.FC<BirthRecordListProps> = ({
     } else {
       let start = Math.max(1, currentPage - 2);
       const end = Math.min(totalPages, start + maxVisiblePages - 1);
-      
+
       if (end - start + 1 < maxVisiblePages) {
         start = end - maxVisiblePages + 1;
       }
-      
+
       for (let i = start; i <= end; i++) {
         pageNumbers.push(i);
       }
     }
-    
+
     return pageNumbers;
   };
 
@@ -75,7 +74,7 @@ export const BirthRecordList: React.FC<BirthRecordListProps> = ({
               <CardTitle className="text-xl font-semibold">
                 Live Birth Records
               </CardTitle>
-              
+
               <div className="flex items-center gap-2">
                 <span className="text-sm text-gray-600">Show:</span>
                 <select
@@ -204,7 +203,6 @@ export const BirthRecordList: React.FC<BirthRecordListProps> = ({
                 </div>
               </div>
 
-              {/* Action Buttons */}
               <div className="flex justify-between items-center pt-2">
                 <Button
                   variant="outline"
@@ -212,9 +210,7 @@ export const BirthRecordList: React.FC<BirthRecordListProps> = ({
                 >
                   Clear Filters
                 </Button>
-                <Button className="flex gap-2" onClick={onNew}>
-                  <Plus className="w-4 h-4" /> New Record
-                </Button>
+
               </div>
             </div>
 
@@ -310,7 +306,7 @@ export const BirthRecordList: React.FC<BirthRecordListProps> = ({
                 <div className="text-sm text-gray-600">
                   Page {currentPage} of {totalPages}
                 </div>
-                
+
                 <div className="flex items-center gap-2">
                   <Button
                     variant="outline"
@@ -349,7 +345,7 @@ export const BirthRecordList: React.FC<BirthRecordListProps> = ({
                   </Button>
                 </div>
 
-               
+
               </div>
             )}
           </CardContent>

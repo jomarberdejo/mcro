@@ -2,88 +2,111 @@ import { StyleSheet } from "@react-pdf/renderer";
 
 export const styles = StyleSheet.create({
   page: {
-    padding: 30, 
+    position: "relative",
+    padding: 72,
     fontFamily: "Times-Roman",
     fontSize: 10,
   },
+  pageBackgroundLogo: {
+    position: "absolute",
+    width: 200,
+    height: 200,
+    left: "55%",
+    top: "50%",
+    marginLeft: -100,
+    marginTop: -100,
+    opacity: 0.5,
+  },
   headerRow: {
+    position: "relative",
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "flex-start",
-    marginBottom: 10, 
-    paddingBottom: 8, 
-    borderBottom: "1px solid #000",
-  },
-  leftColumn: {
     alignItems: "center",
+    paddingLeft: 30,
+    paddingRight: 30,
+
+  },
+  rightLogoColumn: {
+    width: "20%",
+    alignItems: "center",
+    justifyContent: "center",
   },
   centerColumn: {
-    flexShrink: 0,
-    width: "50%",
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
   },
-  rightColumn: {
+  leftLogoColumn: {
     width: "30%",
-    alignItems: "flex-end",
-  },
-  lapuLapuImage: {
-    width: 70, 
-    height: 70, 
-    opacity: 0.4,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 10,
   },
   formNumber: {
     fontSize: 9,
     color: "#666",
-    marginBottom: 1,
+    marginBottom: 4,
     fontStyle: "italic",
+    lineHeight: 1.3,
   },
   headerTitle: {
-    fontSize: 10,
-    marginBottom: 1,
+    fontSize: 11,
+    marginBottom: 4,
+    textAlign: "center",
+    lineHeight: 1.4,
   },
   headerTitleBold: {
-    fontSize: 11,
+    fontSize: 12,
     fontWeight: "bold",
-    marginBottom: 1,
+    marginBottom: 5,
     fontStyle: "italic",
+    textAlign: "center",
+    lineHeight: 1.4,
   },
   headerTitleLarge: {
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: "bold",
-    letterSpacing: 1,
-  },
-  logoContainer: {
-    flexDirection: "row",
-    gap: 8,
-    alignItems: "center",
+    letterSpacing: 1.5,
+    textAlign: "center",
+    marginTop: 6,
+    lineHeight: 1.5,
+    borderBottom: "2px solid #000",
+    marginBottom: 10,
+    paddingBottom: 10,
   },
   logo: {
-    width: 55, 
-    height: 55, 
+    width: 55,
+    height: 55,
+  },
+  logoSingle: {
+    width: 60,
+    height: 60,
   },
   dateRight: {
     textAlign: "right",
     fontSize: 10,
-    marginTop: 8, 
-    marginBottom: 12, 
+    marginTop: 8,
+    marginBottom: 20,
   },
   concernStatement: {
     fontSize: 11,
-    marginBottom: 10, 
+    marginBottom: 10,
   },
   bodyText: {
     fontSize: 10,
     lineHeight: 1.4,
     textAlign: "justify",
-    marginBottom: 12, 
+    marginBottom: 12,
     textIndent: 30,
   },
   bookReference: {
     fontSize: 10,
-    marginBottom: 15, 
+    marginBottom: 15,
   },
   fieldRow: {
     flexDirection: "row",
-    marginBottom: 4, 
+    marginBottom: 4,
     alignItems: "center",
     paddingLeft: 30,
   },
@@ -107,9 +130,9 @@ export const styles = StyleSheet.create({
     textTransform: "uppercase",
   },
   remarksSection: {
-    marginTop: 12, 
+    marginTop: 12,
     paddingLeft: 30,
-    marginBottom: 8, 
+    marginBottom: 8,
   },
   remarksTitle: {
     fontSize: 11,
@@ -119,16 +142,16 @@ export const styles = StyleSheet.create({
   },
   remarksText: {
     fontSize: 9,
-    lineHeight: 1.4, 
+    lineHeight: 1.4,
     textAlign: "justify",
-    marginBottom: 6, 
+    marginBottom: 6,
     textTransform: "uppercase",
     textIndent: 30,
   },
   footerText: {
     fontSize: 10,
-    marginTop: 8, 
-    marginBottom: 8, 
+    marginTop: 8,
+    marginBottom: 8,
     textIndent: 30,
   },
   requestorName: {
@@ -138,20 +161,20 @@ export const styles = StyleSheet.create({
   signatureRightContainer: {
     alignItems: "center",
     marginLeft: "auto",
-    marginTop: 10, 
+    marginTop: 10,
     paddingRight: 30,
   },
   signatureLeftContainer: {
-    marginTop: 8, 
+    marginTop: 8,
     alignItems: "center",
     marginRight: "auto",
     paddingLeft: 50,
   },
   certifyingContainer: {
-    marginVertical: 5, 
+    marginVertical: 5,
   },
   certifyingLabel: {
-    marginBottom: 10, 
+    marginBottom: 10,
     fontSize: 9,
   },
   signatureRight: {
@@ -166,7 +189,7 @@ export const styles = StyleSheet.create({
     alignItems: "center",
   },
   signatureImage: {
-    width: 100, 
+    width: 100,
     height: 35,
     marginBottom: -15,
     objectFit: "contain",
@@ -182,12 +205,12 @@ export const styles = StyleSheet.create({
   },
   verifiedLabel: {
     fontSize: 10,
-    marginTop: 8, 
+    marginTop: 8,
     marginBottom: 5,
   },
   regFeeInfoContainer: {
-    marginTop: 8, 
-    marginBottom: 8, 
+    marginTop: 8,
+    marginBottom: 8,
   },
   noteContainer: {
     display: "flex",
@@ -214,10 +237,9 @@ export const styles = StyleSheet.create({
   },
 });
 
-
 export const documentStyles = StyleSheet.create({
   documentPage: {
-    padding: 40,
+    padding: 72, // Remove padding to allow full page coverage
     backgroundColor: '#fff',
     flexDirection: 'column',
   },
@@ -257,15 +279,14 @@ export const documentStyles = StyleSheet.create({
     flex: 1,
   },
   documentImageContainer: {
-    flex: 1,
     width: '100%',
-    minHeight: 0,
+    height: '100%',
     justifyContent: 'center',
     alignItems: 'center',
   },
   documentImage: {
-    maxWidth: '100%',
-    maxHeight: '100%',
+    width: '100%',
+    height: '100%',
     objectFit: 'contain',
   },
   documentPageNumber: {
@@ -279,5 +300,6 @@ export const documentStyles = StyleSheet.create({
     fontSize: 14,
     color: '#999',
     textAlign: 'center',
+    padding: 40,
   },
 });

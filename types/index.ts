@@ -40,6 +40,7 @@ export interface BirthRecord {
   certifyingOfficerPosition?: string | null;
   signatureImagePath?: string | null;
   userId?: string | null;
+  createdAt?: string | null;
   
 }
 

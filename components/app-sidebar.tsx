@@ -1,7 +1,8 @@
+// app-sidebar.tsx
 "use client";
 
 import * as React from "react";
-import { FileText, Heart, Cross, ClipboardList } from "lucide-react";
+import { FileText, Heart, Cross, ClipboardList, List, Plus } from "lucide-react";
 
 import { NavMain } from "@/components/navigation/nav-main";
 import { NavUser } from "@/components/navigation/nav-user";
@@ -28,22 +29,61 @@ const data = {
       title: "Birth Certificate",
       url: "/admin/birth-certificate",
       icon: FileText,
-      isActive: true,
+      items: [
+        {
+          title: "View Records",
+          url: "/admin/birth-certificate",
+        },
+        {
+          title: "Add New Record",
+          url: "/admin/birth-certificate/new",
+        },
+      ],
     },
     {
       title: "Death Certificate",
       url: "/admin/death-certificate",
       icon: Cross,
+      items: [
+        {
+          title: "View Records",
+          url: "/admin/death-certificate",
+        },
+        {
+          title: "Add New Record",
+          url: "/admin/death-certificate/new",
+        },
+      ],
     },
     {
       title: "Marriage Certificate",
       url: "/admin/marriage-certificate",
       icon: Heart,
+      items: [
+        {
+          title: "View Records",
+          url: "/admin/marriage-certificate",
+        },
+        {
+          title: "Add New Record",
+          url: "/admin/marriage-certificate/new",
+        },
+      ],
     },
     {
-      title: "Application for Marriage Certificate",
+      title: "AML",
       url: "/admin/marriage-cert-app",
       icon: ClipboardList,
+      items: [
+        {
+          title: "View Applications",
+          url: "/admin/marriage-cert-app",
+        },
+        {
+          title: "Add New Application",
+          url: "/admin/marriage-cert-app/new",
+        },
+      ],
     },
   ],
 };

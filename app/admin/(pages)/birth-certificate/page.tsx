@@ -26,6 +26,7 @@ const BirthCertificates: React.FC = () => {
   const [filters, setFilters] = useState<BirthFilterState>(EMPTY_FILTERS);
 
   const filteredRecords = filterBirthRecords(records, filters);
+  
 
   return (
     <BirthRecordList
