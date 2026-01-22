@@ -164,7 +164,7 @@ export const styles = StyleSheet.create({
   signatureRightContainer: {
     alignItems: "center",
     marginLeft: "auto",
-    marginTop: 10,
+    marginTop: 20,
     paddingRight: 30,
   },
   signatureLeftContainer: {
@@ -212,7 +212,7 @@ export const styles = StyleSheet.create({
     marginBottom: 5,
   },
   regFeeInfoContainer: {
-    marginTop: 10,
+    marginTop: 20,
     marginBottom: 8,
   },
   noteContainer: {
