@@ -1,9 +1,15 @@
-
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Plus, Eye, Edit2, Trash2, ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  Plus,
+  Eye,
+  Edit2,
+  Trash2,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 import { MarriageRecordListProps } from "@/types";
 import { getFullName } from "@/utils";
 
@@ -36,16 +42,18 @@ export const MarriageRecordList: React.FC<MarriageRecordListProps> = ({
     }
   };
 
-  const handleRecordsPerPageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleRecordsPerPageChange = (
+    e: React.ChangeEvent<HTMLSelectElement>,
+  ) => {
     const value = parseInt(e.target.value);
     setRecordsPerPage(value);
     setCurrentPage(1);
   };
 
-  const getPageNumbers = () => {
-    const pageNumbers = [];
+  const getPageNumbers = (): number[] => {
+    const pageNumbers: number[] = [];
     const maxVisiblePages = 5;
-    
+
     if (totalPages <= maxVisiblePages) {
       for (let i = 1; i <= totalPages; i++) {
         pageNumbers.push(i);
@@ -53,19 +61,19 @@ export const MarriageRecordList: React.FC<MarriageRecordListProps> = ({
     } else {
       let start = Math.max(1, currentPage - 2);
       const end = Math.min(totalPages, start + maxVisiblePages - 1);
-      
+
       if (end - start + 1 < maxVisiblePages) {
         start = end - maxVisiblePages + 1;
       }
-      
+
       for (let i = start; i <= end; i++) {
         pageNumbers.push(i);
       }
     }
-    
+
     return pageNumbers;
   };
-
+  
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-7xl mx-auto">
@@ -75,7 +83,7 @@ export const MarriageRecordList: React.FC<MarriageRecordListProps> = ({
               <CardTitle className="text-xl font-semibold">
                 Marriage Records
               </CardTitle>
-              
+
               <div className="flex items-center gap-2">
                 <span className="text-sm text-gray-600">Show:</span>
                 <select
@@ -104,21 +112,30 @@ export const MarriageRecordList: React.FC<MarriageRecordListProps> = ({
                     placeholder="Last Name"
                     value={filters.husbandLastName}
                     onChange={(e) =>
-                      onFilterChange({ ...filters, husbandLastName: e.target.value })
+                      onFilterChange({
+                        ...filters,
+                        husbandLastName: e.target.value,
+                      })
                     }
                   />
                   <Input
                     placeholder="First Name"
                     value={filters.husbandFirstName}
                     onChange={(e) =>
-                      onFilterChange({ ...filters, husbandFirstName: e.target.value })
+                      onFilterChange({
+                        ...filters,
+                        husbandFirstName: e.target.value,
+                      })
                     }
                   />
                   <Input
                     placeholder="Middle Name"
                     value={filters.husbandMiddleName}
                     onChange={(e) =>
-                      onFilterChange({ ...filters, husbandMiddleName: e.target.value })
+                      onFilterChange({
+                        ...filters,
+                        husbandMiddleName: e.target.value,
+                      })
                     }
                   />
                 </div>
@@ -134,21 +151,30 @@ export const MarriageRecordList: React.FC<MarriageRecordListProps> = ({
                     placeholder="Last Name"
                     value={filters.wifeLastName}
                     onChange={(e) =>
-                      onFilterChange({ ...filters, wifeLastName: e.target.value })
+                      onFilterChange({
+                        ...filters,
+                        wifeLastName: e.target.value,
+                      })
                     }
                   />
                   <Input
                     placeholder="First Name"
                     value={filters.wifeFirstName}
                     onChange={(e) =>
-                      onFilterChange({ ...filters, wifeFirstName: e.target.value })
+                      onFilterChange({
+                        ...filters,
+                        wifeFirstName: e.target.value,
+                      })
                     }
                   />
                   <Input
                     placeholder="Middle Name"
                     value={filters.wifeMiddleName}
                     onChange={(e) =>
-                      onFilterChange({ ...filters, wifeMiddleName: e.target.value })
+                      onFilterChange({
+                        ...filters,
+                        wifeMiddleName: e.target.value,
+                      })
                     }
                   />
                 </div>
@@ -164,14 +190,20 @@ export const MarriageRecordList: React.FC<MarriageRecordListProps> = ({
                     placeholder="Date of Marriage"
                     value={filters.dateOfMarriage}
                     onChange={(e) =>
-                      onFilterChange({ ...filters, dateOfMarriage: e.target.value })
+                      onFilterChange({
+                        ...filters,
+                        dateOfMarriage: e.target.value,
+                      })
                     }
                   />
                   <Input
                     placeholder="Place of Marriage"
                     value={filters.placeOfMarriage}
                     onChange={(e) =>
-                      onFilterChange({ ...filters, placeOfMarriage: e.target.value })
+                      onFilterChange({
+                        ...filters,
+                        placeOfMarriage: e.target.value,
+                      })
                     }
                   />
                 </div>
@@ -179,10 +211,7 @@ export const MarriageRecordList: React.FC<MarriageRecordListProps> = ({
 
               {/* Action Buttons */}
               <div className="flex justify-between items-center pt-2">
-                <Button
-                  variant="outline"
-                  onClick={onClearFilters}
-                >
+                <Button variant="outline" onClick={onClearFilters}>
                   Clear Filters
                 </Button>
               </div>
@@ -195,7 +224,9 @@ export const MarriageRecordList: React.FC<MarriageRecordListProps> = ({
             )}
 
             <div className="mb-4 text-sm text-gray-600">
-              Showing {indexOfFirstRecord + 1} to {Math.min(indexOfLastRecord, totalRecords)} of {totalRecords} records
+              Showing {indexOfFirstRecord + 1} to{" "}
+              {Math.min(indexOfLastRecord, totalRecords)} of {totalRecords}{" "}
+              records
             </div>
 
             <div className="border rounded-lg overflow-hidden shadow-sm bg-white">
@@ -223,7 +254,10 @@ export const MarriageRecordList: React.FC<MarriageRecordListProps> = ({
                 <tbody>
                   {currentRecords.length === 0 ? (
                     <tr>
-                      <td colSpan={5} className="text-center py-6 text-gray-500">
+                      <td
+                        colSpan={5}
+                        className="text-center py-6 text-gray-500"
+                      >
                         No records found.
                       </td>
                     </tr>
@@ -238,14 +272,14 @@ export const MarriageRecordList: React.FC<MarriageRecordListProps> = ({
                           {getFullName(
                             record.husbandLastName,
                             record.husbandFirstName,
-                            record.husbandMiddleName
+                            record.husbandMiddleName,
                           )}
                         </td>
                         <td className="px-4 py-3">
                           {getFullName(
                             record.wifeLastName,
                             record.wifeFirstName,
-                            record.wifeMiddleName
+                            record.wifeMiddleName,
                           )}
                         </td>
                         <td className="px-4 py-3">{record.dateOfMarriage}</td>
@@ -290,7 +324,7 @@ export const MarriageRecordList: React.FC<MarriageRecordListProps> = ({
                 <div className="text-sm text-gray-600">
                   Page {currentPage} of {totalPages}
                 </div>
-                
+
                 <div className="flex items-center gap-2">
                   <Button
                     variant="outline"

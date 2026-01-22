@@ -9,18 +9,19 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { BirthRecord, DeathRecord, MarriageCertificateApplication, MarriageRecord } from "@/lib/generated/prisma/client";
 import { Search } from "lucide-react";
 import { useState, useMemo } from "react";
+import { ApplicationRecord, BirthRecord, DeathRecord, MarriageRecord } from "./dashboard-card";
 
 type RecordType = "birth" | "death" | "marriage" | "application";
+
 
 
 type RecordsModalProps = {
   isOpen: boolean;
   onClose: () => void;
   title: string;
-  records: BirthRecord[] | DeathRecord[] | MarriageRecord[] | MarriageCertificateApplication[];
+  records: BirthRecord[] | DeathRecord[] | MarriageRecord[] | ApplicationRecord[];
   type: RecordType;
 };
 
@@ -65,7 +66,7 @@ export function RecordsModal({
         return husbandName.includes(query) || wifeName.includes(query) || r.registryNo.toLowerCase().includes(query);
       }
       if (type === "application") {
-        const r = record as MarriageCertificateApplication;
+        const r = record as ApplicationRecord;
         const groomName = formatName(r.groomFirstName, r.groomMiddleName, r.groomLastName).toLowerCase();
         const brideName = formatName(r.brideFirstName, r.brideMiddleName, r.brideLastName).toLowerCase();
         return groomName.includes(query) || brideName.includes(query) || r.registryNo.toLowerCase().includes(query);
@@ -138,7 +139,7 @@ export function RecordsModal({
     }
 
     if (type === "application") {
-      const r = record as MarriageCertificateApplication;
+      const r = record as ApplicationRecord;
       return (
         <div
           key={r.id}

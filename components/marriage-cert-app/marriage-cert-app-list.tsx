@@ -56,8 +56,8 @@ export const MarriageCertificateApplicationList: React.FC<
     setCurrentPage(1);
   };
 
-  const getPageNumbers = () => {
-    const pageNumbers = [];
+ const getPageNumbers = (): number[] => {
+    const pageNumbers: number[] = [];
     const maxVisiblePages = 5;
 
     if (totalPages <= maxVisiblePages) {
@@ -79,7 +79,7 @@ export const MarriageCertificateApplicationList: React.FC<
 
     return pageNumbers;
   };
-
+  
   const getFullName = (firstName: string, middleName: string | null, lastName: string) => {
     const parts = [firstName, middleName, lastName].filter(Boolean);
     return parts.join(" ");

@@ -2,7 +2,7 @@ import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Plus, Eye, Edit2, Trash2, ChevronLeft, ChevronRight } from "lucide-react";
+import { Eye, Edit2, Trash2, ChevronLeft, ChevronRight } from "lucide-react";
 import { DeathRecordListProps } from "@/types";
 import { getFullName } from "@/utils";
 
@@ -35,14 +35,16 @@ export const DeathRecordList: React.FC<DeathRecordListProps> = ({
     }
   };
 
-  const handleRecordsPerPageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleRecordsPerPageChange = (
+    e: React.ChangeEvent<HTMLSelectElement>,
+  ) => {
     const value = parseInt(e.target.value);
     setRecordsPerPage(value);
     setCurrentPage(1);
   };
 
-  const getPageNumbers = () => {
-    const pageNumbers = [];
+  const getPageNumbers = (): number[] => {
+    const pageNumbers: number[] = [];
     const maxVisiblePages = 5;
 
     if (totalPages <= maxVisiblePages) {
@@ -104,41 +106,49 @@ export const DeathRecordList: React.FC<DeathRecordListProps> = ({
                     placeholder="Last Name"
                     value={filters.deceasedLastName}
                     onChange={(e) =>
-                      onFilterChange({ ...filters, deceasedLastName: e.target.value })
+                      onFilterChange({
+                        ...filters,
+                        deceasedLastName: e.target.value,
+                      })
                     }
                   />
                   <Input
                     placeholder="First Name"
                     value={filters.deceasedFirstName}
                     onChange={(e) =>
-                      onFilterChange({ ...filters, deceasedFirstName: e.target.value })
+                      onFilterChange({
+                        ...filters,
+                        deceasedFirstName: e.target.value,
+                      })
                     }
                   />
                   <Input
                     placeholder="Middle Name"
                     value={filters.deceasedMiddleName}
                     onChange={(e) =>
-                      onFilterChange({ ...filters, deceasedMiddleName: e.target.value })
+                      onFilterChange({
+                        ...filters,
+                        deceasedMiddleName: e.target.value,
+                      })
                     }
                   />
                   <Input
                     placeholder="Date of Death"
                     value={filters.dateOfDeath}
                     onChange={(e) =>
-                      onFilterChange({ ...filters, dateOfDeath: e.target.value })
+                      onFilterChange({
+                        ...filters,
+                        dateOfDeath: e.target.value,
+                      })
                     }
                   />
                 </div>
               </div>
 
               <div className="flex justify-between items-center pt-2">
-                <Button
-                  variant="outline"
-                  onClick={onClearFilters}
-                >
+                <Button variant="outline" onClick={onClearFilters}>
                   Clear Filters
                 </Button>
-
               </div>
             </div>
 
@@ -149,7 +159,9 @@ export const DeathRecordList: React.FC<DeathRecordListProps> = ({
             )}
 
             <div className="mb-4 text-sm text-gray-600">
-              Showing {indexOfFirstRecord + 1} to {Math.min(indexOfLastRecord, totalRecords)} of {totalRecords} records
+              Showing {indexOfFirstRecord + 1} to{" "}
+              {Math.min(indexOfLastRecord, totalRecords)} of {totalRecords}{" "}
+              records
             </div>
 
             <div className="border rounded-lg overflow-hidden shadow-sm bg-white">
@@ -165,9 +177,7 @@ export const DeathRecordList: React.FC<DeathRecordListProps> = ({
                     <th className="px-4 py-3 text-left font-semibold">
                       Date of Death
                     </th>
-                    <th className="px-4 py-3 text-left font-semibold">
-                      Age
-                    </th>
+                    <th className="px-4 py-3 text-left font-semibold">Age</th>
                     <th className="px-4 py-3 text-left font-semibold w-40">
                       Actions
                     </th>
@@ -177,7 +187,10 @@ export const DeathRecordList: React.FC<DeathRecordListProps> = ({
                 <tbody>
                   {currentRecords.length === 0 ? (
                     <tr>
-                      <td colSpan={5} className="text-center py-6 text-gray-500">
+                      <td
+                        colSpan={5}
+                        className="text-center py-6 text-gray-500"
+                      >
                         No records found.
                       </td>
                     </tr>
@@ -192,7 +205,7 @@ export const DeathRecordList: React.FC<DeathRecordListProps> = ({
                           {getFullName(
                             record.deceasedLastName,
                             record.deceasedFirstName,
-                            record.deceasedMiddleName
+                            record.deceasedMiddleName,
                           )}
                         </td>
                         <td className="px-4 py-3">{record.dateOfDeath}</td>

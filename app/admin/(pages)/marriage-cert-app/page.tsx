@@ -42,7 +42,6 @@ const MarriageCertificateApplications: React.FC = () => {
       storageAvailable
       onFilterChange={setFilters}
       onClearFilters={() => setFilters(EMPTY_FILTERS)}
-      onNew={() => router.push("/admin/marriage-cert-app/new")}
       onView={(app) => router.push(`/admin/marriage-cert-app/${app.id}`)}
       onEdit={(app) => router.push(`/admin/marriage-cert-app/${app.id}/edit`)}
       onDelete={deleteApplication}

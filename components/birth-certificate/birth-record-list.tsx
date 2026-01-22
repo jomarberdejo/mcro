@@ -41,8 +41,11 @@ export const BirthRecordList: React.FC<BirthRecordListProps> = ({
     setCurrentPage(1);
   };
 
-  const getPageNumbers = () => {
-    const pageNumbers = [];
+  
+  
+
+  const getPageNumbers = (): number[] => {
+    const pageNumbers: number[] = [];
     const maxVisiblePages = 5;
 
     if (totalPages <= maxVisiblePages) {
