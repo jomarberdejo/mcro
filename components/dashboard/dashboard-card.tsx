@@ -2,51 +2,17 @@
 
 import { RecordsModal } from "@/components/dashboard/record-modal";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { FileText, Heart, LucideIcon, Cross, ClipboardList } from "lucide-react";
+import { BirthRecord, DeathRecord, MarriageCertificateApplication, MarriageRecord } from "@/lib/generated/prisma/client";
+import {
+  FileText,
+  Heart,
+  LucideIcon,
+  Cross,
+  ClipboardList,
+} from "lucide-react";
 import { useState } from "react";
 
 type RecordType = "birth" | "death" | "marriage" | "application";
-
-type BirthRecord = {
-  id: string;
-  childFirstName: string;
-  childMiddleName: string | null;
-  childLastName: string;
-  registryNo: string;
-  dateOfBirth: string;
-};
-
-type DeathRecord = {
-  id: string;
-  deceasedFirstName: string;
-  deceasedMiddleName: string | null;
-  deceasedLastName: string;
-  registryNo: string;
-  dateOfDeath: string;
-};
-
-type MarriageRecord = {
-  id: string;
-  husbandFirstName: string;
-  husbandMiddleName: string | null;
-  husbandLastName: string;
-  wifeFirstName: string;
-  wifeMiddleName: string | null;
-  wifeLastName: string;
-  registryNo: string;
-  dateOfMarriage: string;
-};
-
-type ApplicationRecord = {
-  id: string;
-  groomFirstName: string;
-  groomMiddleName: string | null;
-  groomLastName: string;
-  brideFirstName: string;
-  brideMiddleName: string | null;
-  brideLastName: string;
-  registryNo: string;
-};
 
 type StatCard = {
   title: string;
@@ -55,7 +21,11 @@ type StatCard = {
   description: string;
   color: string;
   bgColor: string;
-  records: BirthRecord[] | DeathRecord[] | MarriageRecord[] | ApplicationRecord[];
+  records:
+    | BirthRecord[]
+    | DeathRecord[]
+    | MarriageRecord[]
+    | MarriageCertificateApplication[];
   type: RecordType;
 };
 
@@ -94,7 +64,9 @@ export function DashboardCards({ stats }: { stats: StatCard[] }) {
                 </div>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{stat.count.toLocaleString()}</div>
+                <div className="text-2xl font-bold">
+                  {stat.count.toLocaleString()}
+                </div>
                 <p className="text-xs text-muted-foreground mt-1">
                   {stat.description}
                 </p>

@@ -24,6 +24,7 @@ import { DeathRecordFormInput } from "@/lib/validations/death-record.schema";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { useDeathRecordForm } from "@/hooks/death-certificate/use-death-form";
+import { DuplicateDialog } from "../duplicate-dialog";
 
 interface DeathRecordFormProps {
   recordId?: string;
@@ -44,6 +45,11 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
     isUploadingDoc,
     handleSupportingDocumentsUpload,
     removeSupportingDocument,
+    showDuplicateDialog,
+    duplicateRecords,
+    handleProceedWithSave,
+    handleViewExisting,
+    handleCancelDuplicate,
   } = useDeathRecordForm({
     recordId,
     defaultValues,
@@ -192,7 +198,7 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
                               className={cn(
                                 "h-11 text-base transition-all",
                                 fieldState.invalid &&
-                                "border-red-500 focus-visible:ring-red-500"
+                                  "border-red-500 focus-visible:ring-red-500",
                               )}
                               aria-invalid={fieldState.invalid}
                             />
@@ -221,7 +227,7 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
                               className={cn(
                                 "h-11 text-base transition-all",
                                 fieldState.invalid &&
-                                "border-red-500 focus-visible:ring-red-500"
+                                  "border-red-500 focus-visible:ring-red-500",
                               )}
                               aria-invalid={fieldState.invalid}
                             />
@@ -251,7 +257,7 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
                               className={cn(
                                 "h-11 text-base transition-all",
                                 fieldState.invalid &&
-                                "border-red-500 focus-visible:ring-red-500"
+                                  "border-red-500 focus-visible:ring-red-500",
                               )}
                               aria-invalid={fieldState.invalid}
                             />
@@ -281,7 +287,7 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
                             className={cn(
                               "h-11 text-base transition-all",
                               fieldState.invalid &&
-                              "border-red-500 focus-visible:ring-red-500"
+                                "border-red-500 focus-visible:ring-red-500",
                             )}
                             aria-invalid={fieldState.invalid}
                           />
@@ -315,7 +321,7 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
                               className={cn(
                                 "h-11 text-base transition-all",
                                 fieldState.invalid &&
-                                "border-red-500 focus-visible:ring-red-500"
+                                  "border-red-500 focus-visible:ring-red-500",
                               )}
                               aria-invalid={fieldState.invalid}
                             />
@@ -342,7 +348,7 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
                               className={cn(
                                 "h-11 text-base transition-all",
                                 fieldState.invalid &&
-                                "border-red-500 focus-visible:ring-red-500"
+                                  "border-red-500 focus-visible:ring-red-500",
                               )}
                               aria-invalid={fieldState.invalid}
                             />
@@ -394,7 +400,7 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
                                 className={cn(
                                   "w-full h-11 text-base",
                                   fieldState.invalid &&
-                                  "border-red-500 focus:ring-red-500"
+                                    "border-red-500 focus:ring-red-500",
                                 )}
                               >
                                 <SelectValue placeholder="Select sex" />
@@ -429,7 +435,7 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
                               className={cn(
                                 "h-11 text-base transition-all",
                                 fieldState.invalid &&
-                                "border-red-500 focus-visible:ring-red-500"
+                                  "border-red-500 focus-visible:ring-red-500",
                               )}
                               aria-invalid={fieldState.invalid}
                             />
@@ -460,7 +466,7 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
                                 className={cn(
                                   "w-full h-11 text-base",
                                   fieldState.invalid &&
-                                  "border-red-500 focus:ring-red-500"
+                                    "border-red-500 focus:ring-red-500",
                                 )}
                               >
                                 <SelectValue placeholder="Select status" />
@@ -501,7 +507,7 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
                               className={cn(
                                 "h-11 text-base transition-all",
                                 fieldState.invalid &&
-                                "border-red-500 focus-visible:ring-red-500"
+                                  "border-red-500 focus-visible:ring-red-500",
                               )}
                               aria-invalid={fieldState.invalid}
                             />
@@ -538,7 +544,7 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
                               className={cn(
                                 "h-11 text-base transition-all",
                                 fieldState.invalid &&
-                                "border-red-500 focus-visible:ring-red-500"
+                                  "border-red-500 focus-visible:ring-red-500",
                               )}
                               aria-invalid={fieldState.invalid}
                             />
@@ -566,7 +572,7 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
                               className={cn(
                                 "h-11 text-base transition-all",
                                 fieldState.invalid &&
-                                "border-red-500 focus-visible:ring-red-500"
+                                  "border-red-500 focus-visible:ring-red-500",
                               )}
                               aria-invalid={fieldState.invalid}
                             />
@@ -598,7 +604,7 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
                               className={cn(
                                 "text-base",
                                 fieldState.invalid &&
-                                "border-red-500 focus-visible:ring-red-500"
+                                  "border-red-500 focus-visible:ring-red-500",
                               )}
                               aria-invalid={fieldState.invalid}
                             />
@@ -861,6 +867,30 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
                 </div>
               </FieldGroup>
             </form>
+
+            <DuplicateDialog
+              open={showDuplicateDialog}
+              duplicates={duplicateRecords}
+              onProceed={handleProceedWithSave}
+              onViewExisting={handleViewExisting}
+              onCancel={handleCancelDuplicate}
+              title="Potential Duplicate Birth Certificate Found"
+              renderRecord={(duplicate) => (
+                <>
+                  <div className="font-medium">
+                    {duplicate.childFirstName} {duplicate.childMiddleName}{" "}
+                    {duplicate.childLastName}
+                  </div>
+                  <div className="text-sm text-muted-foreground space-y-1">
+                    <div>Registry No: {duplicate.registryNo}</div>
+                    <div>
+                      Date of Death:{" "}
+                      {new Date(duplicate.dateOfDeath).toLocaleDateString()}
+                    </div>
+                  </div>
+                </>
+              )}
+            />
           </CardContent>
         </Card>
       </div>

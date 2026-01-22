@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useFileUpload } from "@/hooks/use-file-upload";
 import { DeathRecordFormInput, deathRecordSchema } from "@/lib/validations/death-record.schema";
+import { useDuplicateCheck } from "../use-duplicate-check";
 
 interface UseDeathRecordFormProps {
   recordId?: string;
@@ -22,11 +23,31 @@ export interface SupportingDocument {
   mimeType: string;
 }
 
+interface DeathCertificateCheckData {
+  deceasedFirstName: string;
+  deceasedLastName: string;
+  deceasedMiddleName?: string;
+}
+
 export function useDeathRecordForm({
   recordId,
   defaultValues,
   isEditing = false,
 }: UseDeathRecordFormProps) {
+
+  const {
+    showDuplicateDialog,
+    duplicateRecords,
+    handleDuplicateCheck,
+    handleProceedWithSave,
+    handleViewExisting,
+    handleCancelDuplicate,
+  } = useDuplicateCheck<DeathRecordFormInput, DeathCertificateCheckData>({
+    apiEndpoint: "/api/death-certificate/check-duplicate",
+    redirectBasePath: "/admin/death-certificate",
+    recordId,
+  });
+
   const router = useRouter();
   const { uploadFile, deleteFile } = useFileUpload();
 
@@ -184,7 +205,7 @@ export function useDeathRecordForm({
     }
   };
 
-  const onSubmit = async (data: DeathRecordFormInput) => {
+  const saveRecord = async (data: DeathRecordFormInput) => {
     try {
       const url = isEditing
         ? `/api/death-certificate/${recordId}`
@@ -217,6 +238,18 @@ export function useDeathRecordForm({
     }
   };
 
+   const onSubmit = async (data: DeathRecordFormInput): Promise<void> => {
+    const checkData: DeathCertificateCheckData = {
+      deceasedFirstName: data.deceasedFirstName,
+      deceasedLastName: data.deceasedLastName,
+      deceasedMiddleName: data?.deceasedMiddleName,
+    };
+
+    await handleDuplicateCheck(checkData, data, saveRecord);
+  };
+
+
+  
   const handleCancel = () => {
     router.back();
   };
@@ -237,5 +270,10 @@ export function useDeathRecordForm({
     isUploadingDoc,
     handleSupportingDocumentsUpload,
     removeSupportingDocument,
+     showDuplicateDialog,
+    duplicateRecords,
+    handleProceedWithSave: () => handleProceedWithSave(saveRecord),
+    handleViewExisting,
+    handleCancelDuplicate,
   };
 }

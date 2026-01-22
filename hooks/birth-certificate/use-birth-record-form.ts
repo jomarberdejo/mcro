@@ -8,6 +8,7 @@ import {
   BirthRecordFormInput,
 } from "@/lib/validations/birth-record.schema";
 import { useFileUpload } from "@/hooks/use-file-upload";
+import { useDuplicateCheck } from "../use-duplicate-check";
 
 interface UseBirthRecordFormProps {
   recordId?: string;
@@ -24,6 +25,12 @@ export interface SupportingDocument {
   mimeType: string;
 }
 
+interface BirthCertificateCheckData {
+  childFirstName: string;
+  childLastName: string;
+  childMiddleName?: string;
+}
+
 export function useBirthRecordForm({
   recordId,
   defaultValues,
@@ -32,13 +39,28 @@ export function useBirthRecordForm({
   const router = useRouter();
   const { uploadFile, deleteFile } = useFileUpload();
 
+  const {
+    showDuplicateDialog,
+    duplicateRecords,
+    handleDuplicateCheck,
+    handleProceedWithSave,
+    handleViewExisting,
+    handleCancelDuplicate,
+  } = useDuplicateCheck<BirthRecordFormInput, BirthCertificateCheckData>({
+    apiEndpoint: "/api/birth-certificate/check-duplicate",
+    redirectBasePath: "/admin/birth-certificate",
+    recordId,
+  });
+
   const [signaturePreview, setSignaturePreview] = useState<string | null>(
-    defaultValues?.signatureImagePath || null
+    defaultValues?.signatureImagePath || null,
   );
   const [documentPreview, setDocumentPreview] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [isUploadingSignature, setIsUploadingSignature] = useState(false);
-  const [supportingDocuments, setSupportingDocuments] = useState<SupportingDocument[]>([]);
+  const [supportingDocuments, setSupportingDocuments] = useState<
+    SupportingDocument[]
+  >([]);
   const [isUploadingDoc, setIsUploadingDoc] = useState(false);
 
   const form = useForm<BirthRecordFormInput>({
@@ -83,27 +105,31 @@ export function useBirthRecordForm({
   });
 
   useEffect(() => {
-    if (defaultValues?.supportingDocuments && defaultValues.supportingDocuments.length > 0) {
-      const existingDocs: SupportingDocument[] = defaultValues.supportingDocuments.map((doc) => ({
-        id: doc.filePath,
-        path: doc.filePath,
-        preview: doc.filePath,
-        name: doc.fileName,
-        size: doc.fileSize || 0,
-        mimeType: doc.mimeType || 'image/jpeg',
-      }));
+    if (
+      defaultValues?.supportingDocuments &&
+      defaultValues.supportingDocuments.length > 0
+    ) {
+      const existingDocs: SupportingDocument[] =
+        defaultValues.supportingDocuments.map((doc) => ({
+          id: doc.filePath,
+          path: doc.filePath,
+          preview: doc.filePath,
+          name: doc.fileName,
+          size: doc.fileSize || 0,
+          mimeType: doc.mimeType || "image/jpeg",
+        }));
       setSupportingDocuments(existingDocs);
     }
   }, [defaultValues?.supportingDocuments]);
 
   const handleSupportingDocumentsUpload = async (
-    e: React.ChangeEvent<HTMLInputElement>
+    e: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const files = Array.from(e.target.files || []);
     if (files.length === 0) return;
 
     const invalidFiles = files.filter(
-      (file) => !file.type.startsWith("image/") || file.size > 5 * 1024 * 1024
+      (file) => !file.type.startsWith("image/") || file.size > 5 * 1024 * 1024,
     );
 
     if (invalidFiles.length > 0) {
@@ -129,10 +155,10 @@ export function useBirthRecordForm({
       });
 
       const uploadedDocs = await Promise.all(uploadPromises);
-      
+
       setSupportingDocuments((prev) => {
         const newDocs = [...prev, ...uploadedDocs];
-        
+
         form.setValue(
           "supportingDocuments",
           newDocs.map((d) => ({
@@ -140,9 +166,9 @@ export function useBirthRecordForm({
             fileName: d.name,
             fileSize: d.size,
             mimeType: d.mimeType,
-          }))
+          })),
         );
-        
+
         return newDocs;
       });
 
@@ -150,11 +176,13 @@ export function useBirthRecordForm({
     } catch (error) {
       console.error("Error uploading documents:", error);
       toast.error(
-        error instanceof Error ? error.message : "Failed to upload documents"
+        error instanceof Error ? error.message : "Failed to upload documents",
       );
     } finally {
       setIsUploadingDoc(false);
-      const fileInput = document.getElementById("documentsUpload") as HTMLInputElement;
+      const fileInput = document.getElementById(
+        "documentsUpload",
+      ) as HTMLInputElement;
       if (fileInput) fileInput.value = "";
     }
   };
@@ -165,7 +193,7 @@ export function useBirthRecordForm({
 
     try {
       // Only delete from storage if it's a newly uploaded file (has blob URL)
-      if (doc.preview.startsWith('blob:')) {
+      if (doc.preview.startsWith("blob:")) {
         await deleteFile(doc.path);
         URL.revokeObjectURL(doc.preview);
       } else {
@@ -175,7 +203,7 @@ export function useBirthRecordForm({
 
       setSupportingDocuments((prev) => {
         const updatedDocs = prev.filter((d) => d.id !== docId);
-        
+
         form.setValue(
           "supportingDocuments",
           updatedDocs.map((d) => ({
@@ -183,9 +211,9 @@ export function useBirthRecordForm({
             fileName: d.name,
             fileSize: d.size,
             mimeType: d.mimeType,
-          }))
+          })),
         );
-        
+
         return updatedDocs;
       });
 
@@ -196,7 +224,7 @@ export function useBirthRecordForm({
     }
   };
 
-  const onSubmit = async (data: BirthRecordFormInput) => {
+  const saveRecord = async (data: BirthRecordFormInput) => {
     try {
       const url = isEditing
         ? `/api/birth-certificate/${recordId}`
@@ -217,18 +245,27 @@ export function useBirthRecordForm({
       toast.success(
         isEditing
           ? "Birth record updated successfully"
-          : "Birth record created successfully"
+          : "Birth record created successfully",
       );
       router.push("/admin/birth-certificate");
       router.refresh();
     } catch (error) {
       console.error("Error saving birth record:", error);
       toast.error(
-        error instanceof Error ? error.message : "Failed to save birth record"
+        error instanceof Error ? error.message : "Failed to save birth record",
       );
     }
   };
 
+  const onSubmit = async (data: BirthRecordFormInput): Promise<void> => {
+    const checkData: BirthCertificateCheckData = {
+      childFirstName: data.childFirstName,
+      childLastName: data.childLastName,
+      childMiddleName: data?.childMiddleName,
+    };
+
+    await handleDuplicateCheck(checkData, data, saveRecord);
+  };
   const handleCancel = () => {
     router.back();
   };
@@ -249,5 +286,10 @@ export function useBirthRecordForm({
     isUploadingDoc,
     handleSupportingDocumentsUpload,
     removeSupportingDocument,
+    showDuplicateDialog,
+    duplicateRecords,
+    handleProceedWithSave: () => handleProceedWithSave(saveRecord),
+    handleViewExisting,
+    handleCancelDuplicate,
   };
 }

@@ -39,10 +39,8 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const validatedData = birthRecordSchema.parse(body);
 
-    // Destructure to separate supportingDocuments
     const { supportingDocuments, ...recordData } = validatedData;
 
-    // Create record with nested document creation
     const record = await prisma.birthRecord.create({
       data: {
         ...recordData,

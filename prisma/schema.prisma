@@ -106,7 +106,6 @@ model BirthRecord {
   bookNo             String?
   pageNo             String?
 
-  // Child Information
   childLastName   String
   childFirstName  String
   childMiddleName String?

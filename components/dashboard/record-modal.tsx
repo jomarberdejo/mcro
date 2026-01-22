@@ -9,57 +9,18 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { BirthRecord, DeathRecord, MarriageCertificateApplication, MarriageRecord } from "@/lib/generated/prisma/client";
 import { Search } from "lucide-react";
 import { useState, useMemo } from "react";
 
 type RecordType = "birth" | "death" | "marriage" | "application";
 
-type BirthRecord = {
-  id: string;
-  childFirstName: string;
-  childMiddleName: string | null;
-  childLastName: string;
-  registryNo: string;
-  dateOfBirth: string;
-};
-
-type DeathRecord = {
-  id: string;
-  deceasedFirstName: string;
-  deceasedMiddleName: string | null;
-  deceasedLastName: string;
-  registryNo: string;
-  dateOfDeath: string;
-};
-
-type MarriageRecord = {
-  id: string;
-  husbandFirstName: string;
-  husbandMiddleName: string | null;
-  husbandLastName: string;
-  wifeFirstName: string;
-  wifeMiddleName: string | null;
-  wifeLastName: string;
-  registryNo: string;
-  dateOfMarriage: string;
-};
-
-type ApplicationRecord = {
-  id: string;
-  groomFirstName: string;
-  groomMiddleName: string | null;
-  groomLastName: string;
-  brideFirstName: string;
-  brideMiddleName: string | null;
-  brideLastName: string;
-  registryNo: string;
-};
 
 type RecordsModalProps = {
   isOpen: boolean;
   onClose: () => void;
   title: string;
-  records: BirthRecord[] | DeathRecord[] | MarriageRecord[] | ApplicationRecord[];
+  records: BirthRecord[] | DeathRecord[] | MarriageRecord[] | MarriageCertificateApplication[];
   type: RecordType;
 };
 
@@ -104,7 +65,7 @@ export function RecordsModal({
         return husbandName.includes(query) || wifeName.includes(query) || r.registryNo.toLowerCase().includes(query);
       }
       if (type === "application") {
-        const r = record as ApplicationRecord;
+        const r = record as MarriageCertificateApplication;
         const groomName = formatName(r.groomFirstName, r.groomMiddleName, r.groomLastName).toLowerCase();
         const brideName = formatName(r.brideFirstName, r.brideMiddleName, r.brideLastName).toLowerCase();
         return groomName.includes(query) || brideName.includes(query) || r.registryNo.toLowerCase().includes(query);
@@ -177,7 +138,7 @@ export function RecordsModal({
     }
 
     if (type === "application") {
-      const r = record as ApplicationRecord;
+      const r = record as MarriageCertificateApplication;
       return (
         <div
           key={r.id}

@@ -1,10 +1,4 @@
-import { toast } from "sonner";
-import {
-  FieldValues,
-  Path,
-  UseFormSetValue,
-  UseFormWatch,
-} from "react-hook-form";
+
 
 export function useFileUpload() {
   const uploadFile = async (file: File, type: "signature" | "documents") => {
@@ -35,7 +29,6 @@ export function useFileUpload() {
 
   const deleteFile = async (filePath: string) => {
     try {
-      // Extract type and filename from the API path
       // filePath format: /api/files/signature/123-abc.jpg
       const pathParts = filePath.split("/");
       const type = pathParts[3]; // signature or documents

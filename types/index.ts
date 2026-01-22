@@ -1,3 +1,5 @@
+import { MarriageCertificateApplication } from "@/lib/generated/prisma/client";
+
 export type PageMode = "list" | "form" | "view";
 
 // ==================== BIRTH RECORDS ====================
@@ -41,7 +43,6 @@ export interface BirthRecord {
   signatureImagePath?: string | null;
   userId?: string | null;
   createdAt?: string | null;
-  
 }
 
 export interface BirthRecordViewProps {
@@ -362,6 +363,10 @@ export const emptyMarriageRecord = (): MarriageRecord => ({
   remarks: "",
   signatureImage: "",
 });
+
+
+
+
 
 // ==================== SHARED TYPES ====================
 
