@@ -58,7 +58,7 @@ function LoginFormContent() {
         if (redirectTo && redirectTo.startsWith("/admin")) {
           router.push(redirectTo);
         } else {
-          router.push("/admin/birth-certificate");
+          router.push("/admin/dashboard");
         }
       } else {
         const errorData = await res.json();

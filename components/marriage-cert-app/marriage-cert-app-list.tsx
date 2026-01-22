@@ -116,7 +116,7 @@ export const MarriageCertificateApplicationList: React.FC<
             <div className="mb-6 flex flex-col gap-4">
               {/* Registry Information */}
               <div>
-                <label className="text-sm font-semibold text-gray-700 mb-2 block">
+                <label className="text-sm font-semibold text-gray-900 mb-2 block">
                   Registry Information
                 </label>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -139,7 +139,7 @@ export const MarriageCertificateApplicationList: React.FC<
 
               {/* Groom Information */}
               <div>
-                <label className="text-sm font-semibold text-gray-700 mb-2 block">
+                <label className="text-sm font-semibold text-gray-900 mb-2 block">
                   Groom Information
                 </label>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
@@ -169,7 +169,7 @@ export const MarriageCertificateApplicationList: React.FC<
 
               {/* Bride Information */}
               <div>
-                <label className="text-sm font-semibold text-gray-700 mb-2 block">
+                <label className="text-sm font-semibold text-gray-900 mb-2 block">
                   Bride Information
                 </label>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3">

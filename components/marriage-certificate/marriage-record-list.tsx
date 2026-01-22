@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -94,9 +95,8 @@ export const MarriageRecordList: React.FC<MarriageRecordListProps> = ({
 
           <CardContent>
             <div className="mb-6 flex flex-col gap-4">
-              {/* Husband Information */}
               <div>
-                <label className="text-sm font-semibold text-gray-700 mb-2 block">
+                <label className="text-sm font-semibold text-gray-900 mb-2 block">
                   Husband Information
                 </label>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
@@ -126,7 +126,7 @@ export const MarriageRecordList: React.FC<MarriageRecordListProps> = ({
 
               {/* Wife Information */}
               <div>
-                <label className="text-sm font-semibold text-gray-700 mb-2 block">
+                <label className="text-sm font-semibold text-gray-900 mb-2 block">
                   Wife Information
                 </label>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
@@ -156,7 +156,7 @@ export const MarriageRecordList: React.FC<MarriageRecordListProps> = ({
 
               {/* Marriage Details */}
               <div>
-                <label className="text-sm font-semibold text-gray-700 mb-2 block">
+                <label className="text-sm font-semibold text-gray-900 mb-2 block">
                   Marriage Details
                 </label>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">

@@ -55,6 +55,7 @@ export const marriageStyles = StyleSheet.create({
     color: "#333",
     borderBottom: "1px solid #000",
     paddingBottom: 4,
+    marginVertical: 20,
   },
   marriageFieldRow: {
     flexDirection: "row",
@@ -90,13 +91,13 @@ export const marriageStyles = StyleSheet.create({
     marginBottom: 4,
   },
   registryInfoFieldLabel: {
-    width: "18%",
+    width: "22%",
     fontSize: 10,
     color: "#333",
   },
   registryInfoFieldColon: {
     fontSize: 10,
-    width: "3%",
+    width: "5%",
   },
   registryInfoFieldValue: {
     fontSize: 10,
@@ -111,55 +112,62 @@ const MarriageCertificatePDF: React.FC<MarriageCertificatePDFProps> = ({
   const husbandFullName = getFullName(
     record.husbandLastName,
     record.husbandFirstName,
-    record.husbandMiddleName
+    record.husbandMiddleName,
   );
   const wifeFullName = getFullName(
     record.wifeLastName,
     record.wifeFirstName,
-    record.wifeMiddleName
+    record.wifeMiddleName,
   );
 
   const documents = record.supportingDocuments || [];
 
-   const formattedDate = record.createdAt
-  ? record.createdAt.toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    })
-  : "";
+  const formattedDate = record.createdAt
+    ? record.createdAt.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      })
+    : "";
 
   return (
     <Document>
-      <Page size={pageSize} style={styles.page}>
-        <View style={styles.headerRow} wrap={false}>
-          <View style={styles.leftColumn}>
-            <Image src="/logos/datu-gara-2.png" style={styles.lapuLapuImage} />
-          </View>
+      <Page size={pageSize} style={marriageStyles.page}>
+        <Image src="/logos/datu-gara-3.png" style={styles.pageBackgroundLogo} />
 
-          <View style={styles.centerColumn}>
-            <Text style={styles.formNumber}>Civil Registry Form No. 1C</Text>
-            <Text style={styles.formNumber}>(Marriage-available)</Text>
-            <Text style={styles.headerTitle}>Republic of the Philippines</Text>
-            <Text style={styles.headerTitle}>Province of Leyte</Text>
-            <Text style={styles.headerTitleBold}>Municipality of Carigara</Text>
-            <Text style={styles.headerTitleLarge}>
-              OFFICE OF THE MUNICIPAL CIVIL REGISTRAR
-            </Text>
-          </View>
-
-          <View style={styles.rightColumn}>
-            <View style={styles.logoContainer}>
+        <View>
+          <View wrap={false} style={styles.headerRow}>
+            <View style={styles.leftLogoColumn}>
               <Image src="/logos/mcro.png" style={styles.logo} />
               <Image src="/logos/lgu-carigara.png" style={styles.logo} />
-              <Image src="/logos/bagong-pilipinas.png" style={styles.logo} />
+            </View>
+
+            <View style={styles.centerColumn}>
+              <Text style={styles.formNumber}>Civil Registry Form No. 3A</Text>
+              <Text style={styles.formNumber}>(Marriage-available)</Text>
+              <Text style={styles.headerTitle}>
+                Republic of the Philippines
+              </Text>
+              <Text style={styles.headerTitle}>Province of Leyte</Text>
+              <Text style={styles.headerTitleBold}>
+                Municipality of Carigara
+              </Text>
+            </View>
+
+            <View style={styles.rightLogoColumn}>
+              <Image
+                src="/logos/bagong-pilipinas.png"
+                style={styles.logoSingle}
+              />
             </View>
           </View>
+
+          <Text style={styles.headerTitleLarge}>
+            OFFICE OF THE MUNICIPAL CIVIL REGISTRAR
+          </Text>
         </View>
 
-        <Text style={styles.dateRight}>
-          {formattedDate}
-        </Text>
+        <Text style={styles.dateRight}>{formattedDate}</Text>
 
         <Text style={styles.concernStatement}>TO WHOM IT MAY CONCERN:</Text>
 
@@ -422,13 +430,7 @@ const MarriageCertificatePDF: React.FC<MarriageCertificatePDFProps> = ({
         </View>
       </Page>
 
-      {/* Supporting Documents Pages */}
-      <SupportingDocumentsPages
-        documents={documents}
-        registryNo={record.registryNo}
-        recordName={`${husbandFullName} & ${wifeFullName}`}
-        pageSize={pageSize}
-      />
+      <SupportingDocumentsPages documents={documents} pageSize={pageSize} />
     </Document>
   );
 };
@@ -484,7 +486,6 @@ export const MarriageRecordView: React.FC<{
             <ArrowLeft className="w-4 h-4 mr-2" /> Back to Records
           </Button>
 
-          {/* Document Count Badge */}
           {documents.length > 0 && (
             <div className="flex items-center gap-2 px-4 py-2 bg-blue-100 text-blue-800 rounded-lg">
               <FileText className="w-4 h-4" />
@@ -524,7 +525,7 @@ export const MarriageRecordView: React.FC<{
             )}
           </PDFDownloadLink>
 
-          <Button variant="ghost" onClick={handleEdit}>
+          <Button variant="outline" onClick={handleEdit}>
             <Edit2 className="w-4 h-4 mr-2" /> Edit
           </Button>
 

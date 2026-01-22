@@ -96,7 +96,7 @@ export const BirthRecordList: React.FC<BirthRecordListProps> = ({
             <div className="mb-6 flex flex-col gap-4">
               {/* Child Information */}
               <div>
-                <label className="text-sm font-semibold text-gray-700 mb-2 block">
+                <label className="text-sm font-semibold text-gray-900 mb-2 block">
                   Child Information
                 </label>
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
@@ -133,7 +133,7 @@ export const BirthRecordList: React.FC<BirthRecordListProps> = ({
 
               {/* Father Information */}
               <div>
-                <label className="text-sm font-semibold text-gray-700 mb-2 block">
+                <label className="text-sm font-semibold text-gray-900 mb-2 block">
                   Father Information
                 </label>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
@@ -169,7 +169,7 @@ export const BirthRecordList: React.FC<BirthRecordListProps> = ({
 
               {/* Mother Information */}
               <div>
-                <label className="text-sm font-semibold text-gray-700 mb-2 block">
+                <label className="text-sm font-semibold text-gray-900 mb-2 block">
                   Mother Information
                 </label>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3">

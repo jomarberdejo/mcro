@@ -96,7 +96,7 @@ export const DeathRecordList: React.FC<DeathRecordListProps> = ({
             <div className="mb-6 flex flex-col gap-4">
               {/* Deceased Information */}
               <div>
-                <label className="text-sm font-semibold text-gray-700 mb-2 block">
+                <label className="text-sm font-semibold text-gray-900 mb-2 block">
                   Deceased Information
                 </label>
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-3">

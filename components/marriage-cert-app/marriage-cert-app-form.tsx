@@ -65,7 +65,6 @@ export const MarriageCertificateApplicationForm: React.FC<
           </CardHeader>
 
           <CardContent>
-            {/* Supporting Documents Section */}
             <div className="mb-6 p-4 border-2 border-dashed border-blue-300 rounded-lg bg-blue-50">
               <div className="flex items-start gap-4">
                 <FileImage className="w-8 h-8 text-blue-600 mt-1" />
@@ -115,7 +114,6 @@ export const MarriageCertificateApplicationForm: React.FC<
                       </span>
                     </div>
 
-                    {/* Documents Preview Grid */}
                     {supportingDocuments.length > 0 && (
                       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 mt-4">
                         {supportingDocuments.map((doc) => (

@@ -1,8 +1,7 @@
-// app-sidebar.tsx
 "use client";
 
 import * as React from "react";
-import { FileText, Heart, Cross, ClipboardList, List, Plus } from "lucide-react";
+import { FileText, Heart, Cross, ClipboardList, LayoutDashboard } from "lucide-react";
 
 import { NavMain } from "@/components/navigation/nav-main";
 import { NavUser } from "@/components/navigation/nav-user";
@@ -25,6 +24,11 @@ const data = {
   },
 
   navMain: [
+    {
+      title: "Dashboard",
+      url: "/admin/dashboard",
+      icon: LayoutDashboard,
+    },
     {
       title: "Birth Certificate",
       url: "/admin/birth-certificate",

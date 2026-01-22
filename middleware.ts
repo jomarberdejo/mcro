@@ -32,7 +32,7 @@ export async function middleware(request: NextRequest) {
     const redirect = request.nextUrl.searchParams.get("redirect");
     const destination = redirect && redirect.startsWith("/admin") 
       ? redirect 
-      : "/admin/birth-certificate";
+      : "/admin/dashboard";
     const url = new URL(destination, request.url);
     return NextResponse.redirect(url);
   }
