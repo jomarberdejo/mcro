@@ -3,19 +3,22 @@ import { StyleSheet } from "@react-pdf/renderer";
 export const styles = StyleSheet.create({
   page: {
     position: "relative",
-    padding: 72,
+    paddingLeft: 72,
+    paddingRight: 72,
+    paddingTop: 48,
     fontFamily: "Times-Roman",
-    fontSize: 10,
+    fontSize: 11,
+
   },
   pageBackgroundLogo: {
     position: "absolute",
-    width: 200,
-    height: 200,
-    left: "55%",
-    top: "50%",
+    width: 400,
+    height: 450,
+    left: "40%",
+    top: "40%",
     marginLeft: -100,
     marginTop: -100,
-    opacity: 0.5,
+    opacity: 0.3,
   },
   headerRow: {
     position: "relative",
@@ -44,20 +47,20 @@ export const styles = StyleSheet.create({
     gap: 10,
   },
   formNumber: {
-    fontSize: 9,
+    fontSize: 11,
     color: "#666",
     marginBottom: 4,
     fontStyle: "italic",
     lineHeight: 1.3,
   },
   headerTitle: {
-    fontSize: 11,
+    fontSize: 12,
     marginBottom: 4,
     textAlign: "center",
     lineHeight: 1.4,
   },
   headerTitleBold: {
-    fontSize: 12,
+    fontSize: 14,
     fontWeight: "bold",
     marginBottom: 5,
     fontStyle: "italic",
@@ -65,7 +68,7 @@ export const styles = StyleSheet.create({
     lineHeight: 1.4,
   },
   headerTitleLarge: {
-    fontSize: 14,
+    fontSize: 15,
     fontWeight: "bold",
     letterSpacing: 1.5,
     textAlign: "center",
@@ -85,7 +88,7 @@ export const styles = StyleSheet.create({
   },
   dateRight: {
     textAlign: "right",
-    fontSize: 10,
+    fontSize: 11,
     marginTop: 8,
     marginBottom: 20,
   },
@@ -94,14 +97,14 @@ export const styles = StyleSheet.create({
     marginBottom: 10,
   },
   bodyText: {
-    fontSize: 10,
+    fontSize: 11,
     lineHeight: 1.4,
     textAlign: "justify",
     marginBottom: 12,
     textIndent: 30,
   },
   bookReference: {
-    fontSize: 10,
+    fontSize: 11,
     marginBottom: 15,
   },
   fieldRow: {
@@ -112,20 +115,20 @@ export const styles = StyleSheet.create({
   },
   fieldLabel: {
     width: "35%",
-    fontSize: 10,
+    fontSize: 11,
     color: "#333",
   },
   fieldColon: {
     width: "5%",
-    fontSize: 10,
+    fontSize: 11,
   },
   fieldValue: {
     width: "60%",
-    fontSize: 10,
+    fontSize: 11,
   },
   fieldValueBold: {
     width: "60%",
-    fontSize: 10,
+    fontSize: 11,
     fontWeight: "bold",
     textTransform: "uppercase",
   },
@@ -141,7 +144,7 @@ export const styles = StyleSheet.create({
     color: "#666",
   },
   remarksText: {
-    fontSize: 9,
+    fontSize: 11,
     lineHeight: 1.4,
     textAlign: "justify",
     marginBottom: 6,
@@ -175,7 +178,7 @@ export const styles = StyleSheet.create({
   },
   certifyingLabel: {
     marginBottom: 10,
-    fontSize: 9,
+    fontSize: 10,
   },
   signatureRight: {
     flexDirection: "column",
@@ -200,16 +203,16 @@ export const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   signatureTitle: {
-    fontSize: 9,
+    fontSize: 10,
     marginTop: 2,
   },
   verifiedLabel: {
     fontSize: 10,
-    marginTop: 8,
+    marginTop: 10,
     marginBottom: 5,
   },
   regFeeInfoContainer: {
-    marginTop: 8,
+    marginTop: 10,
     marginBottom: 8,
   },
   noteContainer: {
@@ -217,14 +220,14 @@ export const styles = StyleSheet.create({
     flexDirection: "row",
     gap: 2,
     alignItems: "center",
-    paddingLeft: 30,
+    // paddingLeft: 30,
     marginTop: 8,
   },
   noteHighlight: {
     fontWeight: 700,
   },
   noteText: {
-    fontSize: 9,
+    fontSize: 10,
   },
   sectionTitle: {
     fontSize: 11,
@@ -239,7 +242,9 @@ export const styles = StyleSheet.create({
 
 export const documentStyles = StyleSheet.create({
   documentPage: {
-    padding: 72, // Remove padding to allow full page coverage
+    paddingLeft: 72,
+    paddingRight: 72,
+    paddingTop: 24,
     backgroundColor: '#fff',
     flexDirection: 'column',
   },
@@ -255,7 +260,7 @@ export const documentStyles = StyleSheet.create({
     marginBottom: 5,
   },
   documentSubHeaderText: {
-    fontSize: 12,
+    fontSize: 11,
     textAlign: 'center',
     color: '#666',
   },
