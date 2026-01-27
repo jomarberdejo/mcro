@@ -101,6 +101,11 @@ export function useBirthRecordForm({
       processFeeInfo: "",
       signatureImagePath: "",
       supportingDocuments: [],
+      certificateDate: new Date().toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      }),
     },
   });
 

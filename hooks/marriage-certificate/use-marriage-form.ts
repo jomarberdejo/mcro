@@ -74,6 +74,11 @@ export function useMarriageRecordForm({
       remarks: "",
       signatureImagePath: "",
       supportingDocuments: [],
+      certificateDate: new Date().toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      }),
     },
 
   });
@@ -125,10 +130,10 @@ export function useMarriageRecordForm({
       });
 
       const uploadedDocs = await Promise.all(uploadPromises);
-      
+
       setSupportingDocuments((prev) => {
         const newDocs = [...prev, ...uploadedDocs];
-        
+
         form.setValue(
           "supportingDocuments",
           newDocs.map((d) => ({
@@ -138,7 +143,7 @@ export function useMarriageRecordForm({
             mimeType: d.mimeType,
           }))
         );
-        
+
         return newDocs;
       });
 
@@ -171,7 +176,7 @@ export function useMarriageRecordForm({
 
       setSupportingDocuments((prev) => {
         const updatedDocs = prev.filter((d) => d.id !== docId);
-        
+
         form.setValue(
           "supportingDocuments",
           updatedDocs.map((d) => ({
@@ -181,7 +186,7 @@ export function useMarriageRecordForm({
             mimeType: d.mimeType,
           }))
         );
-        
+
         return updatedDocs;
       });
 

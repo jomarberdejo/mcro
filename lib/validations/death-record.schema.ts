@@ -40,7 +40,8 @@ export const deathRecordSchema = z.object({
   processFeeInfo: z.string().default(""),
   remarks: z.string().default(""),
   signatureImagePath: z.string().default(""),
-  supportingDocuments: z.array(supportingDocumentSchema).default([])
+  supportingDocuments: z.array(supportingDocumentSchema).default([]),
+    certificateDate: z.string().default(""),
 });
 
 export type DeathRecordFormInput = z.input<typeof deathRecordSchema>;

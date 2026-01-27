@@ -46,7 +46,9 @@ export const marriageRecordSchema = z.object({
   processFeeInfo: z.string().default(""),
   remarks: z.string().default(""),
   signatureImagePath: z.string().optional(),
-  supportingDocuments: z.array(supportingDocumentSchema).default([])
+  supportingDocuments: z.array(supportingDocumentSchema).default([]),
+  certificateDate: z.string().default(""),
+
 });
 
 export type MarriageRecordFormInput = z.input<typeof marriageRecordSchema>;

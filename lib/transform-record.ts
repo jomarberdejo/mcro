@@ -54,6 +54,7 @@ export function transformBirthRecord(
     requestPurpose: record.requestPurpose ?? "",
     certifyingOfficerName: record.certifyingOfficerName ?? "",
     certifyingOfficerPosition: record.certifyingOfficerPosition ?? "",
+    certificateDate: record.certificateDate ?? "",
 
     signatureImagePath: record.signatureImagePath ?? "",
     supportingDocuments: record.supportingDocuments?.map(doc => ({
@@ -107,6 +108,7 @@ export function transformMarriageRecord(
     certifyingOfficerPosition: record.certifyingOfficerPosition ?? "",
     processFeeInfo: record.processFeeInfo ?? "",
     remarks: record.remarks ?? "",
+    certificateDate: record.certificateDate ?? "",
 
     signatureImagePath: record.signatureImagePath ?? "",
     supportingDocuments: record.supportingDocuments?.map(doc => ({
@@ -151,6 +153,7 @@ export function transformDeathRecord(
     certifyingOfficerPosition: record.certifyingOfficerPosition ?? "",
     processFeeInfo: record.processFeeInfo ?? "",
     remarks: record.remarks ?? "",
+    certificateDate: record.certificateDate ?? "",
 
     signatureImagePath: record.signatureImagePath ?? "",
     supportingDocuments: record.supportingDocuments?.map(doc => ({

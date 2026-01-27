@@ -50,13 +50,7 @@ const BirthCertificatePDF: React.FC<BirthCertificatePDFProps> = ({
 
   const documents = record.supportingDocuments || [];
 
-  const formattedDate = record.createdAt
-    ? record.createdAt.toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      })
-    : "";
+ 
 
   return (
     <Document>
@@ -95,7 +89,7 @@ const BirthCertificatePDF: React.FC<BirthCertificatePDFProps> = ({
           </Text>
         </View>
 
-        <Text style={styles.dateRight}>{formattedDate}</Text>
+        <Text style={styles.dateRight}>{record.certificateDate}</Text>
 
         <Text style={styles.concernStatement}>TO WHOM IT MAY CONCERN:</Text>
 

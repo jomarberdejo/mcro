@@ -341,6 +341,36 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                         </Field>
                       )}
                     />
+
+                    <Controller
+                      name="certificateDate"
+                      control={control}
+                      rules={{ required: "Certificate date is required" }}
+                      render={({ field, fieldState }) => (
+                        <Field>
+                          <FieldLabel
+                            htmlFor="certificateDate"
+                            className="text-sm font-semibold text-gray-700"
+                          >
+                            Certificate Date *
+                          </FieldLabel>
+                          <Input
+                            id="certificateDate"
+                            placeholder="e.g., January 15, 2024"
+                            {...field}
+                            className={cn(
+                              "h-11 text-base transition-all",
+                              fieldState.invalid &&
+                              "border-red-500 focus-visible:ring-red-500",
+                            )}
+                            aria-invalid={fieldState.invalid}
+                          />
+                          {fieldState.error && (
+                            <FieldError errors={[fieldState.error]} />
+                          )}
+                        </Field>
+                      )}
+                    />
                   </div>
 
                   <div className="border-t pt-4">

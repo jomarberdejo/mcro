@@ -871,6 +871,7 @@ export const SupportingDocumentScalarFieldEnum = {
   deathRecordId: 'deathRecordId',
   marriageRecordId: 'marriageRecordId',
   marriageCertificateApplicationId: 'marriageCertificateApplicationId',
+  certificateDate: 'certificateDate',
   uploadedBy: 'uploadedBy',
   uploadedAt: 'uploadedAt'
 } as const
@@ -914,6 +915,7 @@ export const BirthRecordScalarFieldEnum = {
   verifierPosition: 'verifierPosition',
   certifyingOfficerName: 'certifyingOfficerName',
   certifyingOfficerPosition: 'certifyingOfficerPosition',
+  certificateDate: 'certificateDate',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   userId: 'userId'
@@ -948,6 +950,7 @@ export const DeathRecordScalarFieldEnum = {
   processFeeInfo: 'processFeeInfo',
   remarks: 'remarks',
   signatureImagePath: 'signatureImagePath',
+  certificateDate: 'certificateDate',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   userId: 'userId'
@@ -990,6 +993,7 @@ export const MarriageRecordScalarFieldEnum = {
   processFeeInfo: 'processFeeInfo',
   remarks: 'remarks',
   signatureImagePath: 'signatureImagePath',
+  certificateDate: 'certificateDate',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   userId: 'userId'
@@ -1083,6 +1087,7 @@ export const SupportingDocumentOrderByRelevanceFieldEnum = {
   deathRecordId: 'deathRecordId',
   marriageRecordId: 'marriageRecordId',
   marriageCertificateApplicationId: 'marriageCertificateApplicationId',
+  certificateDate: 'certificateDate',
   uploadedBy: 'uploadedBy'
 } as const
 
@@ -1123,6 +1128,7 @@ export const BirthRecordOrderByRelevanceFieldEnum = {
   verifierPosition: 'verifierPosition',
   certifyingOfficerName: 'certifyingOfficerName',
   certifyingOfficerPosition: 'certifyingOfficerPosition',
+  certificateDate: 'certificateDate',
   userId: 'userId'
 } as const
 
@@ -1153,6 +1159,7 @@ export const DeathRecordOrderByRelevanceFieldEnum = {
   processFeeInfo: 'processFeeInfo',
   remarks: 'remarks',
   signatureImagePath: 'signatureImagePath',
+  certificateDate: 'certificateDate',
   userId: 'userId'
 } as const
 
@@ -1191,6 +1198,7 @@ export const MarriageRecordOrderByRelevanceFieldEnum = {
   processFeeInfo: 'processFeeInfo',
   remarks: 'remarks',
   signatureImagePath: 'signatureImagePath',
+  certificateDate: 'certificateDate',
   userId: 'userId'
 } as const
 

@@ -1,10 +1,8 @@
-
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 // Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client"
   output   = "../lib/generated/prisma"
@@ -43,20 +41,18 @@ enum DocumentType {
 //////////////////////
 
 model User {
-  id String @id @default(uuid())
-
+  id       String  @id @default(uuid())
   name     String?
-  username String @unique
+  username String  @unique
   password String
   email    String? @unique
-
   office   String? @default("MCRO")
   metadata Json?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  birthRecord                     BirthRecord[]
+  birthRecords                    BirthRecord[]
   deathRecords                    DeathRecord[]
   marriageRecords                 MarriageRecord[]
   marriageCertificateApplications MarriageCertificateApplication[]
@@ -69,11 +65,11 @@ model User {
 model SupportingDocument {
   id String @id @default(cuid())
 
-  filePath    String // Storage path of the file
-  fileName    String // Original filename
-  fileSize    Int? // Size in bytes
-  mimeType    String? // e.g., "image/jpeg"
-  description String? // Optional description
+  filePath    String
+  fileName    String
+  fileSize    Int?
+  mimeType    String?
+  description String?
   type        DocumentType @default(OTHER)
 
   birthRecordId                    String?
@@ -81,18 +77,30 @@ model SupportingDocument {
   marriageRecordId                 String?
   marriageCertificateApplicationId String?
 
-  birthRecord                    BirthRecord?                   @relation(fields: [birthRecordId], references: [id], onDelete: Cascade)
-  deathRecord                    DeathRecord?                   @relation(fields: [deathRecordId], references: [id], onDelete: Cascade)
-  marriageRecord                 MarriageRecord?                @relation(fields: [marriageRecordId], references: [id], onDelete: Cascade)
+  birthRecord                    BirthRecord?                    @relation(fields: [birthRecordId], references: [id], onDelete: Cascade)
+  deathRecord                    DeathRecord?                    @relation(fields: [deathRecordId], references: [id], onDelete: Cascade)
+  marriageRecord                 MarriageRecord?                 @relation(fields: [marriageRecordId], references: [id], onDelete: Cascade)
   marriageCertificateApplication MarriageCertificateApplication? @relation(fields: [marriageCertificateApplicationId], references: [id], onDelete: Cascade)
 
-  uploadedBy String? // User ID who uploaded
-  uploadedAt DateTime @default(now())
+  certificateDate String?
+  uploadedBy      String? // User ID who uploaded
+  uploadedAt      DateTime @default(now())
 
   @@index([birthRecordId])
   @@index([deathRecordId])
   @@index([marriageRecordId])
   @@index([marriageCertificateApplicationId])
+}
+
+//////////////////////
+// RECORD INTERFACES
+//////////////////////
+
+model SignatureFields {
+  id                            String @id @default(cuid())
+  registrarSignaturePath         String?
+  verifierSignaturePath          String?
+  certifyingOfficerSignaturePath String?
 }
 
 //////////////////////
@@ -117,28 +125,26 @@ model BirthRecord {
   birthOrder      String?
   timeOfBirth     String?
 
-  // Mother Information
+  // Mother Info
   motherLastName    String?
   motherFirstName   String?
   motherMiddleName  String?
   motherCitizenship String?
 
-  // Father Information
+  // Father Info
   fatherLastName    String?
   fatherFirstName   String?
   fatherMiddleName  String?
   fatherCitizenship String?
 
-  // Marriage Information
+  // Marriage Info
   dateOfMarriage  String?
   placeOfMarriage String?
 
-  // Administrative Information
-  remarks            String? @db.Text
-  registrarName      String?
-  signatureImagePath String?
-  processFeeInfo     String? @db.Text
-
+  // Administrative Info
+  remarks                   String? @db.Text
+  registrarName             String?
+  processFeeInfo            String? @db.Text
   requestorName             String?
   requestPurpose            String?
   verifiedBy                String
@@ -146,7 +152,13 @@ model BirthRecord {
   certifyingOfficerName     String?
   certifyingOfficerPosition String?
 
+  // Signatures
+  registrarSignaturePath         String?
+  verifierSignaturePath          String?
+  certifyingOfficerSignaturePath String?
+
   supportingDocuments SupportingDocument[]
+  certificateDate     String?
 
   createdAt DateTime? @default(now())
   updatedAt DateTime? @updatedAt
@@ -162,13 +174,12 @@ model BirthRecord {
 //////////////////////
 
 model DeathRecord {
-  id String @id @default(cuid())
-
+  id         String  @id @default(cuid())
   registryNo String  @unique
   pageNo     String?
   bookNo     String?
 
-  // Deceased Information
+  // Deceased Info
   deceasedLastName   String
   deceasedFirstName  String
   deceasedMiddleName String?
@@ -177,36 +188,37 @@ model DeathRecord {
   civilStatus        CivilStatus
   citizenship        String
 
-  // Death Information
+  // Death Info
   dateOfDeath  String
   placeOfDeath String
   causeOfDeath String
 
-  // Registration Information
+  // Registration Info
   dateOfRegistration String
   requestorName      String?
   requestPurpose     String?
 
-  // Administrative Information
+  // Administrative Info
   registrarName             String?
   verifiedBy                String?
   verifierPosition          String?
   certifyingOfficerName     String?
   certifyingOfficerPosition String?
+  processFeeInfo            String? @db.Text
+  remarks                   String? @db.Text
 
-  processFeeInfo String? @db.Text
+  // Signatures
+  registrarSignaturePath         String?
+  verifierSignaturePath          String?
+  certifyingOfficerSignaturePath String?
 
-  remarks            String? @db.Text
-  signatureImagePath String?
-
-  // Relations
   supportingDocuments SupportingDocument[]
+  certificateDate     String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
-  user   User?   @relation(fields: [userId], references: [id])
-  userId String?
+  user      User?    @relation(fields: [userId], references: [id])
+  userId    String?
 
   @@index([registryNo])
   @@index([deceasedLastName, deceasedFirstName])
@@ -217,8 +229,7 @@ model DeathRecord {
 //////////////////////
 
 model MarriageRecord {
-  id String @id @default(cuid())
-
+  id         String  @id @default(cuid())
   registryNo String  @unique
   bookNo     String?
   pageNo     String?
@@ -227,7 +238,7 @@ model MarriageRecord {
   placeOfMarriage    String
   dateOfRegistration String?
 
-  // Husband Information
+  // Husband Info
   husbandLastName    String
   husbandFirstName   String
   husbandMiddleName  String?
@@ -237,7 +248,7 @@ model MarriageRecord {
   husbandMotherName  String?
   husbandFatherName  String?
 
-  // Wife Information
+  // Wife Info
   wifeLastName    String
   wifeFirstName   String
   wifeMiddleName  String?
@@ -247,31 +258,29 @@ model MarriageRecord {
   wifeMotherName  String?
   wifeFatherName  String?
 
-  // Administrative Information
-  requestorName  String?
-  requestPurpose String?
-
-  registrarName    String?
-  verifiedBy       String?
-  verifierPosition String?
-
+  // Administrative Info
+  requestorName             String?
+  requestPurpose            String?
+  registrarName             String?
+  verifiedBy                String?
+  verifierPosition          String?
   certifyingOfficerName     String?
   certifyingOfficerPosition String?
+  processFeeInfo            String?
+  remarks                   String? @db.Text
 
-  processFeeInfo String?
+  // Signatures
+  registrarSignaturePath         String?
+  verifierSignaturePath          String?
+  certifyingOfficerSignaturePath String?
 
-  remarks String? @db.Text
-
-  signatureImagePath String?
-
-  // Relations
   supportingDocuments SupportingDocument[]
+  certificateDate     String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
-  user   User?   @relation(fields: [userId], references: [id])
-  userId String?
+  user      User?    @relation(fields: [userId], references: [id])
+  userId    String?
 
   @@index([registryNo])
   @@index([husbandLastName, husbandFirstName])
@@ -283,37 +292,36 @@ model MarriageRecord {
 //////////////////////
 
 model MarriageCertificateApplication {
-  id String @id @default(cuid())
-
+  id                 String  @id @default(cuid())
   registryNo         String
   bookNo             String?
   pageNo             String?
   dateOfRegistration String?
 
-  // Groom Information
+  // Groom Info
   groomFirstName   String
   groomMiddleName  String?
   groomLastName    String
   groomDateOfBirth String
 
-  // Bride Information
+  // Bride Info
   brideFirstName   String
   brideMiddleName  String?
   brideLastName    String
   brideDateOfBirth String
 
-  // Relations
+  // Signatures
+  registrarSignaturePath         String?
+  verifierSignaturePath          String?
+  certifyingOfficerSignaturePath String?
+
   supportingDocuments SupportingDocument[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  user   User?   @relation(fields: [userId], references: [id])
-  userId String?
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  user                User?                @relation(fields: [userId], references: [id])
+  userId              String?
 
   @@index([registryNo])
   @@index([groomLastName, groomFirstName])
   @@index([brideLastName, brideFirstName])
 }
-
-

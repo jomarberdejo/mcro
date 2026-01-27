@@ -46,7 +46,8 @@ export const birthRecordSchema = z.object({
   requestPurpose: z.string().default(""),
   certifyingOfficerName: z.string().default(""),
   certifyingOfficerPosition: z.string().default(""),
-  supportingDocuments: z.array(supportingDocumentSchema).default([])
+  supportingDocuments: z.array(supportingDocumentSchema).default([]),
+  certificateDate: z.string().default(""),
 
 
 }).refine((data) => {

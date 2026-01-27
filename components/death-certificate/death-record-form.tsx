@@ -198,7 +198,7 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
                               className={cn(
                                 "h-11 text-base transition-all",
                                 fieldState.invalid &&
-                                  "border-red-500 focus-visible:ring-red-500",
+                                "border-red-500 focus-visible:ring-red-500",
                               )}
                               aria-invalid={fieldState.invalid}
                             />
@@ -227,7 +227,7 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
                               className={cn(
                                 "h-11 text-base transition-all",
                                 fieldState.invalid &&
-                                  "border-red-500 focus-visible:ring-red-500",
+                                "border-red-500 focus-visible:ring-red-500",
                               )}
                               aria-invalid={fieldState.invalid}
                             />
@@ -257,7 +257,7 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
                               className={cn(
                                 "h-11 text-base transition-all",
                                 fieldState.invalid &&
-                                  "border-red-500 focus-visible:ring-red-500",
+                                "border-red-500 focus-visible:ring-red-500",
                               )}
                               aria-invalid={fieldState.invalid}
                             />
@@ -287,7 +287,37 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
                             className={cn(
                               "h-11 text-base transition-all",
                               fieldState.invalid &&
-                                "border-red-500 focus-visible:ring-red-500",
+                              "border-red-500 focus-visible:ring-red-500",
+                            )}
+                            aria-invalid={fieldState.invalid}
+                          />
+                          {fieldState.error && (
+                            <FieldError errors={[fieldState.error]} />
+                          )}
+                        </Field>
+                      )}
+                    />
+
+                    <Controller
+                      name="certificateDate"
+                      control={control}
+                      rules={{ required: "Certificate date is required" }}
+                      render={({ field, fieldState }) => (
+                        <Field>
+                          <FieldLabel
+                            htmlFor="certificateDate"
+                            className="text-sm font-semibold text-gray-700"
+                          >
+                            Certificate Date *
+                          </FieldLabel>
+                          <Input
+                            id="certificateDate"
+                            placeholder="e.g., January 15, 2024"
+                            {...field}
+                            className={cn(
+                              "h-11 text-base transition-all",
+                              fieldState.invalid &&
+                              "border-red-500 focus-visible:ring-red-500",
                             )}
                             aria-invalid={fieldState.invalid}
                           />
@@ -321,7 +351,7 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
                               className={cn(
                                 "h-11 text-base transition-all",
                                 fieldState.invalid &&
-                                  "border-red-500 focus-visible:ring-red-500",
+                                "border-red-500 focus-visible:ring-red-500",
                               )}
                               aria-invalid={fieldState.invalid}
                             />
@@ -348,7 +378,7 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
                               className={cn(
                                 "h-11 text-base transition-all",
                                 fieldState.invalid &&
-                                  "border-red-500 focus-visible:ring-red-500",
+                                "border-red-500 focus-visible:ring-red-500",
                               )}
                               aria-invalid={fieldState.invalid}
                             />
@@ -400,7 +430,7 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
                                 className={cn(
                                   "w-full h-11 text-base",
                                   fieldState.invalid &&
-                                    "border-red-500 focus:ring-red-500",
+                                  "border-red-500 focus:ring-red-500",
                                 )}
                               >
                                 <SelectValue placeholder="Select sex" />
@@ -435,7 +465,7 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
                               className={cn(
                                 "h-11 text-base transition-all",
                                 fieldState.invalid &&
-                                  "border-red-500 focus-visible:ring-red-500",
+                                "border-red-500 focus-visible:ring-red-500",
                               )}
                               aria-invalid={fieldState.invalid}
                             />
@@ -466,7 +496,7 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
                                 className={cn(
                                   "w-full h-11 text-base",
                                   fieldState.invalid &&
-                                    "border-red-500 focus:ring-red-500",
+                                  "border-red-500 focus:ring-red-500",
                                 )}
                               >
                                 <SelectValue placeholder="Select status" />
@@ -507,7 +537,7 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
                               className={cn(
                                 "h-11 text-base transition-all",
                                 fieldState.invalid &&
-                                  "border-red-500 focus-visible:ring-red-500",
+                                "border-red-500 focus-visible:ring-red-500",
                               )}
                               aria-invalid={fieldState.invalid}
                             />
@@ -544,7 +574,7 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
                               className={cn(
                                 "h-11 text-base transition-all",
                                 fieldState.invalid &&
-                                  "border-red-500 focus-visible:ring-red-500",
+                                "border-red-500 focus-visible:ring-red-500",
                               )}
                               aria-invalid={fieldState.invalid}
                             />
@@ -572,7 +602,7 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
                               className={cn(
                                 "h-11 text-base transition-all",
                                 fieldState.invalid &&
-                                  "border-red-500 focus-visible:ring-red-500",
+                                "border-red-500 focus-visible:ring-red-500",
                               )}
                               aria-invalid={fieldState.invalid}
                             />
@@ -604,7 +634,7 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
                               className={cn(
                                 "text-base",
                                 fieldState.invalid &&
-                                  "border-red-500 focus-visible:ring-red-500",
+                                "border-red-500 focus-visible:ring-red-500",
                               )}
                               aria-invalid={fieldState.invalid}
                             />
