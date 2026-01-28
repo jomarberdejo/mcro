@@ -3,26 +3,39 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
   try {
-    const { childFirstName, childLastName, childMiddleName, excludeId } =
+    const { childFirstName, childLastName, childMiddleName, excludeId, registryNo } =
       await request.json();
 
     const existingRecords = await prisma.birthRecord.findMany({
-      where: {
+       where: {
         AND: [
           {
-            childFirstName: {
-              equals: childFirstName,
-            },
-          },
-          {
-            childLastName: {
-              equals: childLastName,
-            },
-          },
-          {
-            childMiddleName: {
-              equals: childMiddleName,
-            },
+            OR: [
+              {
+                AND: [
+                  {
+                    childFirstName: {
+                      equals: childFirstName,
+                    },
+                  },
+                  {
+                    childLastName: {
+                      equals: childLastName,
+                    },
+                  },
+                  {
+                    childMiddleName: {
+                      equals: childMiddleName || undefined,
+                    },
+                  },
+                ],
+              },
+              {
+                registryNo: {
+                  equals: registryNo,
+                },
+              },
+            ],
           },
           ...(excludeId ? [{ id: { not: excludeId } }] : []),
         ],

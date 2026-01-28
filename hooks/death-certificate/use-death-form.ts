@@ -33,6 +33,8 @@ interface DeathCertificateCheckData {
   deceasedFirstName: string;
   deceasedLastName: string;
   deceasedMiddleName?: string;
+  registryNo?: string;
+  recordId?: string;
 }
 
 export function useDeathRecordForm({
@@ -505,6 +507,8 @@ export function useDeathRecordForm({
       deceasedFirstName: data.deceasedFirstName,
       deceasedLastName: data.deceasedLastName,
       deceasedMiddleName: data?.deceasedMiddleName,
+      registryNo: data?.registryNo,
+      recordId: isEditing ? recordId : undefined,
     };
 
     await handleDuplicateCheck(checkData, data, saveRecord);

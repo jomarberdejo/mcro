@@ -92,7 +92,6 @@ export async function PUT(
       validatedData.certifyingOfficerSignaturePath
     );
 
-    // Handle supporting documents
     const existingDocPaths = new Set(
       existingRecord.supportingDocuments.map(doc => doc.filePath)
     );

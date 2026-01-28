@@ -1104,14 +1104,14 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
               renderRecord={(duplicate) => (
                 <>
                   <div className="font-medium">
-                    {duplicate.childFirstName} {duplicate.childMiddleName}{" "}
-                    {duplicate.childLastName}
+                    {duplicate.deceasedFirstName} {duplicate.deceasedMiddleName}{" "}
+                    {duplicate.deceasedLastName}
                   </div>
                   <div className="text-sm text-muted-foreground space-y-1">
                     <div>Registry No: {duplicate.registryNo}</div>
                     <div>
                       Date of Death:{" "}
-                      {new Date(duplicate.dateOfDeath).toLocaleDateString()}
+                      {duplicate.dateOfDeath}
                     </div>
                   </div>
                 </>

@@ -1294,7 +1294,7 @@ export const BirthRecordForm: React.FC<BirthRecordFormProps> = ({
                     <div>Registry No: {duplicate.registryNo}</div>
                     <div>
                       Date of Birth:{" "}
-                      {new Date(duplicate.dateOfBirth).toLocaleDateString()}
+                      {duplicate.dateOfBirth}
                     </div>
                   </div>
                 </>

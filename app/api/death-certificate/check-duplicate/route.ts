@@ -3,27 +3,46 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
   try {
-  
-    const { deceasedFirstName, deceasedLastName, deceasedMiddleName, excludeId } =
-      await request.json();
+    const {
+      deceasedFirstName,
+      deceasedLastName,
+      deceasedMiddleName,
+      registryNo,
+      excludeId,
+    } = await request.json();
+
+    console.log(deceasedFirstName, deceasedLastName, deceasedMiddleName, registryNo, excludeId)
 
     const existingRecords = await prisma.deathRecord.findMany({
       where: {
         AND: [
           {
-            deceasedFirstName: {
-              equals: deceasedFirstName,
-            },
-          },
-          {
-            deceasedLastName: {
-              equals: deceasedLastName,
-            },
-          },
-          {
-            deceasedMiddleName: {
-              equals: deceasedMiddleName,
-            },
+            OR: [
+              {
+                AND: [
+                  {
+                    deceasedFirstName: {
+                      equals: deceasedFirstName,
+                    },
+                  },
+                  {
+                    deceasedLastName: {
+                      equals: deceasedLastName,
+                    },
+                  },
+                  {
+                    deceasedMiddleName: {
+                      equals: deceasedMiddleName || undefined,
+                    },
+                  },
+                ],
+              },
+              {
+                registryNo: {
+                  equals: registryNo,
+                },
+              },
+            ],
           },
           ...(excludeId ? [{ id: { not: excludeId } }] : []),
         ],
@@ -46,7 +65,7 @@ export async function POST(request: NextRequest) {
     console.error("Error checking duplicates:", error);
     return NextResponse.json(
       { error: "Failed to check for duplicates" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

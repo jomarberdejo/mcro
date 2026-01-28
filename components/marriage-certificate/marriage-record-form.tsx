@@ -965,6 +965,65 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                         )}
                       />
 
+                      {/* Registrar Signature Upload */}
+                      <Field>
+                        <FieldLabel className="text-sm font-semibold text-gray-700">
+                          Registrar Signature (Optional)
+                        </FieldLabel>
+                        <div className="flex items-center gap-3">
+                          <Input
+                            id="registrarSignatureUpload"
+                            type="file"
+                            accept="image/png,image/jpeg,image/jpg"
+                            onChange={handleRegistrarSignatureUpload}
+                            className="hidden"
+                            disabled={isUploadingRegistrarSig}
+                          />
+                          <Button
+                            type="button"
+                            variant="outline"
+                            onClick={() =>
+                              document
+                                .getElementById("registrarSignatureUpload")
+                                ?.click()
+                            }
+                            disabled={isUploadingRegistrarSig}
+                          >
+                            {isUploadingRegistrarSig ? (
+                              <>
+                                <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                                Uploading...
+                              </>
+                            ) : (
+                              <>
+                                <Upload className="w-4 h-4 mr-2" />
+                                Upload Signature
+                              </>
+                            )}
+                          </Button>
+                          {registrarSignature && (
+                            <div className="flex items-center gap-2">
+                              <div className="relative w-32 h-16 border rounded bg-white">
+                                <Image
+                                  src={registrarSignature.preview}
+                                  alt="Registrar signature"
+                                  fill
+                                  className="object-contain p-1"
+                                />
+                              </div>
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="sm"
+                                onClick={removeRegistrarSignature}
+                              >
+                                <X className="w-4 h-4" />
+                              </Button>
+                            </div>
+                          )}
+                        </div>
+                      </Field>
+
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <Controller
                           name="verifiedBy"
@@ -1008,6 +1067,65 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                           )}
                         />
                       </div>
+
+                      {/* Verifier Signature Upload */}
+                      <Field>
+                        <FieldLabel className="text-sm font-semibold text-gray-700">
+                          Verifier Signature (Optional)
+                        </FieldLabel>
+                        <div className="flex items-center gap-3">
+                          <Input
+                            id="verifierSignatureUpload"
+                            type="file"
+                            accept="image/png,image/jpeg,image/jpg"
+                            onChange={handleVerifierSignatureUpload}
+                            className="hidden"
+                            disabled={isUploadingVerifierSig}
+                          />
+                          <Button
+                            type="button"
+                            variant="outline"
+                            onClick={() =>
+                              document
+                                .getElementById("verifierSignatureUpload")
+                                ?.click()
+                            }
+                            disabled={isUploadingVerifierSig}
+                          >
+                            {isUploadingVerifierSig ? (
+                              <>
+                                <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                                Uploading...
+                              </>
+                            ) : (
+                              <>
+                                <Upload className="w-4 h-4 mr-2" />
+                                Upload Signature
+                              </>
+                            )}
+                          </Button>
+                          {verifierSignature && (
+                            <div className="flex items-center gap-2">
+                              <div className="relative w-32 h-16 border rounded bg-white">
+                                <Image
+                                  src={verifierSignature.preview}
+                                  alt="Verifier signature"
+                                  fill
+                                  className="object-contain p-1"
+                                />
+                              </div>
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="sm"
+                                onClick={removeVerifierSignature}
+                              >
+                                <X className="w-4 h-4" />
+                              </Button>
+                            </div>
+                          )}
+                        </div>
+                      </Field>
 
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <Controller
@@ -1055,6 +1173,67 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                           )}
                         />
                       </div>
+
+                      {/* Certifying Officer Signature Upload */}
+                      <Field>
+                        <FieldLabel className="text-sm font-semibold text-gray-700">
+                          Certifying Officer Signature (Optional)
+                        </FieldLabel>
+                        <div className="flex items-center gap-3">
+                          <Input
+                            id="certifyingOfficerSignatureUpload"
+                            type="file"
+                            accept="image/png,image/jpeg,image/jpg"
+                            onChange={handleCertifyingOfficerSignatureUpload}
+                            className="hidden"
+                            disabled={isUploadingCertifyingOfficerSig}
+                          />
+                          <Button
+                            type="button"
+                            variant="outline"
+                            onClick={() =>
+                              document
+                                .getElementById(
+                                  "certifyingOfficerSignatureUpload",
+                                )
+                                ?.click()
+                            }
+                            disabled={isUploadingCertifyingOfficerSig}
+                          >
+                            {isUploadingCertifyingOfficerSig ? (
+                              <>
+                                <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                                Uploading...
+                              </>
+                            ) : (
+                              <>
+                                <Upload className="w-4 h-4 mr-2" />
+                                Upload Signature
+                              </>
+                            )}
+                          </Button>
+                          {certifyingOfficerSignature && (
+                            <div className="flex items-center gap-2">
+                              <div className="relative w-32 h-16 border rounded bg-white">
+                                <Image
+                                  src={certifyingOfficerSignature.preview}
+                                  alt="Certifying officer signature"
+                                  fill
+                                  className="object-contain p-1"
+                                />
+                              </div>
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="sm"
+                                onClick={removeCertifyingOfficerSignature}
+                              >
+                                <X className="w-4 h-4" />
+                              </Button>
+                            </div>
+                          )}
+                        </div>
+                      </Field>
                     </div>
                   </div>
 

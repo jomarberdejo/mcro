@@ -30,6 +30,8 @@ interface BirthCertificateCheckData {
   childFirstName: string;
   childLastName: string;
   childMiddleName?: string;
+  registryNo: string;
+  recordId?: string;
 }
 
 export function useBirthRecordForm({
@@ -525,6 +527,8 @@ export function useBirthRecordForm({
       childFirstName: data.childFirstName,
       childLastName: data.childLastName,
       childMiddleName: data?.childMiddleName,
+      registryNo: data?.registryNo,
+      recordId: isEditing ? recordId : undefined,
     };
 
     await handleDuplicateCheck(checkData, data, saveRecord);

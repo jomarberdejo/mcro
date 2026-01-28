@@ -109,7 +109,7 @@ model SignatureFields {
 
 model BirthRecord {
   id                 String  @id @default(cuid())
-  registryNo         String  @unique
+  registryNo         String  
   dateOfRegistration String
   bookNo             String?
   pageNo             String?
@@ -175,7 +175,7 @@ model BirthRecord {
 
 model DeathRecord {
   id         String  @id @default(cuid())
-  registryNo String  @unique
+  registryNo String  
   pageNo     String?
   bookNo     String?
 
@@ -230,7 +230,7 @@ model DeathRecord {
 
 model MarriageRecord {
   id         String  @id @default(cuid())
-  registryNo String  @unique
+  registryNo String  
   bookNo     String?
   pageNo     String?
 
