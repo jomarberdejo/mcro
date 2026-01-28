@@ -122,8 +122,6 @@ const MarriageCertificatePDF: React.FC<MarriageCertificatePDFProps> = ({
 
   const documents = record.supportingDocuments || [];
 
-
-
   return (
     <Document>
       <Page size={pageSize} style={marriageStyles.page}>
@@ -366,10 +364,10 @@ const MarriageCertificatePDF: React.FC<MarriageCertificatePDFProps> = ({
           )}
         </View>
 
-        <View style={styles.signatureRightContainer}>
-          {record.signatureImagePath && (
+        <View style={styles.registrarSignaturePathCont}>
+          {record.registrarSignaturePath && (
             <Image
-              src={record.signatureImagePath}
+              src={record.registrarSignaturePath}
               style={styles.signatureImage}
             />
           )}
@@ -382,6 +380,12 @@ const MarriageCertificatePDF: React.FC<MarriageCertificatePDFProps> = ({
               <Text style={styles.certifyingLabel}>
                 &quot;FOR AND BEHALF OF THE MCR&quot;
               </Text>
+              {record.certifyingOfficerSignaturePath && (
+                <Image
+                  src={record.certifyingOfficerSignaturePath}
+                  style={styles.signatureImage}
+                />
+              )}
               <View style={styles.signatureRight}>
                 <Text style={styles.signatureName}>
                   {record.certifyingOfficerName}
@@ -398,10 +402,10 @@ const MarriageCertificatePDF: React.FC<MarriageCertificatePDFProps> = ({
           <Text style={styles.verifiedLabel}>Verified by:</Text>
         </View>
 
-        <View style={styles.signatureLeftContainer}>
-          {record.signatureImagePath && (
+        <View style={styles.verifierSignaturePathCont}>
+          {record.verifierSignaturePath && (
             <Image
-              src={record.signatureImagePath}
+              src={record.verifierSignaturePath}
               style={styles.signatureImage}
             />
           )}

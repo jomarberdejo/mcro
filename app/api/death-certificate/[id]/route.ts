@@ -51,7 +51,9 @@ export async function PUT(
     const existingRecord = await prisma.deathRecord.findUnique({
       where: { id },
       select: { 
-        signatureImagePath: true,
+        registrarSignaturePath: true,
+        verifierSignaturePath: true,
+        certifyingOfficerSignaturePath: true,
         supportingDocuments: true,
       },
     });
@@ -63,23 +65,34 @@ export async function PUT(
       );
     }
 
-    if (validatedData.signatureImagePath) {
-      if (
-        existingRecord.signatureImagePath &&
-        existingRecord.signatureImagePath !== validatedData.signatureImagePath
-      ) {
+    const deleteOldSignature = async (oldPath: string | null, newPath: string | null | undefined) => {
+      if (oldPath && oldPath !== newPath) {
         const oldFilePath = path.join(
           process.cwd(),
           "uploads",
           "signature",
-          path.basename(existingRecord.signatureImagePath)
+          path.basename(oldPath)
         );
         if (existsSync(oldFilePath)) {
           await unlink(oldFilePath).catch(console.error);
         }
       }
-    }
+    };
 
+    await deleteOldSignature(
+      existingRecord.registrarSignaturePath,
+      validatedData.registrarSignaturePath
+    );
+    await deleteOldSignature(
+      existingRecord.verifierSignaturePath,
+      validatedData.verifierSignaturePath
+    );
+    await deleteOldSignature(
+      existingRecord.certifyingOfficerSignaturePath,
+      validatedData.certifyingOfficerSignaturePath
+    );
+
+    // Handle supporting documents
     const existingDocPaths = new Set(
       existingRecord.supportingDocuments.map(doc => doc.filePath)
     );
@@ -177,34 +190,41 @@ export async function DELETE(
       );
     }
 
-    // Delete signature file if exists
-    if (record.signatureImagePath) {
-      const filePath = path.join(
-        process.cwd(),
-        "public",
-        record.signatureImagePath
-      );
-      if (existsSync(filePath)) {
-        await unlink(filePath).catch(console.error);
+    const deleteSignatureFile = async (signaturePath: string | null) => {
+      if (signaturePath) {
+        const filePath = path.join(
+          process.cwd(),
+          "uploads",
+          "signature",
+          path.basename(signaturePath)
+        );
+        if (existsSync(filePath)) {
+          await unlink(filePath).catch(console.error);
+        }
       }
-    }
+    };
 
-    // Optional: Delete supporting document files from storage
-    // Uncomment if you want to delete files from disk/cloud storage
-    /*
+    await deleteSignatureFile(record.registrarSignaturePath);
+    await deleteSignatureFile(record.verifierSignaturePath);
+    await deleteSignatureFile(record.certifyingOfficerSignaturePath);
+
     if (record.supportingDocuments.length > 0) {
       for (const doc of record.supportingDocuments) {
         try {
-          const docFilePath = path.join(process.cwd(), 'public', doc.filePath);
+          const docFilePath = path.join(
+            process.cwd(),
+            "uploads",
+            "documents",
+            path.basename(doc.filePath)
+          );
           if (existsSync(docFilePath)) {
-            await unlink(docFilePath);
+            await unlink(docFilePath).catch(console.error);
           }
         } catch (fileError) {
           console.error(`Failed to delete file: ${doc.filePath}`, fileError);
         }
       }
     }
-    */
 
     await prisma.deathRecord.delete({
       where: { id },
@@ -214,6 +234,11 @@ export async function DELETE(
       { 
         message: "Death record deleted successfully",
         deletedDocuments: record.supportingDocuments.length,
+        deletedSignatures: [
+          record.registrarSignaturePath,
+          record.verifierSignaturePath,
+          record.certifyingOfficerSignaturePath,
+        ].filter(Boolean).length,
       },
       { status: 200 }
     );

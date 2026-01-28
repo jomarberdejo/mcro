@@ -50,6 +50,11 @@ export type User = Prisma.UserModel
  */
 export type SupportingDocument = Prisma.SupportingDocumentModel
 /**
+ * Model SignatureFields
+ * 
+ */
+export type SignatureFields = Prisma.SignatureFieldsModel
+/**
  * Model BirthRecord
  * 
  */

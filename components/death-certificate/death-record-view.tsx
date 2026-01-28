@@ -40,8 +40,6 @@ const DeathCertificatePDF: React.FC<DeathCertificatePDFProps> = ({
 
   const documents = record.supportingDocuments || [];
 
- 
-
   return (
     <Document>
       <Page size={pageSize} style={styles.page}>
@@ -79,7 +77,7 @@ const DeathCertificatePDF: React.FC<DeathCertificatePDFProps> = ({
           </Text>
         </View>
 
-       <Text style={styles.dateRight}>{record.certificateDate}</Text>
+        <Text style={styles.dateRight}>{record.certificateDate}</Text>
 
         <Text style={styles.concernStatement}>TO WHOM IT MAY CONCERN:</Text>
 
@@ -174,10 +172,10 @@ const DeathCertificatePDF: React.FC<DeathCertificatePDFProps> = ({
           )}
         </View>
 
-        <View style={styles.signatureRightContainer}>
-          {record.signatureImagePath && (
+        <View style={styles.registrarSignaturePathCont}>
+          {record.registrarSignaturePath && (
             <Image
-              src={record.signatureImagePath}
+              src={record.registrarSignaturePath}
               style={styles.signatureImage}
             />
           )}
@@ -190,6 +188,12 @@ const DeathCertificatePDF: React.FC<DeathCertificatePDFProps> = ({
               <Text style={styles.certifyingLabel}>
                 &quot;FOR AND BEHALF OF THE MCR&quot;
               </Text>
+              {record.certifyingOfficerSignaturePath && (
+                <Image
+                  src={record.certifyingOfficerSignaturePath}
+                  style={styles.signatureImage}
+                />
+              )}
               <View style={styles.signatureRight}>
                 <Text style={styles.signatureName}>
                   {record.certifyingOfficerName}
@@ -206,10 +210,10 @@ const DeathCertificatePDF: React.FC<DeathCertificatePDFProps> = ({
           <Text style={styles.verifiedLabel}>Verified by:</Text>
         </View>
 
-        <View style={styles.signatureLeftContainer}>
-          {record.signatureImagePath && (
+        <View style={styles.verifierSignaturePathCont}>
+          {record.verifierSignaturePath && (
             <Image
-              src={record.signatureImagePath}
+              src={record.verifierSignaturePath}
               style={styles.signatureImage}
             />
           )}
@@ -232,10 +236,7 @@ const DeathCertificatePDF: React.FC<DeathCertificatePDFProps> = ({
         </View>
       </Page>
 
-      <SupportingDocumentsPages
-        documents={documents}
-        pageSize={pageSize}
-      />
+      <SupportingDocumentsPages documents={documents} pageSize={pageSize} />
     </Document>
   );
 };

@@ -9,6 +9,8 @@ export async function POST(request: NextRequest) {
     const file = formData.get("file") as File;
     const type = formData.get("type") as string; 
 
+    console.log("FORM DATA ==== ", formData);
+
     if (!file) {
       return NextResponse.json(
         { error: "No file provided" },

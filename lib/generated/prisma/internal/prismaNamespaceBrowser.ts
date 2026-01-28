@@ -53,6 +53,7 @@ export const AnyNull = runtime.AnyNull
 export const ModelName = {
   User: 'User',
   SupportingDocument: 'SupportingDocument',
+  SignatureFields: 'SignatureFields',
   BirthRecord: 'BirthRecord',
   DeathRecord: 'DeathRecord',
   MarriageRecord: 'MarriageRecord',
@@ -110,6 +111,16 @@ export const SupportingDocumentScalarFieldEnum = {
 export type SupportingDocumentScalarFieldEnum = (typeof SupportingDocumentScalarFieldEnum)[keyof typeof SupportingDocumentScalarFieldEnum]
 
 
+export const SignatureFieldsScalarFieldEnum = {
+  id: 'id',
+  registrarSignaturePath: 'registrarSignaturePath',
+  verifierSignaturePath: 'verifierSignaturePath',
+  certifyingOfficerSignaturePath: 'certifyingOfficerSignaturePath'
+} as const
+
+export type SignatureFieldsScalarFieldEnum = (typeof SignatureFieldsScalarFieldEnum)[keyof typeof SignatureFieldsScalarFieldEnum]
+
+
 export const BirthRecordScalarFieldEnum = {
   id: 'id',
   registryNo: 'registryNo',
@@ -138,7 +149,6 @@ export const BirthRecordScalarFieldEnum = {
   placeOfMarriage: 'placeOfMarriage',
   remarks: 'remarks',
   registrarName: 'registrarName',
-  signatureImagePath: 'signatureImagePath',
   processFeeInfo: 'processFeeInfo',
   requestorName: 'requestorName',
   requestPurpose: 'requestPurpose',
@@ -146,6 +156,9 @@ export const BirthRecordScalarFieldEnum = {
   verifierPosition: 'verifierPosition',
   certifyingOfficerName: 'certifyingOfficerName',
   certifyingOfficerPosition: 'certifyingOfficerPosition',
+  registrarSignaturePath: 'registrarSignaturePath',
+  verifierSignaturePath: 'verifierSignaturePath',
+  certifyingOfficerSignaturePath: 'certifyingOfficerSignaturePath',
   certificateDate: 'certificateDate',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
@@ -180,7 +193,9 @@ export const DeathRecordScalarFieldEnum = {
   certifyingOfficerPosition: 'certifyingOfficerPosition',
   processFeeInfo: 'processFeeInfo',
   remarks: 'remarks',
-  signatureImagePath: 'signatureImagePath',
+  registrarSignaturePath: 'registrarSignaturePath',
+  verifierSignaturePath: 'verifierSignaturePath',
+  certifyingOfficerSignaturePath: 'certifyingOfficerSignaturePath',
   certificateDate: 'certificateDate',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
@@ -223,7 +238,9 @@ export const MarriageRecordScalarFieldEnum = {
   certifyingOfficerPosition: 'certifyingOfficerPosition',
   processFeeInfo: 'processFeeInfo',
   remarks: 'remarks',
-  signatureImagePath: 'signatureImagePath',
+  registrarSignaturePath: 'registrarSignaturePath',
+  verifierSignaturePath: 'verifierSignaturePath',
+  certifyingOfficerSignaturePath: 'certifyingOfficerSignaturePath',
   certificateDate: 'certificateDate',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
@@ -247,6 +264,9 @@ export const MarriageCertificateApplicationScalarFieldEnum = {
   brideMiddleName: 'brideMiddleName',
   brideLastName: 'brideLastName',
   brideDateOfBirth: 'brideDateOfBirth',
+  registrarSignaturePath: 'registrarSignaturePath',
+  verifierSignaturePath: 'verifierSignaturePath',
+  certifyingOfficerSignaturePath: 'certifyingOfficerSignaturePath',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   userId: 'userId'
@@ -325,6 +345,16 @@ export const SupportingDocumentOrderByRelevanceFieldEnum = {
 export type SupportingDocumentOrderByRelevanceFieldEnum = (typeof SupportingDocumentOrderByRelevanceFieldEnum)[keyof typeof SupportingDocumentOrderByRelevanceFieldEnum]
 
 
+export const SignatureFieldsOrderByRelevanceFieldEnum = {
+  id: 'id',
+  registrarSignaturePath: 'registrarSignaturePath',
+  verifierSignaturePath: 'verifierSignaturePath',
+  certifyingOfficerSignaturePath: 'certifyingOfficerSignaturePath'
+} as const
+
+export type SignatureFieldsOrderByRelevanceFieldEnum = (typeof SignatureFieldsOrderByRelevanceFieldEnum)[keyof typeof SignatureFieldsOrderByRelevanceFieldEnum]
+
+
 export const BirthRecordOrderByRelevanceFieldEnum = {
   id: 'id',
   registryNo: 'registryNo',
@@ -351,7 +381,6 @@ export const BirthRecordOrderByRelevanceFieldEnum = {
   placeOfMarriage: 'placeOfMarriage',
   remarks: 'remarks',
   registrarName: 'registrarName',
-  signatureImagePath: 'signatureImagePath',
   processFeeInfo: 'processFeeInfo',
   requestorName: 'requestorName',
   requestPurpose: 'requestPurpose',
@@ -359,6 +388,9 @@ export const BirthRecordOrderByRelevanceFieldEnum = {
   verifierPosition: 'verifierPosition',
   certifyingOfficerName: 'certifyingOfficerName',
   certifyingOfficerPosition: 'certifyingOfficerPosition',
+  registrarSignaturePath: 'registrarSignaturePath',
+  verifierSignaturePath: 'verifierSignaturePath',
+  certifyingOfficerSignaturePath: 'certifyingOfficerSignaturePath',
   certificateDate: 'certificateDate',
   userId: 'userId'
 } as const
@@ -389,7 +421,9 @@ export const DeathRecordOrderByRelevanceFieldEnum = {
   certifyingOfficerPosition: 'certifyingOfficerPosition',
   processFeeInfo: 'processFeeInfo',
   remarks: 'remarks',
-  signatureImagePath: 'signatureImagePath',
+  registrarSignaturePath: 'registrarSignaturePath',
+  verifierSignaturePath: 'verifierSignaturePath',
+  certifyingOfficerSignaturePath: 'certifyingOfficerSignaturePath',
   certificateDate: 'certificateDate',
   userId: 'userId'
 } as const
@@ -428,7 +462,9 @@ export const MarriageRecordOrderByRelevanceFieldEnum = {
   certifyingOfficerPosition: 'certifyingOfficerPosition',
   processFeeInfo: 'processFeeInfo',
   remarks: 'remarks',
-  signatureImagePath: 'signatureImagePath',
+  registrarSignaturePath: 'registrarSignaturePath',
+  verifierSignaturePath: 'verifierSignaturePath',
+  certifyingOfficerSignaturePath: 'certifyingOfficerSignaturePath',
   certificateDate: 'certificateDate',
   userId: 'userId'
 } as const
@@ -450,6 +486,9 @@ export const MarriageCertificateApplicationOrderByRelevanceFieldEnum = {
   brideMiddleName: 'brideMiddleName',
   brideLastName: 'brideLastName',
   brideDateOfBirth: 'brideDateOfBirth',
+  registrarSignaturePath: 'registrarSignaturePath',
+  verifierSignaturePath: 'verifierSignaturePath',
+  certifyingOfficerSignaturePath: 'certifyingOfficerSignaturePath',
   userId: 'userId'
 } as const
 

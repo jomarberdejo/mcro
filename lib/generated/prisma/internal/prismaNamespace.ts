@@ -386,6 +386,7 @@ type FieldRefInputType<Model, FieldType> = Model extends never ? never : FieldRe
 export const ModelName = {
   User: 'User',
   SupportingDocument: 'SupportingDocument',
+  SignatureFields: 'SignatureFields',
   BirthRecord: 'BirthRecord',
   DeathRecord: 'DeathRecord',
   MarriageRecord: 'MarriageRecord',
@@ -405,7 +406,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "supportingDocument" | "birthRecord" | "deathRecord" | "marriageRecord" | "marriageCertificateApplication"
+    modelProps: "user" | "supportingDocument" | "signatureFields" | "birthRecord" | "deathRecord" | "marriageRecord" | "marriageCertificateApplication"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -538,6 +539,72 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.SupportingDocumentCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.SupportingDocumentCountAggregateOutputType> | number
+        }
+      }
+    }
+    SignatureFields: {
+      payload: Prisma.$SignatureFieldsPayload<ExtArgs>
+      fields: Prisma.SignatureFieldsFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.SignatureFieldsFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SignatureFieldsPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.SignatureFieldsFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SignatureFieldsPayload>
+        }
+        findFirst: {
+          args: Prisma.SignatureFieldsFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SignatureFieldsPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.SignatureFieldsFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SignatureFieldsPayload>
+        }
+        findMany: {
+          args: Prisma.SignatureFieldsFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SignatureFieldsPayload>[]
+        }
+        create: {
+          args: Prisma.SignatureFieldsCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SignatureFieldsPayload>
+        }
+        createMany: {
+          args: Prisma.SignatureFieldsCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        delete: {
+          args: Prisma.SignatureFieldsDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SignatureFieldsPayload>
+        }
+        update: {
+          args: Prisma.SignatureFieldsUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SignatureFieldsPayload>
+        }
+        deleteMany: {
+          args: Prisma.SignatureFieldsDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.SignatureFieldsUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        upsert: {
+          args: Prisma.SignatureFieldsUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SignatureFieldsPayload>
+        }
+        aggregate: {
+          args: Prisma.SignatureFieldsAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateSignatureFields>
+        }
+        groupBy: {
+          args: Prisma.SignatureFieldsGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SignatureFieldsGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.SignatureFieldsCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SignatureFieldsCountAggregateOutputType> | number
         }
       }
     }
@@ -879,6 +946,16 @@ export const SupportingDocumentScalarFieldEnum = {
 export type SupportingDocumentScalarFieldEnum = (typeof SupportingDocumentScalarFieldEnum)[keyof typeof SupportingDocumentScalarFieldEnum]
 
 
+export const SignatureFieldsScalarFieldEnum = {
+  id: 'id',
+  registrarSignaturePath: 'registrarSignaturePath',
+  verifierSignaturePath: 'verifierSignaturePath',
+  certifyingOfficerSignaturePath: 'certifyingOfficerSignaturePath'
+} as const
+
+export type SignatureFieldsScalarFieldEnum = (typeof SignatureFieldsScalarFieldEnum)[keyof typeof SignatureFieldsScalarFieldEnum]
+
+
 export const BirthRecordScalarFieldEnum = {
   id: 'id',
   registryNo: 'registryNo',
@@ -907,7 +984,6 @@ export const BirthRecordScalarFieldEnum = {
   placeOfMarriage: 'placeOfMarriage',
   remarks: 'remarks',
   registrarName: 'registrarName',
-  signatureImagePath: 'signatureImagePath',
   processFeeInfo: 'processFeeInfo',
   requestorName: 'requestorName',
   requestPurpose: 'requestPurpose',
@@ -915,6 +991,9 @@ export const BirthRecordScalarFieldEnum = {
   verifierPosition: 'verifierPosition',
   certifyingOfficerName: 'certifyingOfficerName',
   certifyingOfficerPosition: 'certifyingOfficerPosition',
+  registrarSignaturePath: 'registrarSignaturePath',
+  verifierSignaturePath: 'verifierSignaturePath',
+  certifyingOfficerSignaturePath: 'certifyingOfficerSignaturePath',
   certificateDate: 'certificateDate',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
@@ -949,7 +1028,9 @@ export const DeathRecordScalarFieldEnum = {
   certifyingOfficerPosition: 'certifyingOfficerPosition',
   processFeeInfo: 'processFeeInfo',
   remarks: 'remarks',
-  signatureImagePath: 'signatureImagePath',
+  registrarSignaturePath: 'registrarSignaturePath',
+  verifierSignaturePath: 'verifierSignaturePath',
+  certifyingOfficerSignaturePath: 'certifyingOfficerSignaturePath',
   certificateDate: 'certificateDate',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
@@ -992,7 +1073,9 @@ export const MarriageRecordScalarFieldEnum = {
   certifyingOfficerPosition: 'certifyingOfficerPosition',
   processFeeInfo: 'processFeeInfo',
   remarks: 'remarks',
-  signatureImagePath: 'signatureImagePath',
+  registrarSignaturePath: 'registrarSignaturePath',
+  verifierSignaturePath: 'verifierSignaturePath',
+  certifyingOfficerSignaturePath: 'certifyingOfficerSignaturePath',
   certificateDate: 'certificateDate',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
@@ -1016,6 +1099,9 @@ export const MarriageCertificateApplicationScalarFieldEnum = {
   brideMiddleName: 'brideMiddleName',
   brideLastName: 'brideLastName',
   brideDateOfBirth: 'brideDateOfBirth',
+  registrarSignaturePath: 'registrarSignaturePath',
+  verifierSignaturePath: 'verifierSignaturePath',
+  certifyingOfficerSignaturePath: 'certifyingOfficerSignaturePath',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   userId: 'userId'
@@ -1094,6 +1180,16 @@ export const SupportingDocumentOrderByRelevanceFieldEnum = {
 export type SupportingDocumentOrderByRelevanceFieldEnum = (typeof SupportingDocumentOrderByRelevanceFieldEnum)[keyof typeof SupportingDocumentOrderByRelevanceFieldEnum]
 
 
+export const SignatureFieldsOrderByRelevanceFieldEnum = {
+  id: 'id',
+  registrarSignaturePath: 'registrarSignaturePath',
+  verifierSignaturePath: 'verifierSignaturePath',
+  certifyingOfficerSignaturePath: 'certifyingOfficerSignaturePath'
+} as const
+
+export type SignatureFieldsOrderByRelevanceFieldEnum = (typeof SignatureFieldsOrderByRelevanceFieldEnum)[keyof typeof SignatureFieldsOrderByRelevanceFieldEnum]
+
+
 export const BirthRecordOrderByRelevanceFieldEnum = {
   id: 'id',
   registryNo: 'registryNo',
@@ -1120,7 +1216,6 @@ export const BirthRecordOrderByRelevanceFieldEnum = {
   placeOfMarriage: 'placeOfMarriage',
   remarks: 'remarks',
   registrarName: 'registrarName',
-  signatureImagePath: 'signatureImagePath',
   processFeeInfo: 'processFeeInfo',
   requestorName: 'requestorName',
   requestPurpose: 'requestPurpose',
@@ -1128,6 +1223,9 @@ export const BirthRecordOrderByRelevanceFieldEnum = {
   verifierPosition: 'verifierPosition',
   certifyingOfficerName: 'certifyingOfficerName',
   certifyingOfficerPosition: 'certifyingOfficerPosition',
+  registrarSignaturePath: 'registrarSignaturePath',
+  verifierSignaturePath: 'verifierSignaturePath',
+  certifyingOfficerSignaturePath: 'certifyingOfficerSignaturePath',
   certificateDate: 'certificateDate',
   userId: 'userId'
 } as const
@@ -1158,7 +1256,9 @@ export const DeathRecordOrderByRelevanceFieldEnum = {
   certifyingOfficerPosition: 'certifyingOfficerPosition',
   processFeeInfo: 'processFeeInfo',
   remarks: 'remarks',
-  signatureImagePath: 'signatureImagePath',
+  registrarSignaturePath: 'registrarSignaturePath',
+  verifierSignaturePath: 'verifierSignaturePath',
+  certifyingOfficerSignaturePath: 'certifyingOfficerSignaturePath',
   certificateDate: 'certificateDate',
   userId: 'userId'
 } as const
@@ -1197,7 +1297,9 @@ export const MarriageRecordOrderByRelevanceFieldEnum = {
   certifyingOfficerPosition: 'certifyingOfficerPosition',
   processFeeInfo: 'processFeeInfo',
   remarks: 'remarks',
-  signatureImagePath: 'signatureImagePath',
+  registrarSignaturePath: 'registrarSignaturePath',
+  verifierSignaturePath: 'verifierSignaturePath',
+  certifyingOfficerSignaturePath: 'certifyingOfficerSignaturePath',
   certificateDate: 'certificateDate',
   userId: 'userId'
 } as const
@@ -1219,6 +1321,9 @@ export const MarriageCertificateApplicationOrderByRelevanceFieldEnum = {
   brideMiddleName: 'brideMiddleName',
   brideLastName: 'brideLastName',
   brideDateOfBirth: 'brideDateOfBirth',
+  registrarSignaturePath: 'registrarSignaturePath',
+  verifierSignaturePath: 'verifierSignaturePath',
+  certifyingOfficerSignaturePath: 'certifyingOfficerSignaturePath',
   userId: 'userId'
 } as const
 
@@ -1397,6 +1502,7 @@ export type PrismaClientOptions = ({
 export type GlobalOmitConfig = {
   user?: Prisma.UserOmit
   supportingDocument?: Prisma.SupportingDocumentOmit
+  signatureFields?: Prisma.SignatureFieldsOmit
   birthRecord?: Prisma.BirthRecordOmit
   deathRecord?: Prisma.DeathRecordOmit
   marriageRecord?: Prisma.MarriageRecordOmit

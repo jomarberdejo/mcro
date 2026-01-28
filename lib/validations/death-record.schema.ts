@@ -1,8 +1,6 @@
 import { z } from "zod";
 import { supportingDocumentSchema } from "./schema";
 
-
-
 export const deathRecordSchema = z.object({
   registryNo: z.string().min(1, "Registry number is required"),
   pageNo: z.string().default(""),
@@ -35,13 +33,16 @@ export const deathRecordSchema = z.object({
   verifierPosition: z.string().default(""),
   certifyingOfficerName: z.string().default(""),
   certifyingOfficerPosition: z.string().default(""),
+  registrarSignaturePath: z.string().default(""),
+  verifierSignaturePath: z.string().default(""),
+
+  certifyingOfficerSignaturePath: z.string().default(""),
 
   // Additional Information
   processFeeInfo: z.string().default(""),
   remarks: z.string().default(""),
-  signatureImagePath: z.string().default(""),
   supportingDocuments: z.array(supportingDocumentSchema).default([]),
-    certificateDate: z.string().default(""),
+  certificateDate: z.string().default(""),
 });
 
 export type DeathRecordFormInput = z.input<typeof deathRecordSchema>;

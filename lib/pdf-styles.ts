@@ -8,7 +8,6 @@ export const styles = StyleSheet.create({
     paddingTop: 48,
     fontFamily: "Times-Roman",
     fontSize: 11,
-
   },
   pageBackgroundLogo: {
     position: "absolute",
@@ -27,7 +26,6 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     paddingLeft: 30,
     paddingRight: 30,
-
   },
   rightLogoColumn: {
     width: "20%",
@@ -161,13 +159,13 @@ export const styles = StyleSheet.create({
     fontWeight: "bold",
     textTransform: "uppercase",
   },
-  signatureRightContainer: {
+  registrarSignaturePathCont: {
     alignItems: "center",
     marginLeft: "auto",
     marginTop: 20,
     paddingRight: 30,
   },
-  signatureLeftContainer: {
+  verifierSignaturePathCont: {
     marginTop: 8,
     alignItems: "center",
     marginRight: "auto",
@@ -175,6 +173,9 @@ export const styles = StyleSheet.create({
   },
   certifyingContainer: {
     marginVertical: 5,
+    alignItems: "center",
+    marginRight: "auto",
+    // paddingLeft: 50,
   },
   certifyingLabel: {
     marginBottom: 10,
@@ -188,13 +189,12 @@ export const styles = StyleSheet.create({
   signatureLeft: {
     flexDirection: "column",
     justifyContent: "flex-start",
-    marginRight: "auto",
     alignItems: "center",
   },
   signatureImage: {
     width: 100,
     height: 35,
-    marginBottom: -15,
+    marginBottom: -12,
     objectFit: "contain",
   },
   signatureName: {
@@ -245,38 +245,38 @@ export const documentStyles = StyleSheet.create({
     paddingLeft: 72,
     paddingRight: 72,
     paddingTop: 24,
-    backgroundColor: '#fff',
-    flexDirection: 'column',
+    backgroundColor: "#fff",
+    flexDirection: "column",
   },
   documentHeader: {
     marginBottom: 20,
-    borderBottom: '2px solid #333',
+    borderBottom: "2px solid #333",
     paddingBottom: 10,
   },
   documentHeaderText: {
     fontSize: 16,
-    fontWeight: 'bold',
-    textAlign: 'center',
+    fontWeight: "bold",
+    textAlign: "center",
     marginBottom: 5,
   },
   documentSubHeaderText: {
     fontSize: 11,
-    textAlign: 'center',
-    color: '#666',
+    textAlign: "center",
+    color: "#666",
   },
   documentInfo: {
     marginBottom: 20,
     padding: 10,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: "#f5f5f5",
     borderRadius: 4,
   },
   documentInfoRow: {
-    flexDirection: 'row',
+    flexDirection: "row",
     marginBottom: 5,
   },
   documentInfoLabel: {
     fontSize: 10,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     width: 120,
   },
   documentInfoValue: {
@@ -284,27 +284,27 @@ export const documentStyles = StyleSheet.create({
     flex: 1,
   },
   documentImageContainer: {
-    width: '100%',
-    height: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
+    width: "100%",
+    height: "100%",
+    justifyContent: "center",
+    alignItems: "center",
   },
   documentImage: {
-    width: '100%',
-    height: '100%',
-    objectFit: 'contain',
+    width: "100%",
+    height: "100%",
+    objectFit: "contain",
   },
   documentPageNumber: {
-    position: 'absolute',
+    position: "absolute",
     bottom: 20,
     right: 40,
     fontSize: 10,
-    color: '#666',
+    color: "#666",
   },
   noDocumentsText: {
     fontSize: 14,
-    color: '#999',
-    textAlign: 'center',
+    color: "#999",
+    textAlign: "center",
     padding: 40,
   },
 });

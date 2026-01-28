@@ -41,14 +41,15 @@ export const marriageRecordSchema = z.object({
   verifierPosition: z.string().default(""),
   certifyingOfficerName: z.string().default(""),
   certifyingOfficerPosition: z.string().default(""),
+  registrarSignaturePath: z.string().default(""),
+  verifierSignaturePath: z.string().default(""),
 
+  certifyingOfficerSignaturePath: z.string().default(""),
   // Additional Information
   processFeeInfo: z.string().default(""),
   remarks: z.string().default(""),
-  signatureImagePath: z.string().optional(),
   supportingDocuments: z.array(supportingDocumentSchema).default([]),
   certificateDate: z.string().default(""),
-
 });
 
 export type MarriageRecordFormInput = z.input<typeof marriageRecordSchema>;

@@ -51,7 +51,9 @@ export async function PUT(
     const existingRecord = await prisma.birthRecord.findUnique({
       where: { id },
       select: { 
-        signatureImagePath: true,
+        registrarSignaturePath: true,
+        verifierSignaturePath: true,
+        certifyingOfficerSignaturePath: true,
         supportingDocuments: true,
       },
     });
@@ -63,23 +65,34 @@ export async function PUT(
       );
     }
 
-    if (validatedData.signatureImagePath) {
-      if (
-        existingRecord.signatureImagePath &&
-        existingRecord.signatureImagePath !== validatedData.signatureImagePath
-      ) {
+    const deleteOldSignature = async (oldPath: string | null, newPath: string | null | undefined) => {
+      if (oldPath && oldPath !== newPath) {
         const oldFilePath = path.join(
           process.cwd(),
           "uploads",
           "signature",
-          path.basename(existingRecord.signatureImagePath)
+          path.basename(oldPath)
         );
         if (existsSync(oldFilePath)) {
           await unlink(oldFilePath).catch(console.error);
         }
       }
-    }
+    };
 
+    await deleteOldSignature(
+      existingRecord.registrarSignaturePath,
+      validatedData.registrarSignaturePath
+    );
+    await deleteOldSignature(
+      existingRecord.verifierSignaturePath,
+      validatedData.verifierSignaturePath
+    );
+    await deleteOldSignature(
+      existingRecord.certifyingOfficerSignaturePath,
+      validatedData.certifyingOfficerSignaturePath
+    );
+
+    // Handle supporting documents
     const existingDocPaths = new Set(
       existingRecord.supportingDocuments.map(doc => doc.filePath)
     );
@@ -177,17 +190,23 @@ export async function DELETE(
       );
     }
 
-    if (record.signatureImagePath) {
-      const filePath = path.join(
-        process.cwd(),
-        "uploads",
-        "signature",
-        path.basename(record.signatureImagePath)
-      );
-      if (existsSync(filePath)) {
-        await unlink(filePath).catch(console.error);
+    const deleteSignatureFile = async (signaturePath: string | null) => {
+      if (signaturePath) {
+        const filePath = path.join(
+          process.cwd(),
+          "uploads",
+          "signature",
+          path.basename(signaturePath)
+        );
+        if (existsSync(filePath)) {
+          await unlink(filePath).catch(console.error);
+        }
       }
-    }
+    };
+
+    await deleteSignatureFile(record.registrarSignaturePath);
+    await deleteSignatureFile(record.verifierSignaturePath);
+    await deleteSignatureFile(record.certifyingOfficerSignaturePath);
 
     if (record.supportingDocuments.length > 0) {
       for (const doc of record.supportingDocuments) {
@@ -215,6 +234,11 @@ export async function DELETE(
       { 
         message: "Birth record deleted successfully",
         deletedDocuments: record.supportingDocuments.length,
+        deletedSignatures: [
+          record.registrarSignaturePath,
+          record.verifierSignaturePath,
+          record.certifyingOfficerSignaturePath,
+        ].filter(Boolean).length,
       },
       { status: 200 }
     );

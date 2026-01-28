@@ -50,8 +50,6 @@ const BirthCertificatePDF: React.FC<BirthCertificatePDFProps> = ({
 
   const documents = record.supportingDocuments || [];
 
- 
-
   return (
     <Document>
       <Page size={pageSize} style={styles.page}>
@@ -223,10 +221,10 @@ const BirthCertificatePDF: React.FC<BirthCertificatePDFProps> = ({
           )}
         </View>
 
-        <View style={styles.signatureRightContainer}>
-          {record.signatureImagePath && (
+        <View style={styles.registrarSignaturePathCont}>
+          {record.registrarSignaturePath && (
             <Image
-              src={record.signatureImagePath}
+              src={record.registrarSignaturePath}
               style={styles.signatureImage}
             />
           )}
@@ -239,6 +237,12 @@ const BirthCertificatePDF: React.FC<BirthCertificatePDFProps> = ({
               <Text style={styles.certifyingLabel}>
                 &quot;FOR AND BEHALF OF THE MCR&quot;
               </Text>
+              {record.certifyingOfficerSignaturePath && (
+                <Image
+                  src={record.certifyingOfficerSignaturePath}
+                  style={styles.signatureImage}
+                />
+              )}
               <View style={styles.signatureRight}>
                 <Text style={styles.signatureName}>
                   {record.certifyingOfficerName}
@@ -255,10 +259,10 @@ const BirthCertificatePDF: React.FC<BirthCertificatePDFProps> = ({
           <Text style={styles.verifiedLabel}>Verified by:</Text>
         </View>
 
-        <View style={styles.signatureLeftContainer}>
-          {record.signatureImagePath && (
+        <View style={styles.verifierSignaturePathCont}>
+          {record.verifierSignaturePath && (
             <Image
-              src={record.signatureImagePath}
+              src={record.verifierSignaturePath}
               style={styles.signatureImage}
             />
           )}
@@ -338,7 +342,6 @@ export const BirthRecordView: React.FC<{
             <ArrowLeft className="w-4 h-4 mr-2" /> Back to Records
           </Button>
 
-          {/* Document Count Badge */}
           {documents.length > 0 && (
             <div className="flex items-center gap-2 px-4 py-2 bg-blue-100 text-blue-800 rounded-lg">
               <FileText className="w-4 h-4" />

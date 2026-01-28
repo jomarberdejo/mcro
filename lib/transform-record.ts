@@ -4,13 +4,18 @@ import { BirthRecordFormInput } from "@/lib/validations/birth-record.schema";
 import { DeathRecordFormInput } from "@/lib/validations/death-record.schema";
 import { MarriageRecordFormInput } from "@/lib/validations/marriage-record.schema";
 import { MarriageCertificateApplicationFormInput } from "@/lib/validations/marriage-cert-app.schema";
-import { BirthRecordWithDocuments, DeathRecordWithDocuments, MarriageRecordWithDocuments, MarriageCertificateApplicationWithDocuments } from "./types";
+import {
+  BirthRecordWithDocuments,
+  DeathRecordWithDocuments,
+  MarriageRecordWithDocuments,
+  MarriageCertificateApplicationWithDocuments,
+} from "./types";
 
 /**
  * Transform BirthRecord (Prisma) into form input
  */
 export function transformBirthRecord(
-  record: BirthRecordWithDocuments
+  record: BirthRecordWithDocuments,
 ): Partial<BirthRecordFormInput> {
   return {
     registryNo: record.registryNo ?? "",
@@ -22,7 +27,8 @@ export function transformBirthRecord(
     childFirstName: record.childFirstName ?? "",
     childMiddleName: record.childMiddleName ?? "",
 
-    sex: record.sex === "Male" || record.sex === "Female" ? record.sex : undefined,
+    sex:
+      record.sex === "Male" || record.sex === "Female" ? record.sex : undefined,
 
     dateOfBirth: record.dateOfBirth ?? "",
     placeOfBirth: record.placeOfBirth ?? "",
@@ -55,14 +61,16 @@ export function transformBirthRecord(
     certifyingOfficerName: record.certifyingOfficerName ?? "",
     certifyingOfficerPosition: record.certifyingOfficerPosition ?? "",
     certificateDate: record.certificateDate ?? "",
-
-    signatureImagePath: record.signatureImagePath ?? "",
-    supportingDocuments: record.supportingDocuments?.map(doc => ({
-      filePath: doc.filePath,
-      fileName: doc.fileName,
-      fileSize: doc.fileSize ?? undefined,
-      mimeType: doc.mimeType ?? undefined,
-    })) ?? [],
+    registrarSignaturePath: record.registrarSignaturePath ?? "",
+    verifierSignaturePath: record.verifierSignaturePath ?? "",
+    certifyingOfficerSignaturePath: record.certifyingOfficerSignaturePath ?? "",
+    supportingDocuments:
+      record.supportingDocuments?.map((doc) => ({
+        filePath: doc.filePath,
+        fileName: doc.fileName,
+        fileSize: doc.fileSize ?? undefined,
+        mimeType: doc.mimeType ?? undefined,
+      })) ?? [],
   };
 }
 
@@ -70,7 +78,7 @@ export function transformBirthRecord(
  * Transform MarriageRecord (Prisma) into form input
  */
 export function transformMarriageRecord(
-  record: MarriageRecordWithDocuments
+  record: MarriageRecordWithDocuments,
 ): Partial<MarriageRecordFormInput> {
   return {
     registryNo: record.registryNo ?? "",
@@ -110,13 +118,16 @@ export function transformMarriageRecord(
     remarks: record.remarks ?? "",
     certificateDate: record.certificateDate ?? "",
 
-    signatureImagePath: record.signatureImagePath ?? "",
-    supportingDocuments: record.supportingDocuments?.map(doc => ({
-      filePath: doc.filePath,
-      fileName: doc.fileName,
-      fileSize: doc.fileSize ?? undefined,
-      mimeType: doc.mimeType ?? undefined,
-    })) ?? [],
+    registrarSignaturePath: record.registrarSignaturePath ?? "",
+    verifierSignaturePath: record.verifierSignaturePath ?? "",
+    certifyingOfficerSignaturePath: record.certifyingOfficerSignaturePath ?? "",
+    supportingDocuments:
+      record.supportingDocuments?.map((doc) => ({
+        filePath: doc.filePath,
+        fileName: doc.fileName,
+        fileSize: doc.fileSize ?? undefined,
+        mimeType: doc.mimeType ?? undefined,
+      })) ?? [],
   };
 }
 
@@ -124,7 +135,7 @@ export function transformMarriageRecord(
  * Transform DeathRecord (Prisma) into form input
  */
 export function transformDeathRecord(
-  record: DeathRecordWithDocuments
+  record: DeathRecordWithDocuments,
 ): Partial<DeathRecordFormInput> {
   return {
     registryNo: record.registryNo ?? "",
@@ -154,14 +165,16 @@ export function transformDeathRecord(
     processFeeInfo: record.processFeeInfo ?? "",
     remarks: record.remarks ?? "",
     certificateDate: record.certificateDate ?? "",
-
-    signatureImagePath: record.signatureImagePath ?? "",
-    supportingDocuments: record.supportingDocuments?.map(doc => ({
-      filePath: doc.filePath,
-      fileName: doc.fileName,
-      fileSize: doc.fileSize ?? undefined,
-      mimeType: doc.mimeType ?? undefined,
-    })) ?? [],
+    registrarSignaturePath: record.registrarSignaturePath ?? "",
+    verifierSignaturePath: record.verifierSignaturePath ?? "",
+    certifyingOfficerSignaturePath: record.certifyingOfficerSignaturePath ?? "",
+    supportingDocuments:
+      record.supportingDocuments?.map((doc) => ({
+        filePath: doc.filePath,
+        fileName: doc.fileName,
+        fileSize: doc.fileSize ?? undefined,
+        mimeType: doc.mimeType ?? undefined,
+      })) ?? [],
   };
 }
 
@@ -169,7 +182,7 @@ export function transformDeathRecord(
  * Transform MarriageCertificateApplication (Prisma) into form input
  */
 export function transformMarriageCertificateApplication(
-  application: MarriageCertificateApplicationWithDocuments
+  application: MarriageCertificateApplicationWithDocuments,
 ): Partial<MarriageCertificateApplicationFormInput> {
   return {
     registryNo: application.registryNo ?? "",
@@ -186,11 +199,12 @@ export function transformMarriageCertificateApplication(
     brideMiddleName: application.brideMiddleName ?? "",
     brideLastName: application.brideLastName ?? "",
     brideDateOfBirth: application.brideDateOfBirth ?? "",
-    supportingDocuments: application.supportingDocuments?.map(doc => ({
-      filePath: doc.filePath,
-      fileName: doc.fileName,
-      fileSize: doc.fileSize ?? undefined,
-      mimeType: doc.mimeType ?? undefined,
-    })) ?? [],
+    supportingDocuments:
+      application.supportingDocuments?.map((doc) => ({
+        filePath: doc.filePath,
+        fileName: doc.fileName,
+        fileSize: doc.fileSize ?? undefined,
+        mimeType: doc.mimeType ?? undefined,
+      })) ?? [],
   };
 }
