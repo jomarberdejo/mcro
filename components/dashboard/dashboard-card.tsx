@@ -76,30 +76,30 @@ export function DashboardCards({ stats }: { stats: StatCard[] }) {
   };
   return (
     <>
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4">
         {stats.map((stat) => {
           const Icon = iconMap[stat.icon] || FileText;
           return (
             <Card
               key={stat.title}
-              className="cursor-pointer transition-all hover:shadow-lg hover:scale-105"
+              className="cursor-pointer transition-all hover:shadow-lg hover:scale-105 border-2"
               onClick={() => handleCardClick(stat)}
             >
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+                <CardTitle className="text-xl font-bold">
                   {stat.title}
                 </CardTitle>
-                <div className={`${stat.bgColor} p-2 rounded-lg`}>
-                  <Icon className={`h-4 w-4 ${stat.color}`} />
+                <div className={`${stat.bgColor} p-3 rounded-lg`}>
+                  <Icon className={`h-8 w-8 ${stat.color}`} />
                 </div>
               </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{stat.count.toLocaleString()}</div>
-                <p className="text-xs text-muted-foreground mt-1">
+              <CardContent className="space-y-3">
+                <div className="text-5xl font-bold">{stat.count.toLocaleString()}</div>
+                <p className="text-base text-muted-foreground font-medium">
                   {stat.description}
                 </p>
-                <p className="text-xs text-blue-600 mt-2 font-medium">
-                  Click to view all records
+                <p className="text-base text-blue-600 font-semibold pt-2">
+                  Click to view all records →
                 </p>
               </CardContent>
             </Card>

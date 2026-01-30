@@ -110,7 +110,10 @@ export function useBirthRecordForm({
       verifierPosition: "",
       certifyingOfficerName: "",
       certifyingOfficerPosition: "",
-      processFeeInfo: "",
+      processFeeInfo: `O.R No. :
+Amount Paid: Ph50.00
+Date Paid: 
+Doc. Authentication Fee: Ph10.00 doc. Stamp tax: Ph30.00`,
       supportingDocuments: [],
       registrarSignaturePath: "",
       verifierSignaturePath: "",

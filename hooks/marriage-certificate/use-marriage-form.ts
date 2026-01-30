@@ -85,7 +85,10 @@ export function useMarriageRecordForm({
       verifierPosition: "",
       certifyingOfficerName: "",
       certifyingOfficerPosition: "",
-      processFeeInfo: "",
+      processFeeInfo: `O.R No. :
+Amount Paid: Ph50.00
+Date Paid: 
+Doc. Authentication Fee: Ph10.00 doc. Stamp tax: Ph30.00`,
       remarks: "",
       supportingDocuments: [],
       registrarSignaturePath: "",
@@ -99,7 +102,6 @@ export function useMarriageRecordForm({
     },
   });
 
-  // Load existing signatures on mount
   useEffect(() => {
     if (defaultValues?.registrarSignaturePath) {
       setRegistrarSignature({
@@ -170,7 +172,6 @@ export function useMarriageRecordForm({
     setIsUploadingRegistrarSig(true);
 
     try {
-      // Delete old signature if exists
       if (registrarSignature) {
         await deleteFile(registrarSignature.path);
         if (registrarSignature.preview.startsWith("blob:")) {

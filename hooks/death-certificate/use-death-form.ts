@@ -4,7 +4,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useFileUpload } from "@/hooks/use-file-upload";
-import { DeathRecordFormInput, deathRecordSchema } from "@/lib/validations/death-record.schema";
+import {
+  DeathRecordFormInput,
+  deathRecordSchema,
+} from "@/lib/validations/death-record.schema";
 import { useDuplicateCheck } from "../use-duplicate-check";
 
 interface UseDeathRecordFormProps {
@@ -42,7 +45,6 @@ export function useDeathRecordForm({
   defaultValues,
   isEditing = false,
 }: UseDeathRecordFormProps) {
-
   const {
     showDuplicateDialog,
     duplicateRecords,
@@ -59,21 +61,26 @@ export function useDeathRecordForm({
   const router = useRouter();
   const { uploadFile, deleteFile } = useFileUpload();
 
-  
   const [documentPreview, setDocumentPreview] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [isUploadingSignature, setIsUploadingSignature] = useState(false);
-  const [supportingDocuments, setSupportingDocuments] = useState<SupportingDocument[]>([]);
+  const [supportingDocuments, setSupportingDocuments] = useState<
+    SupportingDocument[]
+  >([]);
   const [isUploadingDoc, setIsUploadingDoc] = useState(false);
 
   // Signature states
-  const [registrarSignature, setRegistrarSignature] = useState<SignatureDocument | null>(null);
-  const [verifierSignature, setVerifierSignature] = useState<SignatureDocument | null>(null);
-  const [certifyingOfficerSignature, setCertifyingOfficerSignature] = useState<SignatureDocument | null>(null);
-  
+  const [registrarSignature, setRegistrarSignature] =
+    useState<SignatureDocument | null>(null);
+  const [verifierSignature, setVerifierSignature] =
+    useState<SignatureDocument | null>(null);
+  const [certifyingOfficerSignature, setCertifyingOfficerSignature] =
+    useState<SignatureDocument | null>(null);
+
   const [isUploadingRegistrarSig, setIsUploadingRegistrarSig] = useState(false);
   const [isUploadingVerifierSig, setIsUploadingVerifierSig] = useState(false);
-  const [isUploadingCertifyingOfficerSig, setIsUploadingCertifyingOfficerSig] = useState(false);
+  const [isUploadingCertifyingOfficerSig, setIsUploadingCertifyingOfficerSig] =
+    useState(false);
 
   const form = useForm<DeathRecordFormInput>({
     resolver: zodResolver(deathRecordSchema),
@@ -99,16 +106,19 @@ export function useDeathRecordForm({
       verifierPosition: "",
       certifyingOfficerName: "",
       certifyingOfficerPosition: "",
-      processFeeInfo: "",
+      processFeeInfo: `O.R No. :
+Amount Paid: Ph50.00
+Date Paid: 
+Doc. Authentication Fee: Ph10.00 doc. Stamp tax: Ph30.00`,
       remarks: "",
       supportingDocuments: [],
       registrarSignaturePath: "",
       verifierSignaturePath: "",
       certifyingOfficerSignaturePath: "",
-      certificateDate: new Date().toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
+      certificateDate: new Date().toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
       }),
     },
   });
@@ -120,45 +130,53 @@ export function useDeathRecordForm({
         id: defaultValues.registrarSignaturePath,
         path: defaultValues.registrarSignaturePath,
         preview: defaultValues.registrarSignaturePath,
-        name: 'registrar-signature',
+        name: "registrar-signature",
       });
     }
-    
+
     if (defaultValues?.verifierSignaturePath) {
       setVerifierSignature({
         id: defaultValues.verifierSignaturePath,
         path: defaultValues.verifierSignaturePath,
         preview: defaultValues.verifierSignaturePath,
-        name: 'verifier-signature',
+        name: "verifier-signature",
       });
     }
-    
+
     if (defaultValues?.certifyingOfficerSignaturePath) {
       setCertifyingOfficerSignature({
         id: defaultValues.certifyingOfficerSignaturePath,
         path: defaultValues.certifyingOfficerSignaturePath,
         preview: defaultValues.certifyingOfficerSignaturePath,
-        name: 'certifying-officer-signature',
+        name: "certifying-officer-signature",
       });
     }
-  }, [defaultValues?.registrarSignaturePath, defaultValues?.verifierSignaturePath, defaultValues?.certifyingOfficerSignaturePath]);
+  }, [
+    defaultValues?.registrarSignaturePath,
+    defaultValues?.verifierSignaturePath,
+    defaultValues?.certifyingOfficerSignaturePath,
+  ]);
 
   useEffect(() => {
-    if (defaultValues?.supportingDocuments && defaultValues.supportingDocuments.length > 0) {
-      const existingDocs: SupportingDocument[] = defaultValues.supportingDocuments.map((doc) => ({
-        id: doc.filePath,
-        path: doc.filePath,
-        preview: doc.filePath,
-        name: doc.fileName,
-        size: doc.fileSize || 0,
-        mimeType: doc.mimeType || 'image/jpeg',
-      }));
+    if (
+      defaultValues?.supportingDocuments &&
+      defaultValues.supportingDocuments.length > 0
+    ) {
+      const existingDocs: SupportingDocument[] =
+        defaultValues.supportingDocuments.map((doc) => ({
+          id: doc.filePath,
+          path: doc.filePath,
+          preview: doc.filePath,
+          name: doc.fileName,
+          size: doc.fileSize || 0,
+          mimeType: doc.mimeType || "image/jpeg",
+        }));
       setSupportingDocuments(existingDocs);
     }
   }, [defaultValues?.supportingDocuments]);
 
   const handleRegistrarSignatureUpload = async (
-    e: React.ChangeEvent<HTMLInputElement>
+    e: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -179,7 +197,7 @@ export function useDeathRecordForm({
       // Delete old signature if exists
       if (registrarSignature) {
         await deleteFile(registrarSignature.path);
-        if (registrarSignature.preview.startsWith('blob:')) {
+        if (registrarSignature.preview.startsWith("blob:")) {
           URL.revokeObjectURL(registrarSignature.preview);
         }
       }
@@ -201,7 +219,7 @@ export function useDeathRecordForm({
     } catch (error) {
       console.error("Error uploading registrar signature:", error);
       toast.error(
-        error instanceof Error ? error.message : "Failed to upload signature"
+        error instanceof Error ? error.message : "Failed to upload signature",
       );
     } finally {
       setIsUploadingRegistrarSig(false);
@@ -214,8 +232,8 @@ export function useDeathRecordForm({
 
     try {
       await deleteFile(registrarSignature.path);
-      
-      if (registrarSignature.preview.startsWith('blob:')) {
+
+      if (registrarSignature.preview.startsWith("blob:")) {
         URL.revokeObjectURL(registrarSignature.preview);
       }
 
@@ -229,7 +247,7 @@ export function useDeathRecordForm({
   };
 
   const handleVerifierSignatureUpload = async (
-    e: React.ChangeEvent<HTMLInputElement>
+    e: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -249,7 +267,7 @@ export function useDeathRecordForm({
     try {
       if (verifierSignature) {
         await deleteFile(verifierSignature.path);
-        if (verifierSignature.preview.startsWith('blob:')) {
+        if (verifierSignature.preview.startsWith("blob:")) {
           URL.revokeObjectURL(verifierSignature.preview);
         }
       }
@@ -271,7 +289,7 @@ export function useDeathRecordForm({
     } catch (error) {
       console.error("Error uploading verifier signature:", error);
       toast.error(
-        error instanceof Error ? error.message : "Failed to upload signature"
+        error instanceof Error ? error.message : "Failed to upload signature",
       );
     } finally {
       setIsUploadingVerifierSig(false);
@@ -284,8 +302,8 @@ export function useDeathRecordForm({
 
     try {
       await deleteFile(verifierSignature.path);
-      
-      if (verifierSignature.preview.startsWith('blob:')) {
+
+      if (verifierSignature.preview.startsWith("blob:")) {
         URL.revokeObjectURL(verifierSignature.preview);
       }
 
@@ -300,7 +318,7 @@ export function useDeathRecordForm({
 
   // Certifying Officer Signature Upload
   const handleCertifyingOfficerSignatureUpload = async (
-    e: React.ChangeEvent<HTMLInputElement>
+    e: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -320,7 +338,7 @@ export function useDeathRecordForm({
     try {
       if (certifyingOfficerSignature) {
         await deleteFile(certifyingOfficerSignature.path);
-        if (certifyingOfficerSignature.preview.startsWith('blob:')) {
+        if (certifyingOfficerSignature.preview.startsWith("blob:")) {
           URL.revokeObjectURL(certifyingOfficerSignature.preview);
         }
       }
@@ -342,7 +360,7 @@ export function useDeathRecordForm({
     } catch (error) {
       console.error("Error uploading certifying officer signature:", error);
       toast.error(
-        error instanceof Error ? error.message : "Failed to upload signature"
+        error instanceof Error ? error.message : "Failed to upload signature",
       );
     } finally {
       setIsUploadingCertifyingOfficerSig(false);
@@ -355,8 +373,8 @@ export function useDeathRecordForm({
 
     try {
       await deleteFile(certifyingOfficerSignature.path);
-      
-      if (certifyingOfficerSignature.preview.startsWith('blob:')) {
+
+      if (certifyingOfficerSignature.preview.startsWith("blob:")) {
         URL.revokeObjectURL(certifyingOfficerSignature.preview);
       }
 
@@ -370,13 +388,13 @@ export function useDeathRecordForm({
   };
 
   const handleSupportingDocumentsUpload = async (
-    e: React.ChangeEvent<HTMLInputElement>
+    e: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const files = Array.from(e.target.files || []);
     if (files.length === 0) return;
 
     const invalidFiles = files.filter(
-      (file) => !file.type.startsWith("image/") || file.size > 5 * 1024 * 1024
+      (file) => !file.type.startsWith("image/") || file.size > 5 * 1024 * 1024,
     );
 
     if (invalidFiles.length > 0) {
@@ -402,10 +420,10 @@ export function useDeathRecordForm({
       });
 
       const uploadedDocs = await Promise.all(uploadPromises);
-      
+
       setSupportingDocuments((prev) => {
         const newDocs = [...prev, ...uploadedDocs];
-        
+
         form.setValue(
           "supportingDocuments",
           newDocs.map((d) => ({
@@ -413,9 +431,9 @@ export function useDeathRecordForm({
             fileName: d.name,
             fileSize: d.size,
             mimeType: d.mimeType,
-          }))
+          })),
         );
-        
+
         return newDocs;
       });
 
@@ -423,11 +441,13 @@ export function useDeathRecordForm({
     } catch (error) {
       console.error("Error uploading documents:", error);
       toast.error(
-        error instanceof Error ? error.message : "Failed to upload documents"
+        error instanceof Error ? error.message : "Failed to upload documents",
       );
     } finally {
       setIsUploadingDoc(false);
-      const fileInput = document.getElementById("documentsUpload") as HTMLInputElement;
+      const fileInput = document.getElementById(
+        "documentsUpload",
+      ) as HTMLInputElement;
       if (fileInput) fileInput.value = "";
     }
   };
@@ -438,7 +458,7 @@ export function useDeathRecordForm({
 
     try {
       // Only delete from storage if it's a newly uploaded file (has blob URL)
-      if (doc.preview.startsWith('blob:')) {
+      if (doc.preview.startsWith("blob:")) {
         await deleteFile(doc.path);
         URL.revokeObjectURL(doc.preview);
       } else {
@@ -448,7 +468,7 @@ export function useDeathRecordForm({
 
       setSupportingDocuments((prev) => {
         const updatedDocs = prev.filter((d) => d.id !== docId);
-        
+
         form.setValue(
           "supportingDocuments",
           updatedDocs.map((d) => ({
@@ -456,9 +476,9 @@ export function useDeathRecordForm({
             fileName: d.name,
             fileSize: d.size,
             mimeType: d.mimeType,
-          }))
+          })),
         );
-        
+
         return updatedDocs;
       });
 
@@ -490,14 +510,14 @@ export function useDeathRecordForm({
       toast.success(
         isEditing
           ? "Death record updated successfully"
-          : "Death record created successfully"
+          : "Death record created successfully",
       );
       router.push("/admin/death-certificate");
       router.refresh();
     } catch (error) {
       console.error("Error saving death record:", error);
       toast.error(
-        error instanceof Error ? error.message : "Failed to save death record"
+        error instanceof Error ? error.message : "Failed to save death record",
       );
     }
   };

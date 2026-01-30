@@ -2,79 +2,67 @@ import { StyleSheet } from "@react-pdf/renderer";
 
 export const styles = StyleSheet.create({
   page: {
-    position: "relative",
     paddingLeft: 72,
     paddingRight: 72,
     paddingTop: 48,
     fontFamily: "Times-Roman",
     fontSize: 11,
   },
-  pageBackgroundLogo: {
-    position: "absolute",
-    width: 400,
-    height: 450,
-    left: "40%",
-    top: "40%",
-    marginLeft: -100,
-    marginTop: -100,
-    opacity: 0.3,
+  headerContainer: {
+    position: "relative",
+    minHeight: 120, 
+    marginBottom: 10,
   },
   headerRow: {
-    position: "relative",
     flexDirection: "row",
-    justifyContent: "space-between",
     alignItems: "center",
-    paddingLeft: 30,
-    paddingRight: 30,
+    justifyContent: "space-between",
+  },
+  leftColumn: {
+    width: "35%",
+    alignItems: "flex-start",
+    justifyContent: "flex-start",
   },
   rightLogoColumn: {
-    width: "20%",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  centerColumn: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  leftLogoColumn: {
-    width: "30%",
+    width: "65%",
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center",
-    gap: 10,
+    justifyContent: "flex-end",
+    gap: 15,
+  },
+  formNumberCont: {
+    marginBottom: 10,
   },
   formNumber: {
     fontSize: 11,
     color: "#666",
-    marginBottom: 4,
     fontStyle: "italic",
-    lineHeight: 1.3,
   },
+  headerTitleCont: {},
   headerTitle: {
     fontSize: 12,
-    marginBottom: 4,
-    textAlign: "center",
-    lineHeight: 1.4,
+    textAlign: "left",
   },
   headerTitleBold: {
     fontSize: 14,
     fontWeight: "bold",
     marginBottom: 5,
     fontStyle: "italic",
-    textAlign: "center",
-    lineHeight: 1.4,
+    textAlign: "left",
+  },
+  headerTitleLargeCont: {
+    position: "absolute",
+    bottom: -10,
+    left: 0,
+    right: 0,
+    borderBottom: "2px solid #000",
+    paddingBottom: 5,
+
   },
   headerTitleLarge: {
     fontSize: 15,
     fontWeight: "bold",
     letterSpacing: 1.5,
-    textAlign: "center",
-    marginTop: 6,
-    lineHeight: 1.5,
-    borderBottom: "2px solid #000",
-    marginBottom: 10,
-    paddingBottom: 10,
   },
   logo: {
     width: 55,
@@ -83,6 +71,10 @@ export const styles = StyleSheet.create({
   logoSingle: {
     width: 60,
     height: 60,
+  },
+  logoDatuGara: {
+    width: 105,
+    height: 105,
   },
   dateRight: {
     textAlign: "right",
@@ -175,7 +167,6 @@ export const styles = StyleSheet.create({
     marginVertical: 5,
     alignItems: "center",
     marginRight: "auto",
-    // paddingLeft: 50,
   },
   certifyingLabel: {
     marginBottom: 10,
@@ -220,7 +211,6 @@ export const styles = StyleSheet.create({
     flexDirection: "row",
     gap: 2,
     alignItems: "center",
-    // paddingLeft: 30,
     marginTop: 8,
   },
   noteHighlight: {

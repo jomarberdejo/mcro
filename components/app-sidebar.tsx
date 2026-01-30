@@ -28,11 +28,13 @@ const data = {
       title: "Dashboard",
       url: "/admin/dashboard",
       icon: LayoutDashboard,
+      color: "text-blue-600",
     },
     {
       title: "Birth Certificate",
       url: "/admin/birth-certificate",
       icon: FileText,
+      color: "text-green-600",
       items: [
         {
           title: "View Records",
@@ -48,6 +50,7 @@ const data = {
       title: "Death Certificate",
       url: "/admin/death-certificate",
       icon: Cross,
+      color: "text-black",
       items: [
         {
           title: "View Records",
@@ -63,6 +66,7 @@ const data = {
       title: "Marriage Certificate",
       url: "/admin/marriage-certificate",
       icon: Heart,
+      color: "text-red-600",
       items: [
         {
           title: "View Records",
@@ -78,6 +82,7 @@ const data = {
       title: "AML",
       url: "/admin/marriage-cert-app",
       icon: ClipboardList,
+      color: "text-violet-600",
       items: [
         {
           title: "View Applications",

@@ -41,8 +41,6 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
-  
-
 }
 
 :root {
@@ -121,5 +119,36 @@
   body {
     @apply bg-background text-foreground;
   }
- 
+  
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="number"],
+  input[type="tel"],
+  input[type="date"],
+  input[type="datetime-local"],
+  input[type="time"],
+  input[type="search"],
+  input[type="url"],
+  select,
+  textarea {
+    border-width: 2px !important;
+    border-color: #000000 !important;
+  }
+  
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible,
+  button:focus-visible {
+    outline-width: 3px !important;
+    outline-offset: 2px !important;
+    outline-color: #000000 !important;
+  }
+}
+
+@layer components {
+  .border {
+    border-width: 1px !important;
+    border-color: #000000 !important;
+  }
 }

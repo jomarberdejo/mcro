@@ -1,14 +1,14 @@
-"use client"
+"use client";
 
-import { ChevronRight, type LucideIcon } from "lucide-react"
-import { usePathname } from "next/navigation"
-import Link from "next/link"
+import { ChevronRight, type LucideIcon } from "lucide-react";
+import { usePathname } from "next/navigation";
+import Link from "next/link";
 
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from "@/components/ui/collapsible"
+} from "@/components/ui/collapsible";
 import {
   SidebarGroup,
   SidebarGroupLabel,
@@ -18,89 +18,97 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
-} from "@/components/ui/sidebar"
+} from "@/components/ui/sidebar";
 
 export function NavMain({
   items,
 }: {
   items: {
-    title: string
-    url: string
-    icon: LucideIcon
-    isActive?: boolean
+    title: string;
+    url: string;
+    icon: LucideIcon;
+    isActive?: boolean;
+    color?: string;
     items?: {
-      title: string
-      url: string
-    }[]
-  }[]
+      title: string;
+      url: string;
+    }[];
+  }[];
 }) {
-  const pathname = usePathname()
+  const pathname = usePathname();
 
   return (
     <SidebarGroup>
-      <SidebarGroupLabel>Main</SidebarGroupLabel>
+      <SidebarGroupLabel className="text-base">Main</SidebarGroupLabel>
       <SidebarMenu>
         {items.map((item) => {
-          const hasSubItems = item.items && item.items.length > 0
-          const hasActiveSubItem = item.items?.some(subItem => pathname === subItem.url)
-          const isActive = pathname === item.url
-          
+          const hasSubItems = item.items && item.items.length > 0;
+          const hasActiveSubItem = item.items?.some(
+            (subItem) => pathname === subItem.url,
+          );
+          const isActive = pathname === item.url;
+
           if (!hasSubItems) {
             return (
               <SidebarMenuItem key={item.title}>
-                <SidebarMenuButton 
-                  asChild 
+                <SidebarMenuButton
+                  asChild
                   tooltip={item.title}
                   isActive={isActive}
+                  className="text-base py-6"
                 >
                   <Link href={item.url}>
-                    <item.icon />
-                    <span>{item.title}</span>
+                    <item.icon className={`shrink-0 ${item.color}`} />
+                    <span className={item.color}>{item.title}</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
-            )
+            );
           }
 
           return (
-            <Collapsible 
-              key={item.title} 
-              asChild 
+            <Collapsible
+              key={item.title}
+              asChild
               defaultOpen={hasActiveSubItem}
             >
               <SidebarMenuItem>
                 <CollapsibleTrigger asChild>
-                  <SidebarMenuButton tooltip={item.title}>
-                    <item.icon />
-                    <span>{item.title}</span>
+                  <SidebarMenuButton
+                    tooltip={item.title}
+                    className="text-base py-6"
+                  >
+                    <item.icon className={`shrink-0 ${item.color}`} />
+                    <span className={item.color}>{item.title}</span>
                     <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
                   </SidebarMenuButton>
                 </CollapsibleTrigger>
                 <CollapsibleContent>
                   <SidebarMenuSub>
                     {item.items?.map((subItem) => {
-                      const isSubActive = pathname === subItem.url
-                      
+                      const isSubActive = pathname === subItem.url;
+
                       return (
                         <SidebarMenuSubItem key={subItem.title}>
-                          <SidebarMenuSubButton 
+                          <SidebarMenuSubButton
                             asChild
                             isActive={isSubActive}
+                            className="text-base py-5"
                           >
                             <Link href={subItem.url}>
                               <span>{subItem.title}</span>
                             </Link>
                           </SidebarMenuSubButton>
                         </SidebarMenuSubItem>
-                      )
+                      );
                     })}
                   </SidebarMenuSub>
                 </CollapsibleContent>
               </SidebarMenuItem>
             </Collapsible>
-          )
+          );
         })}
       </SidebarMenu>
     </SidebarGroup>
-  )
+  );
 }
