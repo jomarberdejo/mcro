@@ -101,7 +101,7 @@ export function useDeathRecordForm({
       dateOfRegistration: "",
       requestorName: "",
       requestPurpose: "",
-      registrarName: "",
+      registrarName: "DARRYL U. MONTEALEGRE, MM",
       verifiedBy: "",
       verifierPosition: "",
       certifyingOfficerName: "",

@@ -59,8 +59,8 @@ export const MarriageCertificateApplicationForm: React.FC<
           <CardHeader>
             <CardTitle>
               {isEditing
-                ? "Edit Marriage Certificate Application"
-                : "New Marriage Certificate Application"}
+                ? "Edit Application for Marriage License"
+                : "New Application for Marriage License"}
             </CardTitle>
           </CardHeader>
 

@@ -109,7 +109,6 @@ export function useMarriageCertificateApplicationForm({
       setSupportingDocuments((prev) => {
         const newDocs = [...prev, ...uploadedDocs];
         
-        // Update form value
         form.setValue(
           "supportingDocuments",
           newDocs.map((d) => ({

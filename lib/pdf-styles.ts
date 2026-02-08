@@ -10,18 +10,20 @@ export const styles = StyleSheet.create({
   },
   headerContainer: {
     position: "relative",
-    minHeight: 120, 
-    marginBottom: 10,
+    minHeight: 120,
   },
   headerRow: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
+    borderBottom: "2px solid #000",
+    paddingBottom: 10,
   },
   leftColumn: {
     width: "35%",
     alignItems: "flex-start",
     justifyContent: "flex-start",
+    flexDirection: "row",
   },
   rightLogoColumn: {
     width: "65%",
@@ -34,7 +36,7 @@ export const styles = StyleSheet.create({
     marginBottom: 10,
   },
   formNumber: {
-    fontSize: 11,
+    fontSize: 8,
     color: "#666",
     fontStyle: "italic",
   },
@@ -52,17 +54,15 @@ export const styles = StyleSheet.create({
   },
   headerTitleLargeCont: {
     position: "absolute",
-    bottom: -10,
-    left: 0,
+    bottom: 29,
+    left: 60,
     right: 0,
-    borderBottom: "2px solid #000",
-    paddingBottom: 5,
-
   },
+
   headerTitleLarge: {
-    fontSize: 15,
+    fontSize: 13,
     fontWeight: "bold",
-    letterSpacing: 1.5,
+    letterSpacing: 1.2,
   },
   logo: {
     width: 55,
@@ -73,13 +73,12 @@ export const styles = StyleSheet.create({
     height: 60,
   },
   logoDatuGara: {
-    width: 105,
-    height: 105,
+    width: 90,
+    height: 90,
   },
   dateRight: {
     textAlign: "right",
     fontSize: 11,
-    marginTop: 8,
     marginBottom: 20,
   },
   concernStatement: {

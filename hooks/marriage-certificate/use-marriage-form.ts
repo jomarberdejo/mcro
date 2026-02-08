@@ -80,7 +80,7 @@ export function useMarriageRecordForm({
       wifeFatherName: "",
       requestorName: "",
       requestPurpose: "",
-      registrarName: "",
+      registrarName: "DARRYL U. MONTEALEGRE, MM",
       verifiedBy: "",
       verifierPosition: "",
       certifyingOfficerName: "",

@@ -75,6 +75,7 @@ export function useBirthRecordForm({
   const [isUploadingCertifyingOfficerSig, setIsUploadingCertifyingOfficerSig] =
     useState(false);
 
+
   const form = useForm<BirthRecordFormInput>({
     resolver: zodResolver(birthRecordSchema),
     defaultValues: defaultValues || {
@@ -105,7 +106,7 @@ export function useBirthRecordForm({
       remarks: "",
       requestorName: "",
       requestPurpose: "",
-      registrarName: "",
+      registrarName: "DARRYL U. MONTEALEGRE, MM",
       verifiedBy: "",
       verifierPosition: "",
       certifyingOfficerName: "",
@@ -126,7 +127,9 @@ Doc. Authentication Fee: Ph10.00 doc. Stamp tax: Ph30.00`,
     },
   });
 
-  // Load existing signatures on mount
+  const dateOfMarriage = form.watch("dateOfMarriage");
+
+
   useEffect(() => {
     if (defaultValues?.registrarSignaturePath) {
       setRegistrarSignature({
@@ -177,6 +180,25 @@ Doc. Authentication Fee: Ph10.00 doc. Stamp tax: Ph30.00`,
       setSupportingDocuments(existingDocs);
     }
   }, [defaultValues?.supportingDocuments]);
+
+  useEffect(() => {
+    if (
+      typeof dateOfMarriage === "string" &&
+      dateOfMarriage.trim().toLowerCase() === "not married"
+    ) {
+      form.setValue("placeOfMarriage", "Not Applicable", {
+        shouldValidate: true,
+        shouldDirty: true,
+      });
+    } else {
+      // Optional: clear when not "not married"
+      form.setValue("placeOfMarriage", "", {
+        shouldValidate: true,
+        shouldDirty: true,
+      });
+    }
+  }, [dateOfMarriage, form]);
+
 
   const handleRegistrarSignatureUpload = async (
     e: React.ChangeEvent<HTMLInputElement>,

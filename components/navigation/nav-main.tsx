@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { ChevronRight, type LucideIcon } from "lucide-react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
@@ -36,16 +37,25 @@ export function NavMain({
   }[];
 }) {
   const pathname = usePathname();
+  const [openItem, setOpenItem] = useState<string | null>(null);
+
+  useEffect(() => {
+    const activeItem = items.find((item) =>
+      item.items?.some((subItem) => subItem.url === pathname),
+    );
+
+    if (activeItem) {
+      setOpenItem(activeItem.title);
+    }
+  }, [pathname, items]);
 
   return (
     <SidebarGroup>
       <SidebarGroupLabel className="text-base">Main</SidebarGroupLabel>
+
       <SidebarMenu>
         {items.map((item) => {
           const hasSubItems = item.items && item.items.length > 0;
-          const hasActiveSubItem = item.items?.some(
-            (subItem) => pathname === subItem.url,
-          );
           const isActive = pathname === item.url;
 
           if (!hasSubItems) {
@@ -56,6 +66,7 @@ export function NavMain({
                   tooltip={item.title}
                   isActive={isActive}
                   className="text-base py-6"
+                  onClick={() => setOpenItem(null)}
                 >
                   <Link href={item.url}>
                     <item.icon className={`shrink-0 ${item.color}`} />
@@ -70,7 +81,10 @@ export function NavMain({
             <Collapsible
               key={item.title}
               asChild
-              defaultOpen={hasActiveSubItem}
+              open={openItem === item.title}
+              onOpenChange={(open) =>
+                setOpenItem(open ? item.title : null)
+              }
             >
               <SidebarMenuItem>
                 <CollapsibleTrigger asChild>
@@ -83,6 +97,7 @@ export function NavMain({
                     <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
                   </SidebarMenuButton>
                 </CollapsibleTrigger>
+
                 <CollapsibleContent>
                   <SidebarMenuSub>
                     {item.items?.map((subItem) => {

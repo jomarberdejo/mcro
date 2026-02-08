@@ -56,21 +56,24 @@ const BirthCertificatePDF: React.FC<BirthCertificatePDFProps> = ({
         <View style={styles.headerContainer}>
           <View wrap={false} style={styles.headerRow}>
             <View style={styles.leftColumn}>
-              <View style={styles.formNumberCont}>
-                <Text style={styles.formNumber}>
-                  Civil Registry Form No. 1A
-                </Text>
-                <Text style={styles.formNumber}>(Birth-available)</Text>
-              </View>
+              <Image src="/logos/datu-gara-3.png" style={styles.logoDatuGara} />
+              <View>
+                <View style={styles.formNumberCont}>
+                  <Text style={styles.formNumber}>
+                    Civil Registry Form No. 1A
+                  </Text>
+                  <Text style={styles.formNumber}>(Birth-available)</Text>
+                </View>
 
-              <View style={styles.headerTitleCont}>
-                <Text style={styles.headerTitle}>
-                  Republic of the Philippines
-                </Text>
-                <Text style={styles.headerTitle}>Province of Leyte</Text>
-                <Text style={styles.headerTitleBold}>
-                  Municipality of Carigara
-                </Text>
+                <View style={styles.headerTitleCont}>
+                  <Text style={styles.headerTitle}>
+                    Republic of the Philippines
+                  </Text>
+                  <Text style={styles.headerTitle}>Province of Leyte</Text>
+                  <Text style={styles.headerTitleBold}>
+                    Municipality of Carigara
+                  </Text>
+                </View>
               </View>
             </View>
 
@@ -81,13 +84,12 @@ const BirthCertificatePDF: React.FC<BirthCertificatePDFProps> = ({
                 src="/logos/bagong-pilipinas.png"
                 style={styles.logoSingle}
               />
-              <Image src="/logos/datu-gara-3.png" style={styles.logoDatuGara} />
+
             </View>
           </View>
 
           <View style={styles.headerTitleLargeCont}>
-            <Text style={styles.headerTitleLarge}>OFFICE OF THE MUNICIPAL</Text>
-            <Text style={styles.headerTitleLarge}>CIVIL REGISTRAR</Text>
+            <Text style={styles.headerTitleLarge}>OFFICE OF THE MUNICIPAL CIVIL REGISTRAR</Text>
           </View>
         </View>
 
