@@ -141,7 +141,7 @@ export const styles = StyleSheet.create({
     textIndent: 30,
   },
   footerText: {
-    fontSize: 10,
+    fontSize: 11,
     marginTop: 8,
     marginBottom: 8,
     textIndent: 30,
