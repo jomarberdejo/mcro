@@ -1,6 +1,8 @@
 import { DashboardCards } from "@/components/dashboard/dashboard-card";
 import { prisma } from "@/lib/prisma";
 
+export const revalidate = 30;
+
 async function getDashboardData() {
   const [
     birthRecordsCount,
@@ -16,7 +18,7 @@ async function getDashboardData() {
     prisma.deathRecord.count(),
     prisma.marriageRecord.count(),
     prisma.marriageCertificateApplication.count(),
-    
+
     prisma.birthRecord.findMany({
       select: {
         id: true,
@@ -116,8 +118,6 @@ async function getDashboardData() {
 
 export default async function DashboardPage() {
   const data = await getDashboardData();
-
-  console.log("SERVER")
 
   return (
     <div className="space-y-6 p-6">
