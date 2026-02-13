@@ -123,7 +123,7 @@ export const styles = StyleSheet.create({
   },
   remarksSection: {
     marginTop: 12,
-    paddingLeft: 30,
+    // paddingLeft: 30,
     marginBottom: 8,
   },
   remarksTitle: {
