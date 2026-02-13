@@ -478,7 +478,7 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
                               htmlFor="age"
                               className="text-sm font-semibold text-gray-700"
                             >
-                              Age *
+                              Age 
                             </FieldLabel>
                             <Input
                               id="age"
@@ -507,11 +507,13 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
                               htmlFor="civilStatus"
                               className="text-sm font-semibold text-gray-700"
                             >
-                              Civil Status *
+                              Civil Status
                             </FieldLabel>
                             <Select
-                              onValueChange={field.onChange}
-                              value={field.value}
+                              onValueChange={(value) =>
+                                field.onChange(value === "none" ? null : value)
+                              }
+                              value={field.value ?? "none"}
                             >
                               <SelectTrigger
                                 id="civilStatus"
@@ -524,6 +526,7 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
                                 <SelectValue placeholder="Select status" />
                               </SelectTrigger>
                               <SelectContent className="w-(--radix-select-trigger-width)">
+                                <SelectItem value="none">— None —</SelectItem>
                                 <SelectItem value="Single">Single</SelectItem>
                                 <SelectItem value="Married">Married</SelectItem>
                                 <SelectItem value="Widowed">Widowed</SelectItem>
@@ -548,7 +551,7 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
                               htmlFor="citizenship"
                               className="text-sm font-semibold text-gray-700"
                             >
-                              Citizenship *
+                              Citizenship 
                             </FieldLabel>
                             <Input
                               id="citizenship"
@@ -584,7 +587,7 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
                               htmlFor="dateOfDeath"
                               className="text-sm font-semibold text-gray-700"
                             >
-                              Date of Death *
+                              Date of Death
                             </FieldLabel>
                             <Input
                               id="dateOfDeath"
@@ -613,7 +616,7 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
                               htmlFor="placeOfDeath"
                               className="text-sm font-semibold text-gray-700"
                             >
-                              Place of Death *
+                              Place of Death 
                             </FieldLabel>
                             <Input
                               id="placeOfDeath"
@@ -643,7 +646,7 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
                               htmlFor="causeOfDeath"
                               className="text-sm font-semibold text-gray-700"
                             >
-                              Cause of Death *
+                              Cause of Death 
                             </FieldLabel>
                             <Textarea
                               id="causeOfDeath"

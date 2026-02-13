@@ -187,14 +187,14 @@ model DeathRecord {
   deceasedFirstName  String
   deceasedMiddleName String?
   sex                Sex?
-  age                String
-  civilStatus        CivilStatus
-  citizenship        String
+  age                String?
+  civilStatus        CivilStatus?
+  citizenship        String?
 
   // Death Info
-  dateOfDeath  String
-  placeOfDeath String
-  causeOfDeath String
+  dateOfDeath  String?
+  placeOfDeath String?
+  causeOfDeath String?
 
   // Registration Info
   dateOfRegistration String
@@ -247,7 +247,7 @@ model MarriageRecord {
   husbandMiddleName  String?
   husbandAge         String
   husbandNationality String
-  husbandCivilStatus CivilStatus
+  husbandCivilStatus CivilStatus?
   husbandMotherName  String?
   husbandFatherName  String?
 
@@ -257,7 +257,7 @@ model MarriageRecord {
   wifeMiddleName  String?
   wifeAge         String
   wifeNationality String
-  wifeCivilStatus CivilStatus
+  wifeCivilStatus CivilStatus?
   wifeMotherName  String?
   wifeFatherName  String?
 

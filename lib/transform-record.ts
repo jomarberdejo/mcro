@@ -28,7 +28,7 @@ export function transformBirthRecord(
     childMiddleName: record.childMiddleName ?? "",
 
     sex:
-      record.sex === "Male" || record.sex === "Female" ? record.sex : undefined,
+      record.sex === "Male" || record.sex === "Female" ? record.sex : null,
 
     dateOfBirth: record.dateOfBirth ?? "",
     placeOfBirth: record.placeOfBirth ?? "",
@@ -146,9 +146,9 @@ export function transformDeathRecord(
     deceasedLastName: record.deceasedLastName ?? "",
     deceasedFirstName: record.deceasedFirstName ?? "",
     deceasedMiddleName: record.deceasedMiddleName ?? "",
-    sex: record.sex === "Male" || record.sex === "Female" ? record.sex : "Male",
-    age: record.age ?? 0,
-    civilStatus: record.civilStatus ?? "Single",
+    sex: record.sex === "Male" || record.sex === "Female" ? record.sex : null,
+    age: record.age ?? "",
+    civilStatus: record.civilStatus ?? null,
     citizenship: record.citizenship ?? "",
 
     dateOfDeath: record.dateOfDeath ?? "",

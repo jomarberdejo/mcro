@@ -22,7 +22,7 @@ export type DeathRecord = {
   deceasedMiddleName: string | null;
   deceasedLastName: string;
   registryNo: string;
-  dateOfDeath: string;
+  dateOfDeath: string | null;
 };
 
 export type MarriageRecord = {

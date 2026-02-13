@@ -132,6 +132,9 @@ Doc. Authentication Fee: Ph10.00 doc. Stamp tax: Ph30.00`,
 
   const dateOfMarriage = form.watch("dateOfMarriage");
 
+ 
+
+
 
   useEffect(() => {
     if (defaultValues?.registrarSignaturePath) {
@@ -580,6 +583,7 @@ Doc. Authentication Fee: Ph10.00 doc. Stamp tax: Ph30.00`,
     if (!pendingFormData) return;
 
     setShowIncompleteWarning(false);
+
     
     const checkData: BirthCertificateCheckData = {
       childFirstName: pendingFormData.childFirstName,

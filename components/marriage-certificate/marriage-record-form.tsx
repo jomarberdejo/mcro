@@ -479,7 +479,7 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                               htmlFor="husbandAge"
                               className="text-sm font-semibold text-gray-700"
                             >
-                              Age *
+                              Age
                             </FieldLabel>
                             <Input
                               id="husbandAge"
@@ -508,7 +508,7 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                               htmlFor="husbandNationality"
                               className="text-sm font-semibold text-gray-700"
                             >
-                              Nationality *
+                              Nationality
                             </FieldLabel>
                             <Input
                               id="husbandNationality"
@@ -536,11 +536,13 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                               htmlFor="husbandCivilStatus"
                               className="text-sm font-semibold text-gray-700"
                             >
-                              Civil Status *
+                              Civil Status
                             </FieldLabel>
                             <Select
-                              onValueChange={field.onChange}
-                              value={field.value}
+                              onValueChange={(value) =>
+                                field.onChange(value === "none" ? null : value)
+                              }
+                              value={field.value ?? "none"}
                             >
                               <SelectTrigger
                                 id="husbandCivilStatus"
@@ -553,6 +555,7 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                                 <SelectValue placeholder="Select status" />
                               </SelectTrigger>
                               <SelectContent className="w-(--radix-select-trigger-width)">
+                                <SelectItem value="none">— None —</SelectItem>
                                 <SelectItem value="Single">Single</SelectItem>
                                 <SelectItem value="Married">Married</SelectItem>
                                 <SelectItem value="Widowed">Widowed</SelectItem>
@@ -702,7 +705,7 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                               htmlFor="wifeAge"
                               className="text-sm font-semibold text-gray-700"
                             >
-                              Age *
+                              Age
                             </FieldLabel>
                             <Input
                               id="wifeAge"
@@ -731,7 +734,7 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                               htmlFor="wifeNationality"
                               className="text-sm font-semibold text-gray-700"
                             >
-                              Nationality *
+                              Nationality
                             </FieldLabel>
                             <Input
                               id="wifeNationality"
@@ -759,11 +762,13 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                               htmlFor="wifeCivilStatus"
                               className="text-sm font-semibold text-gray-700"
                             >
-                              Civil Status *
+                              Civil Status
                             </FieldLabel>
                             <Select
-                              onValueChange={field.onChange}
-                              value={field.value}
+                              onValueChange={(value) =>
+                                field.onChange(value === "none" ? null : value)
+                              }
+                              value={field.value ?? "none"}
                             >
                               <SelectTrigger
                                 id="wifeCivilStatus"
@@ -776,14 +781,12 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                                 <SelectValue placeholder="Select status" />
                               </SelectTrigger>
                               <SelectContent className="w-(--radix-select-trigger-width)">
+                                <SelectItem value="none">— None —</SelectItem>
                                 <SelectItem value="Single">Single</SelectItem>
                                 <SelectItem value="Married">Married</SelectItem>
                                 <SelectItem value="Widowed">Widowed</SelectItem>
                                 <SelectItem value="Divorced">
                                   Divorced
-                                </SelectItem>
-                                <SelectItem value="Separated">
-                                  Separated
                                 </SelectItem>
                               </SelectContent>
                             </Select>

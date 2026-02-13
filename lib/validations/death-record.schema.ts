@@ -12,13 +12,16 @@ export const deathRecordSchema = z.object({
   deceasedMiddleName: z.string().default(""),
   sex: z.enum(["Male", "Female"]).nullable().optional(),
   age: z.string(),
-  civilStatus: z.enum(["Single", "Married", "Widowed", "Divorced"]),
-  citizenship: z.string().min(1, "Citizenship is required"),
+  civilStatus: z
+    .enum(["Single", "Married", "Widowed", "Divorced"])
+    .nullable()
+    .optional(),
+  citizenship: z.string().optional().default(""),
 
   // Death Details
-  dateOfDeath: z.string().min(1, "Date of death is required"),
-  placeOfDeath: z.string().min(1, "Place of death is required"),
-  causeOfDeath: z.string().min(1, "Cause of death is required"),
+  dateOfDeath: z.string().optional().default(""),
+  placeOfDeath: z.string().optional().default(""),
+  causeOfDeath: z.string().optional().default(""),
 
   // Registration Details
   dateOfRegistration: z.string().min(1, "Registration date is required"),
