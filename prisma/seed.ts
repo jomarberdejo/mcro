@@ -7,14 +7,16 @@ async function main() {
   const hashedPassword = await bcrypt.hash("@mcroadmin123", 10);
 
   const admin = await prisma.user.upsert({
-    where: { username: "admin" },
+    where: { username: "mcro_admin" },
     update: {
       username: "mcro_admin",
+      password: hashedPassword,
+      name: "MCRO Admin",
     },
     create: {
       username: "mcro_admin",
       password: hashedPassword,
-      name: "MCRO Administrator",
+      name: "MCRO Admin",
       email: "mcro@lgucarigara.gov.ph",
       office: "MCRO",
     },
