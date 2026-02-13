@@ -39,18 +39,21 @@ enum DocumentType {
 //////////////////////
 // USER
 //////////////////////
+enum UserRole {
+  STAFF
+  ADMIN
+}
 
 model User {
-  id       String  @id @default(uuid())
-  name     String?
-  username String  @unique
-  password String
-  email    String? @unique
-  office   String? @default("MCRO")
-  metadata Json?
-
+  id        String   @id @default(uuid())
+  name      String?
+  username  String   @unique
+  password  String
+  email     String?  @unique
+  office    String?  @default("MCRO")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  role      UserRole @default(STAFF)
 
   birthRecords                    BirthRecord[]
   deathRecords                    DeathRecord[]
@@ -97,7 +100,7 @@ model SupportingDocument {
 //////////////////////
 
 model SignatureFields {
-  id                            String @id @default(cuid())
+  id                             String  @id @default(cuid())
   registrarSignaturePath         String?
   verifierSignaturePath          String?
   certifyingOfficerSignaturePath String?
@@ -109,7 +112,7 @@ model SignatureFields {
 
 model BirthRecord {
   id                 String  @id @default(cuid())
-  registryNo         String  
+  registryNo         String
   dateOfRegistration String
   bookNo             String?
   pageNo             String?
@@ -175,7 +178,7 @@ model BirthRecord {
 
 model DeathRecord {
   id         String  @id @default(cuid())
-  registryNo String  
+  registryNo String
   pageNo     String?
   bookNo     String?
 
@@ -230,7 +233,7 @@ model DeathRecord {
 
 model MarriageRecord {
   id         String  @id @default(cuid())
-  registryNo String  
+  registryNo String
   bookNo     String?
   pageNo     String?
 

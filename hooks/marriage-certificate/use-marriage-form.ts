@@ -40,6 +40,11 @@ export function useMarriageRecordForm({
     SupportingDocument[]
   >([]);
   const [isUploadingDoc, setIsUploadingDoc] = useState(false);
+  const [showIncompleteWarning, setShowIncompleteWarning] = useState(false);
+  const [pendingFormData, setPendingFormData] =
+    useState<MarriageRecordFormInput | null>(null);
+  const [emptyFields, setEmptyFields] = useState<string[]>([]);
+
   // Signature states
   const [registrarSignature, setRegistrarSignature] =
     useState<SignatureDocument | null>(null);
@@ -152,6 +157,46 @@ Doc. Authentication Fee: Ph10.00 doc. Stamp tax: Ph30.00`,
       setSupportingDocuments(existingDocs);
     }
   }, [defaultValues?.supportingDocuments]);
+
+  const checkEmptyFields = (data: MarriageRecordFormInput): string[] => {
+    const emptyFields: string[] = [];
+
+    const requiredFields: { [key: string]: string } = {
+      registryNo: "Registry Number",
+      bookNo: "Book Number",
+      pageNo: "Page Number",
+      dateOfMarriage: "Date of Marriage",
+      placeOfMarriage: "Place of Marriage",
+      dateOfRegistration: "Date of Registration",
+      husbandLastName: "Husband's Last Name",
+      husbandFirstName: "Husband's First Name",
+      husbandAge: "Husband's Age",
+      husbandNationality: "Husband's Nationality",
+      husbandCivilStatus: "Husband's Civil Status",
+      wifeLastName: "Wife's Last Name",
+      wifeFirstName: "Wife's First Name",
+      wifeAge: "Wife's Age",
+      wifeNationality: "Wife's Nationality",
+      wifeCivilStatus: "Wife's Civil Status",
+      registrarName: "Registrar Name",
+    };
+
+    Object.entries(requiredFields).forEach(([key, displayName]) => {
+      const value = data[key as keyof MarriageRecordFormInput];
+      if (!value || (typeof value === "string" && value.trim() === "")) {
+        emptyFields.push(displayName);
+      }
+    });
+
+    if (
+      !data.registrarSignaturePath ||
+      data.registrarSignaturePath.trim() === ""
+    ) {
+      emptyFields.push("Registrar Signature");
+    }
+
+    return emptyFields;
+  };
 
   const handleRegistrarSignatureUpload = async (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -466,7 +511,7 @@ Doc. Authentication Fee: Ph10.00 doc. Stamp tax: Ph30.00`,
     }
   };
 
-  const onSubmit = async (data: MarriageRecordFormInput) => {
+  const saveRecord = async (data: MarriageRecordFormInput) => {
     try {
       const url = isEditing
         ? `/api/marriage-certificate/${recordId}`
@@ -501,6 +546,43 @@ Doc. Authentication Fee: Ph10.00 doc. Stamp tax: Ph30.00`,
     }
   };
 
+  const handleProceedWithIncomplete = async () => {
+    if (!pendingFormData) return;
+
+    setShowIncompleteWarning(false);
+    await saveRecord(pendingFormData);
+    setPendingFormData(null);
+  };
+
+  const handleCancelIncomplete = () => {
+    setShowIncompleteWarning(false);
+    setPendingFormData(null);
+    setEmptyFields([]);
+    // toast.info("Please fill in the missing fields");
+  };
+
+  const onSubmit = async (data: MarriageRecordFormInput) => {
+    const foundEmptyFields = checkEmptyFields(data);
+
+    if (foundEmptyFields.length > 0) {
+      setEmptyFields(foundEmptyFields);
+      setPendingFormData(data);
+      setShowIncompleteWarning(true);
+
+      // toast.warning(
+      //   `Some field${foundEmptyFields.length > 1 ? "s are" : " is"} missing`,
+      //   {
+      //     duration: 3000,
+      //   },
+      // );
+
+      return;
+    }
+
+    // If all fields are filled, proceed normally
+    await saveRecord(data);
+  };
+
   const handleCancel = () => {
     router.back();
   };
@@ -531,5 +613,9 @@ Doc. Authentication Fee: Ph10.00 doc. Stamp tax: Ph30.00`,
     removeRegistrarSignature,
     removeVerifierSignature,
     removeCertifyingOfficerSignature,
+    showIncompleteWarning,
+    handleProceedWithIncomplete,
+    handleCancelIncomplete,
+    emptyFields,
   };
 }

@@ -1,7 +1,13 @@
 "use client";
 
 import * as React from "react";
-import { FileText, Heart, Cross, ClipboardList, LayoutDashboard } from "lucide-react";
+import {
+  FileText,
+  Heart,
+  Cross,
+  ClipboardList,
+  LayoutDashboard,
+} from "lucide-react";
 
 import { NavMain } from "@/components/navigation/nav-main";
 import { NavUser } from "@/components/navigation/nav-user";
@@ -16,13 +22,9 @@ import {
 } from "@/components/ui/sidebar";
 import Image from "next/image";
 import Link from "next/link";
+import { useAuth } from "@/hooks/auth/use-auth";
 
 const data = {
-  user: {
-    name: "Registrar Admin",
-    avatar: "/avatars/registrar.png",
-  },
-
   navMain: [
     {
       title: "Dashboard",
@@ -98,6 +100,8 @@ const data = {
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const { user } = useAuth();
+
   return (
     <Sidebar variant="inset" {...props}>
       <SidebarHeader>
@@ -129,7 +133,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarContent>
 
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser user={user} />
       </SidebarFooter>
     </Sidebar>
   );

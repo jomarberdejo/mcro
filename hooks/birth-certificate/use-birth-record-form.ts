@@ -62,6 +62,9 @@ export function useBirthRecordForm({
     SupportingDocument[]
   >([]);
   const [isUploadingDoc, setIsUploadingDoc] = useState(false);
+  const [showIncompleteWarning, setShowIncompleteWarning] = useState(false);
+  const [pendingFormData, setPendingFormData] = useState<BirthRecordFormInput | null>(null);
+  const [emptyFields, setEmptyFields] = useState<string[]>([]);
 
   const [registrarSignature, setRegistrarSignature] =
     useState<SignatureDocument | null>(null);
@@ -192,8 +195,39 @@ Doc. Authentication Fee: Ph10.00 doc. Stamp tax: Ph30.00`,
       });
     }
   }, [dateOfMarriage, form]);
+  const checkEmptyFields = (data: BirthRecordFormInput): string[] => {
+    const emptyFields: string[] = [];
+    
+    const requiredFields: { [key: string]: string } = {
+      registryNo: "Registry Number",
+      bookNo: "Book Number",
+      pageNo: "Page Number",
+      dateOfRegistration: "Date of Registration",
+      childLastName: "Child's Last Name",
+      childFirstName: "Child's First Name",
+      sex: "Sex",
+      dateOfBirth: "Date of Birth",
+      placeOfBirth: "Place of Birth",
+      motherLastName: "Mother's Last Name",
+      motherFirstName: "Mother's First Name",
+      fatherLastName: "Father's Last Name",
+      fatherFirstName: "Father's First Name",
+      registrarName: "Registrar Name",
+    };
 
+    Object.entries(requiredFields).forEach(([key, displayName]) => {
+      const value = data[key as keyof BirthRecordFormInput];
+      if (!value || (typeof value === "string" && value.trim() === "")) {
+        emptyFields.push(displayName);
+      }
+    });
 
+    if (!data.registrarSignaturePath || data.registrarSignaturePath.trim() === "") {
+      emptyFields.push("Registrar Signature");
+    }
+
+    return emptyFields;
+  };
 
   const handleRegistrarSignatureUpload = async (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -542,7 +576,48 @@ Doc. Authentication Fee: Ph10.00 doc. Stamp tax: Ph30.00`,
     }
   };
 
+  const handleProceedWithIncomplete = async () => {
+    if (!pendingFormData) return;
+
+    setShowIncompleteWarning(false);
+    
+    const checkData: BirthCertificateCheckData = {
+      childFirstName: pendingFormData.childFirstName,
+      childLastName: pendingFormData.childLastName,
+      childMiddleName: pendingFormData?.childMiddleName,
+      registryNo: pendingFormData?.registryNo,
+      recordId: isEditing ? recordId : undefined,
+    };
+
+    await handleDuplicateCheck(checkData, pendingFormData, saveRecord);
+    setPendingFormData(null);
+  };
+
+  const handleCancelIncomplete = () => {
+    setShowIncompleteWarning(false);
+    setPendingFormData(null);
+    setEmptyFields([]);
+    // toast.info("Please fill in the missing fields");
+  };
+
   const onSubmit = async (data: BirthRecordFormInput): Promise<void> => {
+    const foundEmptyFields = checkEmptyFields(data);
+
+    if (foundEmptyFields.length > 0) {
+      setEmptyFields(foundEmptyFields);
+      setPendingFormData(data);
+      setShowIncompleteWarning(true);
+      
+      // toast.warning(
+      //   `Some field${foundEmptyFields.length > 1 ? "s are" : " is"} missing`,
+      //   {
+      //     duration: 3000,
+      //   }
+      // );f
+      
+      return;
+    }
+
     const checkData: BirthCertificateCheckData = {
       childFirstName: data.childFirstName,
       childLastName: data.childLastName,
@@ -553,6 +628,7 @@ Doc. Authentication Fee: Ph10.00 doc. Stamp tax: Ph30.00`,
 
     await handleDuplicateCheck(checkData, data, saveRecord);
   };
+
   const handleCancel = () => {
     router.back();
   };
@@ -588,5 +664,9 @@ Doc. Authentication Fee: Ph10.00 doc. Stamp tax: Ph30.00`,
     removeRegistrarSignature,
     removeVerifierSignature,
     removeCertifyingOfficerSignature,
+    showIncompleteWarning,
+    handleProceedWithIncomplete,
+    handleCancelIncomplete,
+    emptyFields,
   };
 }

@@ -12,7 +12,6 @@ export default function AdminLayout({
   children: React.ReactNode;
 }>) {
 
-  console.log("SERVER ADMIN");
   
   return (
     <SidebarProvider>

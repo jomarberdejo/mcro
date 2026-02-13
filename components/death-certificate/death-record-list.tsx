@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Eye, Edit2, Trash2, ChevronLeft, ChevronRight } from "lucide-react";
 import { DeathRecordListProps } from "@/types";
 import { getFullName } from "@/utils";
+import { UserRole } from "@/lib/generated/prisma/enums";
+import { useAuth } from "@/hooks/auth/use-auth";
 
 export const DeathRecordList: React.FC<DeathRecordListProps> = ({
   records,
@@ -18,6 +20,7 @@ export const DeathRecordList: React.FC<DeathRecordListProps> = ({
 }) => {
   const [currentPage, setCurrentPage] = React.useState(1);
   const [recordsPerPage, setRecordsPerPage] = React.useState(10);
+  const { user } = useAuth();
 
   const totalPages = Math.ceil(records.length / recordsPerPage);
   const indexOfLastRecord = currentPage * recordsPerPage;
@@ -229,14 +232,16 @@ export const DeathRecordList: React.FC<DeathRecordListProps> = ({
                             >
                               <Edit2 className="w-4 h-4" />
                             </Button>
-                            <Button
-                              variant="destructive"
-                              size="sm"
-                              onClick={() => onDelete(record.id)}
-                              className="flex items-center gap-1"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </Button>
+                            {user?.role === UserRole.ADMIN && (
+                              <Button
+                                variant="destructive"
+                                size="sm"
+                                onClick={() => onDelete(record.id)}
+                                className="flex items-center gap-1"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </Button>
+                            )}
                           </div>
                         </td>
                       </tr>

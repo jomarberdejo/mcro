@@ -1,12 +1,21 @@
-"use client";
 
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Plus, Eye, Edit2, Trash2, ChevronLeft, ChevronRight } from "lucide-react";
-import { MarriageCertificateApplication } from "@/lib/generated/prisma/client";
+import {
+  Plus,
+  Eye,
+  Edit2,
+  Trash2,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
+
 import { MarriageCertificateApplicationFilterState } from "@/app/admin/(pages)/marriage-cert-app/page";
+import { useAuth } from "@/hooks/auth/use-auth";
+import { UserRole } from "@/lib/generated/prisma/enums";
+import { MarriageCertificateApplication } from "@/lib/generated/prisma/client";
 
 interface MarriageCertificateApplicationListProps {
   applications: MarriageCertificateApplication[];
@@ -33,11 +42,15 @@ export const MarriageCertificateApplicationList: React.FC<
 }) => {
   const [currentPage, setCurrentPage] = React.useState(1);
   const [recordsPerPage, setRecordsPerPage] = React.useState(10);
+  const { user } = useAuth();
 
   const totalPages = Math.ceil(applications.length / recordsPerPage);
   const indexOfLastRecord = currentPage * recordsPerPage;
   const indexOfFirstRecord = indexOfLastRecord - recordsPerPage;
-  const currentApplications = applications.slice(indexOfFirstRecord, indexOfLastRecord);
+  const currentApplications = applications.slice(
+    indexOfFirstRecord,
+    indexOfLastRecord,
+  );
   const totalRecords = applications.length;
 
   React.useEffect(() => {
@@ -50,13 +63,15 @@ export const MarriageCertificateApplicationList: React.FC<
     }
   };
 
-  const handleRecordsPerPageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleRecordsPerPageChange = (
+    e: React.ChangeEvent<HTMLSelectElement>,
+  ) => {
     const value = parseInt(e.target.value);
     setRecordsPerPage(value);
     setCurrentPage(1);
   };
 
- const getPageNumbers = (): number[] => {
+  const getPageNumbers = (): number[] => {
     const pageNumbers: number[] = [];
     const maxVisiblePages = 5;
 
@@ -79,8 +94,12 @@ export const MarriageCertificateApplicationList: React.FC<
 
     return pageNumbers;
   };
-  
-  const getFullName = (firstName: string, middleName: string | null, lastName: string) => {
+
+  const getFullName = (
+    firstName: string,
+    middleName: string | null,
+    lastName: string,
+  ) => {
     const parts = [firstName, middleName, lastName].filter(Boolean);
     return parts.join(" ");
   };
@@ -131,7 +150,10 @@ export const MarriageCertificateApplicationList: React.FC<
                     placeholder="Date of Registration"
                     value={filters.dateOfRegistration}
                     onChange={(e) =>
-                      onFilterChange({ ...filters, dateOfRegistration: e.target.value })
+                      onFilterChange({
+                        ...filters,
+                        dateOfRegistration: e.target.value,
+                      })
                     }
                   />
                 </div>
@@ -147,21 +169,30 @@ export const MarriageCertificateApplicationList: React.FC<
                     placeholder="Last Name"
                     value={filters.groomLastName}
                     onChange={(e) =>
-                      onFilterChange({ ...filters, groomLastName: e.target.value })
+                      onFilterChange({
+                        ...filters,
+                        groomLastName: e.target.value,
+                      })
                     }
                   />
                   <Input
                     placeholder="First Name"
                     value={filters.groomFirstName}
                     onChange={(e) =>
-                      onFilterChange({ ...filters, groomFirstName: e.target.value })
+                      onFilterChange({
+                        ...filters,
+                        groomFirstName: e.target.value,
+                      })
                     }
                   />
                   <Input
                     placeholder="Middle Name"
                     value={filters.groomMiddleName}
                     onChange={(e) =>
-                      onFilterChange({ ...filters, groomMiddleName: e.target.value })
+                      onFilterChange({
+                        ...filters,
+                        groomMiddleName: e.target.value,
+                      })
                     }
                   />
                 </div>
@@ -177,21 +208,30 @@ export const MarriageCertificateApplicationList: React.FC<
                     placeholder="Last Name"
                     value={filters.brideLastName}
                     onChange={(e) =>
-                      onFilterChange({ ...filters, brideLastName: e.target.value })
+                      onFilterChange({
+                        ...filters,
+                        brideLastName: e.target.value,
+                      })
                     }
                   />
                   <Input
                     placeholder="First Name"
                     value={filters.brideFirstName}
                     onChange={(e) =>
-                      onFilterChange({ ...filters, brideFirstName: e.target.value })
+                      onFilterChange({
+                        ...filters,
+                        brideFirstName: e.target.value,
+                      })
                     }
                   />
                   <Input
                     placeholder="Middle Name"
                     value={filters.brideMiddleName}
                     onChange={(e) =>
-                      onFilterChange({ ...filters, brideMiddleName: e.target.value })
+                      onFilterChange({
+                        ...filters,
+                        brideMiddleName: e.target.value,
+                      })
                     }
                   />
                 </div>
@@ -202,7 +242,6 @@ export const MarriageCertificateApplicationList: React.FC<
                 <Button variant="outline" onClick={onClearFilters}>
                   Clear Filters
                 </Button>
-               
               </div>
             </div>
 
@@ -243,7 +282,10 @@ export const MarriageCertificateApplicationList: React.FC<
                 <tbody>
                   {currentApplications.length === 0 ? (
                     <tr>
-                      <td colSpan={5} className="text-center py-6 text-gray-500">
+                      <td
+                        colSpan={5}
+                        className="text-center py-6 text-gray-500"
+                      >
                         No applications found.
                       </td>
                     </tr>
@@ -258,19 +300,17 @@ export const MarriageCertificateApplicationList: React.FC<
                           {getFullName(
                             app.groomFirstName,
                             app.groomMiddleName,
-                            app.groomLastName
+                            app.groomLastName,
                           )}
                         </td>
                         <td className="px-4 py-3">
                           {getFullName(
                             app.brideFirstName,
                             app.brideMiddleName,
-                            app.brideLastName
+                            app.brideLastName,
                           )}
                         </td>
-                        <td className="px-4 py-3">
-                          {app.dateOfRegistration}
-                        </td>
+                        <td className="px-4 py-3">{app.dateOfRegistration}</td>
 
                         <td className="px-4 py-3">
                           <div className="flex gap-2">
@@ -290,14 +330,16 @@ export const MarriageCertificateApplicationList: React.FC<
                             >
                               <Edit2 className="w-4 h-4" />
                             </Button>
-                            <Button
-                              variant="destructive"
-                              size="sm"
-                              onClick={() => onDelete(app.id)}
-                              className="flex items-center gap-1"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </Button>
+                            {user?.role === UserRole.ADMIN && (
+                              <Button
+                                variant="destructive"
+                                size="sm"
+                                onClick={() => onDelete(app.id)}
+                                className="flex items-center gap-1"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </Button>
+                            )}
                           </div>
                         </td>
                       </tr>

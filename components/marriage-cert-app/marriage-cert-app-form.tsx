@@ -16,6 +16,7 @@ import { MarriageCertificateApplicationFormInput } from "@/lib/validations/marri
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { useMarriageCertificateApplicationForm } from "@/hooks/marriage-cert-app/use-marriage-cert-app-form";
+import { IncompleteFieldsDialog } from "../incomplete-fields-dialog";
 
 interface MarriageCertificateApplicationFormProps {
   applicationId?: string;
@@ -34,6 +35,10 @@ export const MarriageCertificateApplicationForm: React.FC<
     isUploadingDoc,
     handleSupportingDocumentsUpload,
     removeSupportingDocument,
+    showIncompleteWarning,
+    handleProceedWithIncomplete,
+    handleCancelIncomplete,
+    emptyFields,
   } = useMarriageCertificateApplicationForm({
     applicationId,
     defaultValues,
@@ -182,7 +187,7 @@ export const MarriageCertificateApplicationForm: React.FC<
                               className={cn(
                                 "h-11 text-base transition-all",
                                 fieldState.invalid &&
-                                "border-red-500 focus-visible:ring-red-500"
+                                  "border-red-500 focus-visible:ring-red-500",
                               )}
                               aria-invalid={fieldState.invalid}
                             />
@@ -211,7 +216,7 @@ export const MarriageCertificateApplicationForm: React.FC<
                               className={cn(
                                 "h-11 text-base transition-all",
                                 fieldState.invalid &&
-                                "border-red-500 focus-visible:ring-red-500"
+                                  "border-red-500 focus-visible:ring-red-500",
                               )}
                               aria-invalid={fieldState.invalid}
                             />
@@ -241,7 +246,7 @@ export const MarriageCertificateApplicationForm: React.FC<
                               className={cn(
                                 "h-11 text-base transition-all",
                                 fieldState.invalid &&
-                                "border-red-500 focus-visible:ring-red-500"
+                                  "border-red-500 focus-visible:ring-red-500",
                               )}
                               aria-invalid={fieldState.invalid}
                             />
@@ -297,7 +302,7 @@ export const MarriageCertificateApplicationForm: React.FC<
                               className={cn(
                                 "h-11 text-base transition-all",
                                 fieldState.invalid &&
-                                "border-red-500 focus-visible:ring-red-500"
+                                  "border-red-500 focus-visible:ring-red-500",
                               )}
                               aria-invalid={fieldState.invalid}
                             />
@@ -324,7 +329,7 @@ export const MarriageCertificateApplicationForm: React.FC<
                               className={cn(
                                 "h-11 text-base transition-all",
                                 fieldState.invalid &&
-                                "border-red-500 focus-visible:ring-red-500"
+                                  "border-red-500 focus-visible:ring-red-500",
                               )}
                               aria-invalid={fieldState.invalid}
                             />
@@ -374,7 +379,7 @@ export const MarriageCertificateApplicationForm: React.FC<
                               className={cn(
                                 "h-11 text-base transition-all",
                                 fieldState.invalid &&
-                                "border-red-500 focus-visible:ring-red-500"
+                                  "border-red-500 focus-visible:ring-red-500",
                               )}
                               aria-invalid={fieldState.invalid}
                             />
@@ -409,7 +414,7 @@ export const MarriageCertificateApplicationForm: React.FC<
                               className={cn(
                                 "h-11 text-base transition-all",
                                 fieldState.invalid &&
-                                "border-red-500 focus-visible:ring-red-500"
+                                  "border-red-500 focus-visible:ring-red-500",
                               )}
                               aria-invalid={fieldState.invalid}
                             />
@@ -436,7 +441,7 @@ export const MarriageCertificateApplicationForm: React.FC<
                               className={cn(
                                 "h-11 text-base transition-all",
                                 fieldState.invalid &&
-                                "border-red-500 focus-visible:ring-red-500"
+                                  "border-red-500 focus-visible:ring-red-500",
                               )}
                               aria-invalid={fieldState.invalid}
                             />
@@ -486,7 +491,7 @@ export const MarriageCertificateApplicationForm: React.FC<
                               className={cn(
                                 "h-11 text-base transition-all",
                                 fieldState.invalid &&
-                                "border-red-500 focus-visible:ring-red-500"
+                                  "border-red-500 focus-visible:ring-red-500",
                               )}
                               aria-invalid={fieldState.invalid}
                             />
@@ -531,6 +536,13 @@ export const MarriageCertificateApplicationForm: React.FC<
                 </div>
               </FieldGroup>
             </form>
+
+            <IncompleteFieldsDialog
+              open={showIncompleteWarning}
+              emptyFields={emptyFields}
+              onProceed={handleProceedWithIncomplete}
+              onCancel={handleCancelIncomplete}
+            />
           </CardContent>
         </Card>
       </div>

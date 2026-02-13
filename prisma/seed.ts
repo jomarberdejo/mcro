@@ -1,18 +1,18 @@
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 
-
 async function main() {
   console.log("🌱 Seeding database...");
 
-  // Create single admin user for MCRO
-  const hashedPassword = await bcrypt.hash("admin123", 10);
+  const hashedPassword = await bcrypt.hash("@mcroadmin123", 10);
 
   const admin = await prisma.user.upsert({
     where: { username: "admin" },
-    update: {},
+    update: {
+      username: "mcro_admin",
+    },
     create: {
-      username: "admin",
+      username: "mcro_admin",
       password: hashedPassword,
       name: "MCRO Administrator",
       email: "mcro@lgucarigara.gov.ph",
@@ -43,3 +43,8 @@ main()
   .finally(async () => {
     await prisma.$disconnect();
   });
+
+//pass
+
+// @mcroadmin123
+// @mcrostaff

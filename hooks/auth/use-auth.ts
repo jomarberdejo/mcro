@@ -2,13 +2,15 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { UserRole } from "@/lib/generated/prisma/enums";
 
-interface User {
+export interface User {
   id: string;
   username: string;
   name: string | null;
   email: string | null;
   office: string | null;
+  role: UserRole;
 }
 
 export function useAuth() {
@@ -46,6 +48,7 @@ export function useAuth() {
       console.error("Logout failed:", error);
     }
   };
+
 
   return {
     user,

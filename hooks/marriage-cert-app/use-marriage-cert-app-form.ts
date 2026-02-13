@@ -38,6 +38,9 @@ export function useMarriageCertificateApplicationForm({
   const [isProcessing, setIsProcessing] = useState(false);
   const [supportingDocuments, setSupportingDocuments] = useState<SupportingDocument[]>([]);
   const [isUploadingDoc, setIsUploadingDoc] = useState(false);
+  const [showIncompleteWarning, setShowIncompleteWarning] = useState(false);
+  const [pendingFormData, setPendingFormData] = useState<MarriageCertificateApplicationFormInput | null>(null);
+  const [emptyFields, setEmptyFields] = useState<string[]>([]);
 
   const form = useForm<MarriageCertificateApplicationFormInput>({
     resolver: zodResolver(marriageCertificateApplicationSchema),
@@ -71,6 +74,32 @@ export function useMarriageCertificateApplicationForm({
       setSupportingDocuments(existingDocs);
     }
   }, [defaultValues?.supportingDocuments]);
+
+  const checkEmptyFields = (data: MarriageCertificateApplicationFormInput): string[] => {
+    const emptyFields: string[] = [];
+    
+    const requiredFields: { [key: string]: string } = {
+      registryNo: "Registry Number",
+      bookNo: "Book Number",
+      pageNo: "Page Number",
+      dateOfRegistration: "Date of Registration",
+      groomFirstName: "Groom's First Name",
+      groomLastName: "Groom's Last Name",
+      groomDateOfBirth: "Groom's Date of Birth",
+      brideFirstName: "Bride's First Name",
+      brideLastName: "Bride's Last Name",
+      brideDateOfBirth: "Bride's Date of Birth",
+    };
+
+    Object.entries(requiredFields).forEach(([key, displayName]) => {
+      const value = data[key as keyof MarriageCertificateApplicationFormInput];
+      if (!value || (typeof value === "string" && value.trim() === "")) {
+        emptyFields.push(displayName);
+      }
+    });
+
+    return emptyFields;
+  };
 
   const handleSupportingDocumentsUpload = async (
     e: React.ChangeEvent<HTMLInputElement>
@@ -174,7 +203,7 @@ export function useMarriageCertificateApplicationForm({
     }
   };
 
-  const onSubmit = async (data: MarriageCertificateApplicationFormInput) => {
+  const saveApplication = async (data: MarriageCertificateApplicationFormInput) => {
     try {
       const url = isEditing
         ? `/api/marriage-certificate-application/${applicationId}`
@@ -207,6 +236,43 @@ export function useMarriageCertificateApplicationForm({
     }
   };
 
+  const handleProceedWithIncomplete = async () => {
+    if (!pendingFormData) return;
+
+    setShowIncompleteWarning(false);
+    await saveApplication(pendingFormData);
+    setPendingFormData(null);
+  };
+
+  const handleCancelIncomplete = () => {
+    setShowIncompleteWarning(false);
+    setPendingFormData(null);
+    setEmptyFields([]);
+    // toast.info("Please fill in the missing fields");
+  };
+
+  const onSubmit = async (data: MarriageCertificateApplicationFormInput) => {
+    const foundEmptyFields = checkEmptyFields(data);
+
+    if (foundEmptyFields.length > 0) {
+      setEmptyFields(foundEmptyFields);
+      setPendingFormData(data);
+      setShowIncompleteWarning(true);
+      
+      // toast.warning(
+      //   `Some field${foundEmptyFields.length > 1 ? "s are" : " is"} missing`,
+      //   {
+      //     duration: 3000,
+      //   }
+      // );
+      
+      return;
+    }
+
+    // If all fields are filled, proceed normally
+    await saveApplication(data);
+  };
+
   const handleCancel = () => {
     router.back();
   };
@@ -223,5 +289,9 @@ export function useMarriageCertificateApplicationForm({
     isUploadingDoc,
     handleSupportingDocumentsUpload,
     removeSupportingDocument,
+    showIncompleteWarning,
+    handleProceedWithIncomplete,
+    handleCancelIncomplete,
+    emptyFields,
   };
 }

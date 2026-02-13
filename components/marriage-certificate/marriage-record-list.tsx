@@ -12,6 +12,8 @@ import {
 } from "lucide-react";
 import { MarriageRecordListProps } from "@/types";
 import { getFullName } from "@/utils";
+import { useAuth } from "@/hooks/auth/use-auth";
+import { UserRole } from "@/lib/generated/prisma/enums";
 
 export const MarriageRecordList: React.FC<MarriageRecordListProps> = ({
   records,
@@ -25,6 +27,7 @@ export const MarriageRecordList: React.FC<MarriageRecordListProps> = ({
 }) => {
   const [currentPage, setCurrentPage] = React.useState(1);
   const [recordsPerPage, setRecordsPerPage] = React.useState(10);
+  const { user } = useAuth();
 
   const totalPages = Math.ceil(records.length / recordsPerPage);
   const indexOfLastRecord = currentPage * recordsPerPage;
@@ -73,7 +76,7 @@ export const MarriageRecordList: React.FC<MarriageRecordListProps> = ({
 
     return pageNumbers;
   };
-  
+
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-7xl mx-auto">
@@ -209,7 +212,6 @@ export const MarriageRecordList: React.FC<MarriageRecordListProps> = ({
                 </div>
               </div>
 
-              {/* Action Buttons */}
               <div className="flex justify-between items-center pt-2">
                 <Button variant="outline" onClick={onClearFilters}>
                   Clear Filters
@@ -302,14 +304,16 @@ export const MarriageRecordList: React.FC<MarriageRecordListProps> = ({
                             >
                               <Edit2 className="w-4 h-4" />
                             </Button>
-                            <Button
-                              variant="destructive"
-                              size="sm"
-                              onClick={() => onDelete(record.id)}
-                              className="flex items-center gap-1"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </Button>
+                            {user?.role === UserRole.ADMIN && (
+                              <Button
+                                variant="destructive"
+                                size="sm"
+                                onClick={() => onDelete(record.id)}
+                                className="flex items-center gap-1"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </Button>
+                            )}
                           </div>
                         </td>
                       </tr>

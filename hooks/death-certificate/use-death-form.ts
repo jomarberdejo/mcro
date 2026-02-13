@@ -68,6 +68,10 @@ export function useDeathRecordForm({
     SupportingDocument[]
   >([]);
   const [isUploadingDoc, setIsUploadingDoc] = useState(false);
+  const [showIncompleteWarning, setShowIncompleteWarning] = useState(false);
+  const [pendingFormData, setPendingFormData] =
+    useState<DeathRecordFormInput | null>(null);
+  const [emptyFields, setEmptyFields] = useState<string[]>([]);
 
   const [registrarSignature, setRegistrarSignature] =
     useState<SignatureDocument | null>(null);
@@ -172,6 +176,43 @@ Doc. Authentication Fee: Ph10.00 doc. Stamp tax: Ph30.00`,
       setSupportingDocuments(existingDocs);
     }
   }, [defaultValues?.supportingDocuments]);
+
+  const checkEmptyFields = (data: DeathRecordFormInput): string[] => {
+    const emptyFields: string[] = [];
+
+    const requiredFields: { [key: string]: string } = {
+      registryNo: "Registry Number",
+      pageNo: "Page Number",
+      bookNo: "Book Number",
+      deceasedLastName: "Deceased's Last Name",
+      deceasedFirstName: "Deceased's First Name",
+      sex: "Sex",
+      age: "Age",
+      civilStatus: "Civil Status",
+      citizenship: "Citizenship",
+      dateOfDeath: "Date of Death",
+      placeOfDeath: "Place of Death",
+      causeOfDeath: "Cause of Death",
+      dateOfRegistration: "Date of Registration",
+      registrarName: "Registrar Name",
+    };
+
+    Object.entries(requiredFields).forEach(([key, displayName]) => {
+      const value = data[key as keyof DeathRecordFormInput];
+      if (!value || (typeof value === "string" && value.trim() === "")) {
+        emptyFields.push(displayName);
+      }
+    });
+
+    if (
+      !data.registrarSignaturePath ||
+      data.registrarSignaturePath.trim() === ""
+    ) {
+      emptyFields.push("Registrar Signature");
+    }
+
+    return emptyFields;
+  };
 
   const handleRegistrarSignatureUpload = async (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -520,7 +561,48 @@ Doc. Authentication Fee: Ph10.00 doc. Stamp tax: Ph30.00`,
     }
   };
 
+  const handleProceedWithIncomplete = async () => {
+    if (!pendingFormData) return;
+
+    setShowIncompleteWarning(false);
+
+    const checkData: DeathCertificateCheckData = {
+      deceasedFirstName: pendingFormData.deceasedFirstName,
+      deceasedLastName: pendingFormData.deceasedLastName,
+      deceasedMiddleName: pendingFormData?.deceasedMiddleName,
+      registryNo: pendingFormData?.registryNo,
+      recordId: isEditing ? recordId : undefined,
+    };
+
+    await handleDuplicateCheck(checkData, pendingFormData, saveRecord);
+    setPendingFormData(null);
+  };
+
+  const handleCancelIncomplete = () => {
+    setShowIncompleteWarning(false);
+    setPendingFormData(null);
+    setEmptyFields([]);
+    // toast.info("Please fill in the missing fields");
+  };
+
   const onSubmit = async (data: DeathRecordFormInput): Promise<void> => {
+    const foundEmptyFields = checkEmptyFields(data);
+
+    if (foundEmptyFields.length > 0) {
+      setEmptyFields(foundEmptyFields);
+      setPendingFormData(data);
+      setShowIncompleteWarning(true);
+
+      // toast.warning(
+      //   `Some field${foundEmptyFields.length > 1 ? "s are" : " is"} missing`,
+      //   {
+      //     duration: 3000,
+      //   },
+      // );
+
+      return;
+    }
+
     const checkData: DeathCertificateCheckData = {
       deceasedFirstName: data.deceasedFirstName,
       deceasedLastName: data.deceasedLastName,
@@ -567,5 +649,9 @@ Doc. Authentication Fee: Ph10.00 doc. Stamp tax: Ph30.00`,
     removeRegistrarSignature,
     removeVerifierSignature,
     removeCertifyingOfficerSignature,
+    showIncompleteWarning,
+    handleProceedWithIncomplete,
+    handleCancelIncomplete,
+    emptyFields,
   };
 }

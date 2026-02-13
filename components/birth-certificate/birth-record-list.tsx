@@ -2,9 +2,18 @@ import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Plus, Eye, Edit2, Trash2, ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  Plus,
+  Eye,
+  Edit2,
+  Trash2,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 import { BirthRecordListProps } from "@/types";
 import { getFullName } from "@/utils";
+import { useAuth } from "@/hooks/auth/use-auth";
+import { UserRole } from "@/lib/generated/prisma/enums";
 
 export const BirthRecordList: React.FC<BirthRecordListProps> = ({
   records,
@@ -18,6 +27,7 @@ export const BirthRecordList: React.FC<BirthRecordListProps> = ({
 }) => {
   const [currentPage, setCurrentPage] = React.useState(1);
   const [recordsPerPage, setRecordsPerPage] = React.useState(10);
+  const { user } = useAuth();
 
   const totalPages = Math.ceil(records.length / recordsPerPage);
   const indexOfLastRecord = currentPage * recordsPerPage;
@@ -35,14 +45,13 @@ export const BirthRecordList: React.FC<BirthRecordListProps> = ({
     }
   };
 
-  const handleRecordsPerPageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleRecordsPerPageChange = (
+    e: React.ChangeEvent<HTMLSelectElement>,
+  ) => {
     const value = parseInt(e.target.value);
     setRecordsPerPage(value);
     setCurrentPage(1);
   };
-
-  
-  
 
   const getPageNumbers = (): number[] => {
     const pageNumbers: number[] = [];
@@ -107,21 +116,30 @@ export const BirthRecordList: React.FC<BirthRecordListProps> = ({
                     placeholder="Last Name"
                     value={filters.childLastName}
                     onChange={(e) =>
-                      onFilterChange({ ...filters, childLastName: e.target.value })
+                      onFilterChange({
+                        ...filters,
+                        childLastName: e.target.value,
+                      })
                     }
                   />
                   <Input
                     placeholder="First Name"
                     value={filters.childFirstName}
                     onChange={(e) =>
-                      onFilterChange({ ...filters, childFirstName: e.target.value })
+                      onFilterChange({
+                        ...filters,
+                        childFirstName: e.target.value,
+                      })
                     }
                   />
                   <Input
                     placeholder="Middle Name"
                     value={filters.childMiddleName}
                     onChange={(e) =>
-                      onFilterChange({ ...filters, childMiddleName: e.target.value })
+                      onFilterChange({
+                        ...filters,
+                        childMiddleName: e.target.value,
+                      })
                     }
                   />
                   <Input
@@ -144,7 +162,10 @@ export const BirthRecordList: React.FC<BirthRecordListProps> = ({
                     placeholder="Last Name"
                     value={filters.fatherLastName}
                     onChange={(e) =>
-                      onFilterChange({ ...filters, fatherLastName: e.target.value })
+                      onFilterChange({
+                        ...filters,
+                        fatherLastName: e.target.value,
+                      })
                     }
                   />
                   <Input
@@ -180,7 +201,10 @@ export const BirthRecordList: React.FC<BirthRecordListProps> = ({
                     placeholder="Last Name"
                     value={filters.motherLastName}
                     onChange={(e) =>
-                      onFilterChange({ ...filters, motherLastName: e.target.value })
+                      onFilterChange({
+                        ...filters,
+                        motherLastName: e.target.value,
+                      })
                     }
                   />
                   <Input
@@ -207,13 +231,9 @@ export const BirthRecordList: React.FC<BirthRecordListProps> = ({
               </div>
 
               <div className="flex justify-between items-center pt-2">
-                <Button
-                  variant="outline"
-                  onClick={onClearFilters}
-                >
+                <Button variant="outline" onClick={onClearFilters}>
                   Clear Filters
                 </Button>
-
               </div>
             </div>
 
@@ -224,7 +244,9 @@ export const BirthRecordList: React.FC<BirthRecordListProps> = ({
             )}
 
             <div className="mb-4 text-sm text-gray-600">
-              Showing {indexOfFirstRecord + 1} to {Math.min(indexOfLastRecord, totalRecords)} of {totalRecords} records
+              Showing {indexOfFirstRecord + 1} to{" "}
+              {Math.min(indexOfLastRecord, totalRecords)} of {totalRecords}{" "}
+              records
             </div>
 
             <div className="border rounded-lg overflow-hidden shadow-sm bg-white">
@@ -249,7 +271,10 @@ export const BirthRecordList: React.FC<BirthRecordListProps> = ({
                 <tbody>
                   {currentRecords.length === 0 ? (
                     <tr>
-                      <td colSpan={4} className="text-center py-6 text-gray-500">
+                      <td
+                        colSpan={4}
+                        className="text-center py-6 text-gray-500"
+                      >
                         No records found.
                       </td>
                     </tr>
@@ -264,7 +289,7 @@ export const BirthRecordList: React.FC<BirthRecordListProps> = ({
                           {getFullName(
                             record.childLastName,
                             record.childFirstName,
-                            record.childMiddleName
+                            record.childMiddleName,
                           )}
                         </td>
                         <td className="px-4 py-3">{record.dateOfBirth}</td>
@@ -287,14 +312,16 @@ export const BirthRecordList: React.FC<BirthRecordListProps> = ({
                             >
                               <Edit2 className="w-4 h-4" />
                             </Button>
-                            <Button
-                              variant="destructive"
-                              size="sm"
-                              onClick={() => onDelete(record.id)}
-                              className="flex items-center gap-1"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </Button>
+                            {user?.role === UserRole.ADMIN && (
+                              <Button
+                                variant="destructive"
+                                size="sm"
+                                onClick={() => onDelete(record.id)}
+                                className="flex items-center gap-1"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </Button>
+                            )}
                           </div>
                         </td>
                       </tr>
@@ -347,8 +374,6 @@ export const BirthRecordList: React.FC<BirthRecordListProps> = ({
                     <ChevronRight className="w-4 h-4" />
                   </Button>
                 </div>
-
-
               </div>
             )}
           </CardContent>
