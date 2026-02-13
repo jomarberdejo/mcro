@@ -69,7 +69,6 @@ export function useDeathRecordForm({
   >([]);
   const [isUploadingDoc, setIsUploadingDoc] = useState(false);
 
-  // Signature states
   const [registrarSignature, setRegistrarSignature] =
     useState<SignatureDocument | null>(null);
   const [verifierSignature, setVerifierSignature] =
@@ -91,7 +90,7 @@ export function useDeathRecordForm({
       deceasedLastName: "",
       deceasedFirstName: "",
       deceasedMiddleName: "",
-      sex: "" as "Male" | "Female",
+      sex: null,
       age: "",
       civilStatus: "" as "Single" | "Married" | "Widowed" | "Divorced",
       citizenship: "",
@@ -123,7 +122,6 @@ Doc. Authentication Fee: Ph10.00 doc. Stamp tax: Ph30.00`,
     },
   });
 
-  // Load existing signatures on mount
   useEffect(() => {
     if (defaultValues?.registrarSignaturePath) {
       setRegistrarSignature({

@@ -207,7 +207,7 @@ export const BirthRecordForm: React.FC<BirthRecordFormProps> = ({
                               className={cn(
                                 "h-11 text-base transition-all",
                                 fieldState.invalid &&
-                                  "border-red-500 focus-visible:ring-red-500",
+                                "border-red-500 focus-visible:ring-red-500",
                               )}
                               aria-invalid={fieldState.invalid}
                             />
@@ -237,7 +237,7 @@ export const BirthRecordForm: React.FC<BirthRecordFormProps> = ({
                               className={cn(
                                 "h-11 text-base transition-all",
                                 fieldState.invalid &&
-                                  "border-red-500 focus-visible:ring-red-500",
+                                "border-red-500 focus-visible:ring-red-500",
                               )}
                               aria-invalid={fieldState.invalid}
                             />
@@ -267,7 +267,7 @@ export const BirthRecordForm: React.FC<BirthRecordFormProps> = ({
                               className={cn(
                                 "h-11 text-base transition-all",
                                 fieldState.invalid &&
-                                  "border-red-500 focus-visible:ring-red-500",
+                                "border-red-500 focus-visible:ring-red-500",
                               )}
                               aria-invalid={fieldState.invalid}
                             />
@@ -299,7 +299,7 @@ export const BirthRecordForm: React.FC<BirthRecordFormProps> = ({
                             className={cn(
                               "h-11 text-base transition-all",
                               fieldState.invalid &&
-                                "border-red-500 focus-visible:ring-red-500",
+                              "border-red-500 focus-visible:ring-red-500",
                             )}
                             aria-invalid={fieldState.invalid}
                           />
@@ -329,7 +329,7 @@ export const BirthRecordForm: React.FC<BirthRecordFormProps> = ({
                             className={cn(
                               "h-11 text-base transition-all",
                               fieldState.invalid &&
-                                "border-red-500 focus-visible:ring-red-500",
+                              "border-red-500 focus-visible:ring-red-500",
                             )}
                             aria-invalid={fieldState.invalid}
                           />
@@ -362,7 +362,7 @@ export const BirthRecordForm: React.FC<BirthRecordFormProps> = ({
                               className={cn(
                                 "h-11 text-base transition-all",
                                 fieldState.invalid &&
-                                  "border-red-500 focus-visible:ring-red-500",
+                                "border-red-500 focus-visible:ring-red-500",
                               )}
                               {...field}
                               aria-invalid={fieldState.invalid}
@@ -389,7 +389,7 @@ export const BirthRecordForm: React.FC<BirthRecordFormProps> = ({
                               className={cn(
                                 "h-11 text-base transition-all",
                                 fieldState.invalid &&
-                                  "border-red-500 focus-visible:ring-red-500",
+                                "border-red-500 focus-visible:ring-red-500",
                               )}
                               {...field}
                               aria-invalid={fieldState.invalid}
@@ -431,33 +431,40 @@ export const BirthRecordForm: React.FC<BirthRecordFormProps> = ({
                               htmlFor="sex"
                               className="text-sm font-semibold text-gray-700"
                             >
-                              Sex *
+                              Sex
                             </FieldLabel>
+
                             <Select
-                              onValueChange={field.onChange}
-                              value={field.value}
+                              onValueChange={(value) =>
+                                field.onChange(value === "none" ? null : value)
+                              }
+                              value={field.value ?? "none"}
                             >
                               <SelectTrigger
                                 id="sex"
                                 className={cn(
                                   "w-full h-11 text-base",
                                   fieldState.invalid &&
-                                    "border-red-500 focus:ring-red-500",
+                                  "border-red-500 focus:ring-red-500",
                                 )}
                               >
-                                <SelectValue placeholder="Select sex" />
+                                <SelectValue placeholder="Select sex (optional)" />
                               </SelectTrigger>
+
                               <SelectContent className="w-(--radix-select-trigger-width)">
+                                <SelectItem value="none">— None —</SelectItem>
                                 <SelectItem value="Male">Male</SelectItem>
                                 <SelectItem value="Female">Female</SelectItem>
                               </SelectContent>
                             </Select>
+
                             {fieldState.error && (
                               <FieldError errors={[fieldState.error]} />
                             )}
                           </Field>
                         )}
                       />
+
                       <Controller
                         name="dateOfBirth"
                         control={control}
@@ -475,7 +482,7 @@ export const BirthRecordForm: React.FC<BirthRecordFormProps> = ({
                               className={cn(
                                 "h-11 text-base transition-all",
                                 fieldState.invalid &&
-                                  "border-red-500 focus-visible:ring-red-500",
+                                "border-red-500 focus-visible:ring-red-500",
                               )}
                               {...field}
                               aria-invalid={fieldState.invalid}
@@ -548,7 +555,7 @@ export const BirthRecordForm: React.FC<BirthRecordFormProps> = ({
                                   className={cn(
                                     "h-11 text-base transition-all",
                                     fieldState.invalid &&
-                                      "border-red-500 focus-visible:ring-red-500",
+                                    "border-red-500 focus-visible:ring-red-500",
                                   )}
                                   {...field}
                                   value={field.value ?? ""}
@@ -577,7 +584,7 @@ export const BirthRecordForm: React.FC<BirthRecordFormProps> = ({
                                   className={cn(
                                     "h-11 text-base transition-all",
                                     fieldState.invalid &&
-                                      "border-red-500 focus-visible:ring-red-500",
+                                    "border-red-500 focus-visible:ring-red-500",
                                   )}
                                   {...field}
                                   value={field.value ?? ""}
@@ -606,7 +613,7 @@ export const BirthRecordForm: React.FC<BirthRecordFormProps> = ({
                                   className={cn(
                                     "h-11 text-base transition-all",
                                     fieldState.invalid &&
-                                      "border-red-500 focus-visible:ring-red-500",
+                                    "border-red-500 focus-visible:ring-red-500",
                                   )}
                                   {...field}
                                   value={field.value ?? ""}

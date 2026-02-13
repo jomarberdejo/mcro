@@ -3,8 +3,8 @@ import { supportingDocumentSchema } from "./schema";
 
 export const marriageRecordSchema = z.object({
   registryNo: z.string().min(1, "Registry number is required"),
-  bookNo: z.string().default(""),
-  pageNo: z.string().default(""),
+   bookNo: z.string().min(1, "Book number is required"),
+  pageNo: z.string().min(1, "Page number is required"),
 
   // Marriage Details
   dateOfMarriage: z.string().min(1, "Date of marriage is required"),
@@ -14,7 +14,7 @@ export const marriageRecordSchema = z.object({
   // Husband Information
   husbandLastName: z.string().min(1, "Husband's last name is required"),
   husbandFirstName: z.string().min(1, "Husband's first name is required"),
-  husbandMiddleName: z.string().default(""),
+husbandMiddleName: z.string().default(""),
   husbandAge: z.string(),
   husbandNationality: z.string().min(1, "Husband's nationality is required"),
   husbandCivilStatus: z.enum(["Single", "Married", "Widowed", "Divorced"]),

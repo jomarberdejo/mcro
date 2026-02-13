@@ -430,11 +430,14 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
                               htmlFor="sex"
                               className="text-sm font-semibold text-gray-700"
                             >
-                              Sex *
+                              Sex
                             </FieldLabel>
+
                             <Select
-                              onValueChange={field.onChange}
-                              value={field.value}
+                              onValueChange={(value) =>
+                                field.onChange(value === "none" ? null : value)
+                              }
+                              value={field.value ?? "none"}
                             >
                               <SelectTrigger
                                 id="sex"
@@ -444,13 +447,16 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
                                   "border-red-500 focus:ring-red-500",
                                 )}
                               >
-                                <SelectValue placeholder="Select sex" />
+                                <SelectValue placeholder="Select sex (optional)" />
                               </SelectTrigger>
+
                               <SelectContent className="w-(--radix-select-trigger-width)">
+                                <SelectItem value="none">— None —</SelectItem>
                                 <SelectItem value="Male">Male</SelectItem>
                                 <SelectItem value="Female">Female</SelectItem>
                               </SelectContent>
                             </Select>
+
                             {fieldState.error && (
                               <FieldError errors={[fieldState.error]} />
                             )}
@@ -519,9 +525,7 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
                                 <SelectItem value="Divorced">
                                   Divorced
                                 </SelectItem>
-                                <SelectItem value="Separated">
-                                  Separated
-                                </SelectItem>
+
                               </SelectContent>
                             </Select>
                             {fieldState.error && (

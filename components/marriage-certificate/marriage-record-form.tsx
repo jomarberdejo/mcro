@@ -202,7 +202,7 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                               className={cn(
                                 "h-11 text-base transition-all",
                                 fieldState.invalid &&
-                                  "border-red-500 focus-visible:ring-red-500",
+                                "border-red-500 focus-visible:ring-red-500",
                               )}
                               aria-invalid={fieldState.invalid}
                             />
@@ -231,7 +231,7 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                               className={cn(
                                 "h-11 text-base transition-all",
                                 fieldState.invalid &&
-                                  "border-red-500 focus-visible:ring-red-500",
+                                "border-red-500 focus-visible:ring-red-500",
                               )}
                               aria-invalid={fieldState.invalid}
                             />
@@ -261,7 +261,7 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                               className={cn(
                                 "h-11 text-base transition-all",
                                 fieldState.invalid &&
-                                  "border-red-500 focus-visible:ring-red-500",
+                                "border-red-500 focus-visible:ring-red-500",
                               )}
                               aria-invalid={fieldState.invalid}
                             />
@@ -292,7 +292,7 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                               className={cn(
                                 "h-11 text-base transition-all",
                                 fieldState.invalid &&
-                                  "border-red-500 focus-visible:ring-red-500",
+                                "border-red-500 focus-visible:ring-red-500",
                               )}
                               aria-invalid={fieldState.invalid}
                             />
@@ -320,7 +320,7 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                               className={cn(
                                 "h-11 text-base transition-all",
                                 fieldState.invalid &&
-                                  "border-red-500 focus-visible:ring-red-500",
+                                "border-red-500 focus-visible:ring-red-500",
                               )}
                               aria-invalid={fieldState.invalid}
                             />
@@ -372,7 +372,7 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                             className={cn(
                               "h-11 text-base transition-all",
                               fieldState.invalid &&
-                                "border-red-500 focus-visible:ring-red-500",
+                              "border-red-500 focus-visible:ring-red-500",
                             )}
                             aria-invalid={fieldState.invalid}
                           />
@@ -406,7 +406,7 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                               className={cn(
                                 "h-11 text-base transition-all",
                                 fieldState.invalid &&
-                                  "border-red-500 focus-visible:ring-red-500",
+                                "border-red-500 focus-visible:ring-red-500",
                               )}
                               aria-invalid={fieldState.invalid}
                             />
@@ -433,7 +433,7 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                               className={cn(
                                 "h-11 text-base transition-all",
                                 fieldState.invalid &&
-                                  "border-red-500 focus-visible:ring-red-500",
+                                "border-red-500 focus-visible:ring-red-500",
                               )}
                               aria-invalid={fieldState.invalid}
                             />
@@ -483,7 +483,7 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                               className={cn(
                                 "h-11 text-base transition-all",
                                 fieldState.invalid &&
-                                  "border-red-500 focus-visible:ring-red-500",
+                                "border-red-500 focus-visible:ring-red-500",
                               )}
                               aria-invalid={fieldState.invalid}
                             />
@@ -511,7 +511,7 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                               className={cn(
                                 "h-11 text-base transition-all",
                                 fieldState.invalid &&
-                                  "border-red-500 focus-visible:ring-red-500",
+                                "border-red-500 focus-visible:ring-red-500",
                               )}
                               aria-invalid={fieldState.invalid}
                             />
@@ -542,7 +542,7 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                                 className={cn(
                                   "w-full h-11 text-base",
                                   fieldState.invalid &&
-                                    "border-red-500 focus:ring-red-500",
+                                  "border-red-500 focus:ring-red-500",
                                 )}
                               >
                                 <SelectValue placeholder="Select status" />
@@ -554,9 +554,7 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                                 <SelectItem value="Divorced">
                                   Divorced
                                 </SelectItem>
-                                <SelectItem value="Separated">
-                                  Separated
-                                </SelectItem>
+
                               </SelectContent>
                             </Select>
                             {fieldState.error && (
@@ -632,7 +630,7 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                               className={cn(
                                 "h-11 text-base transition-all",
                                 fieldState.invalid &&
-                                  "border-red-500 focus-visible:ring-red-500",
+                                "border-red-500 focus-visible:ring-red-500",
                               )}
                               aria-invalid={fieldState.invalid}
                             />
@@ -659,7 +657,7 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                               className={cn(
                                 "h-11 text-base transition-all",
                                 fieldState.invalid &&
-                                  "border-red-500 focus-visible:ring-red-500",
+                                "border-red-500 focus-visible:ring-red-500",
                               )}
                               aria-invalid={fieldState.invalid}
                             />
@@ -709,7 +707,7 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                               className={cn(
                                 "h-11 text-base transition-all",
                                 fieldState.invalid &&
-                                  "border-red-500 focus-visible:ring-red-500",
+                                "border-red-500 focus-visible:ring-red-500",
                               )}
                               aria-invalid={fieldState.invalid}
                             />
@@ -737,7 +735,7 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                               className={cn(
                                 "h-11 text-base transition-all",
                                 fieldState.invalid &&
-                                  "border-red-500 focus-visible:ring-red-500",
+                                "border-red-500 focus-visible:ring-red-500",
                               )}
                               aria-invalid={fieldState.invalid}
                             />
@@ -768,7 +766,7 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                                 className={cn(
                                   "w-full h-11 text-base",
                                   fieldState.invalid &&
-                                    "border-red-500 focus:ring-red-500",
+                                  "border-red-500 focus:ring-red-500",
                                 )}
                               >
                                 <SelectValue placeholder="Select status" />

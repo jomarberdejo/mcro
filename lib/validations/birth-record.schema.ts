@@ -12,7 +12,7 @@ export const birthRecordSchema = z
     childLastName: z.string().min(1, "Child's last name is required"),
     childFirstName: z.string().min(1, "Child's first name is required"),
     childMiddleName: z.string().default(""),
-    sex: z.enum(["Male", "Female"]),
+    sex: z.enum(["Male", "Female"]).nullable().optional(),
     dateOfBirth: z.string().min(1, "Date of birth is required"),
     placeOfBirth: z.string().default(""),
     isTwin: z.boolean().default(false),

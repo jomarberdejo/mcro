@@ -117,7 +117,7 @@ model BirthRecord {
   childLastName   String
   childFirstName  String
   childMiddleName String?
-  sex             Sex
+  sex             Sex?
   dateOfBirth     String
   placeOfBirth    String?
   isTwin          Boolean @default(false)
@@ -183,7 +183,7 @@ model DeathRecord {
   deceasedLastName   String
   deceasedFirstName  String
   deceasedMiddleName String?
-  sex                Sex
+  sex                Sex?
   age                String
   civilStatus        CivilStatus
   citizenship        String

@@ -86,7 +86,7 @@ export function useBirthRecordForm({
       childLastName: "",
       childFirstName: "",
       childMiddleName: "",
-      sex: "" as "Male" | "Female",
+      sex: null,
       dateOfBirth: "",
       placeOfBirth: "",
       isTwin: false,
@@ -190,14 +190,9 @@ Doc. Authentication Fee: Ph10.00 doc. Stamp tax: Ph30.00`,
         shouldValidate: true,
         shouldDirty: true,
       });
-    } else {
-      // Optional: clear when not "not married"
-      form.setValue("placeOfMarriage", "", {
-        shouldValidate: true,
-        shouldDirty: true,
-      });
     }
   }, [dateOfMarriage, form]);
+
 
 
   const handleRegistrarSignatureUpload = async (
@@ -219,7 +214,6 @@ Doc. Authentication Fee: Ph10.00 doc. Stamp tax: Ph30.00`,
     setIsUploadingRegistrarSig(true);
 
     try {
-      // Delete old signature if exists
       if (registrarSignature) {
         await deleteFile(registrarSignature.path);
         if (registrarSignature.preview.startsWith("blob:")) {
@@ -341,7 +335,6 @@ Doc. Authentication Fee: Ph10.00 doc. Stamp tax: Ph30.00`,
     }
   };
 
-  // Certifying Officer Signature Upload
   const handleCertifyingOfficerSignatureUpload = async (
     e: React.ChangeEvent<HTMLInputElement>,
   ) => {
@@ -482,12 +475,10 @@ Doc. Authentication Fee: Ph10.00 doc. Stamp tax: Ph30.00`,
     if (!doc) return;
 
     try {
-      // Only delete from storage if it's a newly uploaded file (has blob URL)
       if (doc.preview.startsWith("blob:")) {
         await deleteFile(doc.path);
         URL.revokeObjectURL(doc.preview);
       } else {
-        // For existing files, just delete from storage
         await deleteFile(doc.path);
       }
 
@@ -515,7 +506,11 @@ Doc. Authentication Fee: Ph10.00 doc. Stamp tax: Ph30.00`,
   };
 
   const saveRecord = async (data: BirthRecordFormInput) => {
+
     try {
+
+      console.log("data ===", data);
+
       const url = isEditing
         ? `/api/birth-certificate/${recordId}`
         : "/api/birth-certificate";

@@ -3,14 +3,14 @@ import { supportingDocumentSchema } from "./schema";
 
 export const deathRecordSchema = z.object({
   registryNo: z.string().min(1, "Registry number is required"),
-  pageNo: z.string().default(""),
-  bookNo: z.string().default(""),
+  bookNo: z.string().min(1, "Book number is required"),
+  pageNo: z.string().min(1, "Page number is required"),
 
   // Deceased Information
   deceasedLastName: z.string().min(1, "Deceased's last name is required"),
   deceasedFirstName: z.string().min(1, "Deceased's first name is required"),
   deceasedMiddleName: z.string().default(""),
-  sex: z.enum(["Male", "Female"]),
+  sex: z.enum(["Male", "Female"]).nullable().optional(),
   age: z.string(),
   civilStatus: z.enum(["Single", "Married", "Widowed", "Divorced"]),
   citizenship: z.string().min(1, "Citizenship is required"),
