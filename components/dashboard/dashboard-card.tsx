@@ -2,8 +2,15 @@
 
 import { RecordsModal } from "@/components/dashboard/record-modal";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { FileText, Heart, LucideIcon, Cross, ClipboardList } from "lucide-react";
+import {
+  FileText,
+  Heart,
+  LucideIcon,
+  Cross,
+  ClipboardList,
+} from "lucide-react";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 type RecordType = "birth" | "death" | "marriage" | "application";
 
@@ -55,8 +62,13 @@ export type StatCard = {
   description: string;
   color: string;
   bgColor: string;
-  records: BirthRecord[] | DeathRecord[] | MarriageRecord[] | ApplicationRecord[];
+  records:
+    | BirthRecord[]
+    | DeathRecord[]
+    | MarriageRecord[]
+    | ApplicationRecord[];
   type: RecordType;
+  url: string;
 };
 
 const iconMap: Record<string, LucideIcon> = {
@@ -69,10 +81,12 @@ const iconMap: Record<string, LucideIcon> = {
 export function DashboardCards({ stats }: { stats: StatCard[] }) {
   const [selectedStat, setSelectedStat] = useState<StatCard | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const router = useRouter();
 
   const handleCardClick = (stat: StatCard) => {
-    setSelectedStat(stat);
-    setIsModalOpen(true);
+    // setSelectedStat(stat);
+    // setIsModalOpen(true);
+    router.push(stat.url);
   };
   return (
     <>
@@ -94,7 +108,9 @@ export function DashboardCards({ stats }: { stats: StatCard[] }) {
                 </div>
               </CardHeader>
               <CardContent className="space-y-3">
-                <div className="text-5xl font-bold">{stat.count.toLocaleString()}</div>
+                <div className="text-5xl font-bold">
+                  {stat.count.toLocaleString()}
+                </div>
                 <p className="text-base text-muted-foreground font-medium">
                   {stat.description}
                 </p>

@@ -5,19 +5,19 @@ import { supportingDocumentSchema } from "./schema";
 
 export const marriageCertificateApplicationSchema = z.object({
   registryNo: z.string().min(1, "Registry number is required"),
-  bookNo: z.string().default(""),
-  pageNo: z.string().default(""),
-  dateOfRegistration: z.string().default(""),
+  bookNo: z.string().min(1, "Book number is required"),
+  pageNo: z.string().min(1, "Page number is required"),
+  dateOfRegistration: z.string().optional().default(""),
   
-  groomFirstName: z.string().min(1, "Groom's first name is required"),
-  groomMiddleName: z.string().default(""),
-  groomLastName: z.string().min(1, "Groom's last name is required"),
-  groomDateOfBirth: z.string().min(1, "Groom's date of birth is required"),
+  groomFirstName: z.string().optional().default(""),
+  groomMiddleName: z.string().optional().default(""),
+  groomLastName: z.string().optional().default(""),
+  groomDateOfBirth: z.string().optional().default(""),
   
-  brideFirstName: z.string().min(1, "Bride's first name is required"),
-  brideMiddleName: z.string().default(""),
-  brideLastName: z.string().min(1, "Bride's last name is required"),
-  brideDateOfBirth: z.string().min(1, "Bride's date of birth is required"),
+  brideFirstName: z.string().optional().default(""),
+  brideMiddleName: z.string().optional().default(""),
+  brideLastName: z.string().optional().default(""),
+  brideDateOfBirth: z.string().optional().default(""),
   supportingDocuments: z.array(supportingDocumentSchema).default([])
 });
 

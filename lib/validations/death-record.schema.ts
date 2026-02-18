@@ -7,11 +7,11 @@ export const deathRecordSchema = z.object({
   pageNo: z.string().min(1, "Page number is required"),
 
   // Deceased Information
-  deceasedLastName: z.string().min(1, "Deceased's last name is required"),
-  deceasedFirstName: z.string().min(1, "Deceased's first name is required"),
-  deceasedMiddleName: z.string().default(""),
+  deceasedLastName: z.string().optional().default(""),
+  deceasedFirstName: z.string().optional().default(""),
+  deceasedMiddleName: z.string().optional().default(""),
   sex: z.enum(["Male", "Female"]).nullable().optional(),
-  age: z.string(),
+  age: z.string().optional().default(""),
   civilStatus: z
     .enum(["Single", "Married", "Widowed", "Divorced"])
     .nullable()
@@ -24,28 +24,28 @@ export const deathRecordSchema = z.object({
   causeOfDeath: z.string().optional().default(""),
 
   // Registration Details
-  dateOfRegistration: z.string().min(1, "Registration date is required"),
+  dateOfRegistration: z.string().optional().default(""),
 
   // Request Information
-  requestorName: z.string().default(""),
-  requestPurpose: z.string().default(""),
+  requestorName: z.string().optional().default(""),
+  requestPurpose: z.string().optional().default(""),
 
   // Official Information
-  registrarName: z.string().default(""),
-  verifiedBy: z.string().default(""),
-  verifierPosition: z.string().default(""),
-  certifyingOfficerName: z.string().default(""),
-  certifyingOfficerPosition: z.string().default(""),
-  registrarSignaturePath: z.string().default(""),
-  verifierSignaturePath: z.string().default(""),
+  registrarName: z.string().optional().default(""),
+  verifiedBy: z.string().optional().default(""),
+  verifierPosition: z.string().optional().default(""),
+  certifyingOfficerName: z.string().optional().default(""),
+  certifyingOfficerPosition: z.string().optional().default(""),
+  registrarSignaturePath: z.string().optional().default(""),
+  verifierSignaturePath: z.string().optional().default(""),
 
-  certifyingOfficerSignaturePath: z.string().default(""),
+  certifyingOfficerSignaturePath: z.string().optional().default(""),
 
   // Additional Information
-  processFeeInfo: z.string().default(""),
-  remarks: z.string().default(""),
-  supportingDocuments: z.array(supportingDocumentSchema).default([]),
-  certificateDate: z.string().default(""),
+  processFeeInfo: z.string().optional().default(""),
+  remarks: z.string().optional().default(""),
+  supportingDocuments: z.array(supportingDocumentSchema).optional().default([]),
+  certificateDate: z.string().optional().default(""),
 });
 
 export type DeathRecordFormInput = z.input<typeof deathRecordSchema>;

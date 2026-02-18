@@ -81,6 +81,7 @@ async function getDashboardData() {
         bgColor: "bg-green-100",
         records: birthRecords,
         type: "birth" as const,
+        url: "/admin/birth-certificate",
       },
       {
         title: "Death Certificates",
@@ -91,6 +92,7 @@ async function getDashboardData() {
         bgColor: "bg-gray-100",
         records: deathRecords,
         type: "death" as const,
+        url: "/admin/death-certificate",
       },
       {
         title: "Marriage Certificates",
@@ -101,6 +103,7 @@ async function getDashboardData() {
         bgColor: "bg-red-100",
         records: marriageRecords,
         type: "marriage" as const,
+        url: "/admin/marriage-certificate",
       },
       {
         title: "Marriage Applications",
@@ -111,6 +114,7 @@ async function getDashboardData() {
         bgColor: "bg-violet-100",
         records: marriageApplications,
         type: "application" as const,
+        url: "/admin/marriage-cert-app",
       },
     ],
   };

@@ -16,7 +16,6 @@ import { ApplicationRecord, BirthRecord, DeathRecord, MarriageRecord } from "./d
 type RecordType = "birth" | "death" | "marriage" | "application";
 
 
-
 type RecordsModalProps = {
   isOpen: boolean;
   onClose: () => void;

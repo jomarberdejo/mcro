@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { birthRecordSchema } from "@/lib/validations/birth-record.schema";
 import { z } from "zod";
+import { getCurrentUser } from "@/lib/user";
 
 export async function GET(request: NextRequest) {
   try {
@@ -29,13 +30,19 @@ export async function GET(request: NextRequest) {
     console.error("Error fetching birth records:", error);
     return NextResponse.json(
       { error: "Failed to fetch birth records" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
 export async function POST(request: NextRequest) {
   try {
+    const user = await getCurrentUser();
+
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const body = await request.json();
     const validatedData = birthRecordSchema.parse(body);
 
@@ -44,14 +51,16 @@ export async function POST(request: NextRequest) {
     const record = await prisma.birthRecord.create({
       data: {
         ...recordData,
+        userId: user.userId,
         supportingDocuments: {
-          create: supportingDocuments?.map((doc) => ({
-            filePath: doc.filePath,
-            fileName: doc.fileName,
-            fileSize: doc.fileSize,
-            mimeType: doc.mimeType,
-            type: 'BIRTH_CERTIFICATE',
-          })) || [],
+          create:
+            supportingDocuments?.map((doc) => ({
+              filePath: doc.filePath,
+              fileName: doc.fileName,
+              fileSize: doc.fileSize,
+              mimeType: doc.mimeType,
+              type: "BIRTH_CERTIFICATE",
+            })) || [],
         },
       },
       include: {
@@ -64,21 +73,18 @@ export async function POST(request: NextRequest) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: "Validation failed", details: error.issues },
-        { status: 400 }
+        { status: 400 },
       );
     }
-    
+
     if (error instanceof Error) {
-      return NextResponse.json(
-        { error: error.message },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: error.message }, { status: 500 });
     }
-    
+
     console.error("Error creating birth record:", error);
     return NextResponse.json(
       { error: "Failed to create birth record" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

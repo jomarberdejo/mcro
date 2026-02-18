@@ -113,15 +113,15 @@ model SignatureFields {
 model BirthRecord {
   id                 String  @id @default(cuid())
   registryNo         String
-  dateOfRegistration String
-  bookNo             String?
-  pageNo             String?
+  dateOfRegistration String?
+  bookNo             String
+  pageNo             String
 
-  childLastName   String
-  childFirstName  String
+  childLastName   String?
+  childFirstName  String?
   childMiddleName String?
   sex             Sex?
-  dateOfBirth     String
+  dateOfBirth     String?
   placeOfBirth    String?
   isTwin          Boolean @default(false)
   typeOfBirth     String?
@@ -150,8 +150,8 @@ model BirthRecord {
   processFeeInfo            String? @db.Text
   requestorName             String?
   requestPurpose            String?
-  verifiedBy                String
-  verifierPosition          String
+  verifiedBy                String?
+  verifierPosition          String?
   certifyingOfficerName     String?
   certifyingOfficerPosition String?
 
@@ -179,12 +179,12 @@ model BirthRecord {
 model DeathRecord {
   id         String  @id @default(cuid())
   registryNo String
-  pageNo     String?
-  bookNo     String?
+  pageNo     String
+  bookNo     String
 
   // Deceased Info
-  deceasedLastName   String
-  deceasedFirstName  String
+  deceasedLastName   String?
+  deceasedFirstName  String?
   deceasedMiddleName String?
   sex                Sex?
   age                String?
@@ -234,29 +234,29 @@ model DeathRecord {
 model MarriageRecord {
   id         String  @id @default(cuid())
   registryNo String
-  bookNo     String?
-  pageNo     String?
+  bookNo     String
+  pageNo     String
 
-  dateOfMarriage     String
-  placeOfMarriage    String
+  dateOfMarriage     String?
+  placeOfMarriage    String?
   dateOfRegistration String?
 
   // Husband Info
-  husbandLastName    String
-  husbandFirstName   String
+  husbandLastName    String?
+  husbandFirstName   String?
   husbandMiddleName  String?
-  husbandAge         String
-  husbandNationality String
+  husbandAge         String?
+  husbandNationality String?
   husbandCivilStatus CivilStatus?
   husbandMotherName  String?
   husbandFatherName  String?
 
   // Wife Info
-  wifeLastName    String
-  wifeFirstName   String
+  wifeLastName    String?
+  wifeFirstName   String?
   wifeMiddleName  String?
-  wifeAge         String
-  wifeNationality String
+  wifeAge         String?
+  wifeNationality String?
   wifeCivilStatus CivilStatus?
   wifeMotherName  String?
   wifeFatherName  String?
@@ -297,21 +297,21 @@ model MarriageRecord {
 model MarriageCertificateApplication {
   id                 String  @id @default(cuid())
   registryNo         String
-  bookNo             String?
-  pageNo             String?
+  bookNo             String
+  pageNo             String
   dateOfRegistration String?
 
   // Groom Info
-  groomFirstName   String
+  groomFirstName   String?
   groomMiddleName  String?
-  groomLastName    String
-  groomDateOfBirth String
+  groomLastName    String?
+  groomDateOfBirth String?
 
   // Bride Info
-  brideFirstName   String
+  brideFirstName   String?
   brideMiddleName  String?
-  brideLastName    String
-  brideDateOfBirth String
+  brideLastName    String?
+  brideDateOfBirth String?
 
   // Signatures
   registrarSignaturePath         String?

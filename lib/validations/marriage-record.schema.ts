@@ -7,55 +7,55 @@ export const marriageRecordSchema = z.object({
   pageNo: z.string().min(1, "Page number is required"),
 
   // Marriage Details
-  dateOfMarriage: z.string().min(1, "Date of marriage is required"),
-  placeOfMarriage: z.string().min(1, "Place of marriage is required"),
-  dateOfRegistration: z.string().default(""),
+  dateOfMarriage: z.string().optional().default(""),
+  placeOfMarriage: z.string().optional().default(""),
+  dateOfRegistration: z.string().optional().default(""),
 
   // Husband Information
-  husbandLastName: z.string().min(1, "Husband's last name is required"),
-  husbandFirstName: z.string().min(1, "Husband's first name is required"),
-  husbandMiddleName: z.string().default(""),
-  husbandAge: z.string(),
+  husbandLastName: z.string().optional().default(""),
+  husbandFirstName: z.string().optional().default(""),
+  husbandMiddleName: z.string().optional().default(""),
+  husbandAge: z.string().optional().default(""),
   husbandNationality: z.string().optional().default(""),
   husbandCivilStatus: z
     .enum(["Single", "Married", "Widowed", "Divorced"])
     .nullable()
     .optional(),
-  husbandMotherName: z.string().default(""),
-  husbandFatherName: z.string().default(""),
+  husbandMotherName: z.string().optional().default(""),
+  husbandFatherName: z.string().optional().default(""),
 
   // Wife Information
-  wifeLastName: z.string().min(1, "Wife's last name is required"),
-  wifeFirstName: z.string().min(1, "Wife's first name is required"),
-  wifeMiddleName: z.string().default(""),
-  wifeAge: z.string(),
+  wifeLastName: z.string().optional().default(""),
+  wifeFirstName: z.string().optional().default(""),
+  wifeMiddleName: z.string().optional().default(""),
+  wifeAge: z.string().optional().default(""),
   wifeNationality: z.string().optional().default(""),
   wifeCivilStatus: z
     .enum(["Single", "Married", "Widowed", "Divorced"])
     .nullable()
     .optional(),
-  wifeMotherName: z.string().default(""),
-  wifeFatherName: z.string().default(""),
+  wifeMotherName: z.string().optional().default(""),
+  wifeFatherName: z.string().optional().default(""),
 
   // Request Information
-  requestorName: z.string().default(""),
-  requestPurpose: z.string().default(""),
+  requestorName: z.string().optional().default(""),
+  requestPurpose: z.string().optional().default(""),
 
   // Official Information
-  registrarName: z.string().default(""),
-  verifiedBy: z.string().default(""),
-  verifierPosition: z.string().default(""),
-  certifyingOfficerName: z.string().default(""),
-  certifyingOfficerPosition: z.string().default(""),
-  registrarSignaturePath: z.string().default(""),
-  verifierSignaturePath: z.string().default(""),
+  registrarName: z.string().optional().default(""),
+  verifiedBy: z.string().optional().default(""),
+  verifierPosition: z.string().optional().default(""),
+  certifyingOfficerName: z.string().optional().default(""),
+  certifyingOfficerPosition: z.string().optional().default(""),
+  registrarSignaturePath: z.string().optional().default(""),
+  verifierSignaturePath: z.string().optional().default(""),
 
-  certifyingOfficerSignaturePath: z.string().default(""),
+  certifyingOfficerSignaturePath: z.string().optional().default(""),
   // Additional Information
-  processFeeInfo: z.string().default(""),
-  remarks: z.string().default(""),
-  supportingDocuments: z.array(supportingDocumentSchema).default([]),
-  certificateDate: z.string().default(""),
+  processFeeInfo: z.string().optional().default(""),
+  remarks: z.string().optional().default(""),
+  supportingDocuments: z.array(supportingDocumentSchema).optional().default([]),
+  certificateDate: z.string().optional().default(""),
 });
 
 export type MarriageRecordFormInput = z.input<typeof marriageRecordSchema>;

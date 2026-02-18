@@ -3,7 +3,6 @@ import type { NextRequest } from "next/server";
 import { verifyAuth } from "@/lib/auth";
 
 const protectedRoutes = ["/admin"];
-
 const authRoutes = ["/"];
 
 export async function middleware(request: NextRequest) {
@@ -17,6 +16,7 @@ export async function middleware(request: NextRequest) {
   const isAuthRoute = authRoutes.some((route) => pathname === route);
 
   let isAuthenticated = false;
+
   if (token) {
     const payload = await verifyAuth(token);
     isAuthenticated = !!payload;
@@ -30,9 +30,11 @@ export async function middleware(request: NextRequest) {
 
   if (isAuthRoute && isAuthenticated) {
     const redirect = request.nextUrl.searchParams.get("redirect");
-    const destination = redirect && redirect.startsWith("/admin") 
-      ? redirect 
-      : "/admin/dashboard";
+    const destination =
+      redirect && redirect.startsWith("/admin")
+        ? redirect
+        : "/admin/dashboard";
+
     const url = new URL(destination, request.url);
     return NextResponse.redirect(url);
   }
@@ -42,14 +44,6 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except:
-     * - api routes (handled separately)
-     * - _next/static (static files)
-     * - _next/image (image optimization)
-     * - favicon.ico
-     * - public folder
-     */
     "/((?!api|_next/static|_next/image|favicon.ico|public|.*\\..*|_next).*)",
   ],
 };

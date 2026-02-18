@@ -1,8 +1,6 @@
 import { jwtVerify, type JWTPayload as JoseJWTPayload } from "jose";
 
-const JWT_SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET || "your-secret-key-change-in-production"
-);
+const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET);
 
 export interface JWTPayload extends JoseJWTPayload {
   userId: string;
