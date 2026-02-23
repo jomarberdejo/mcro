@@ -24,7 +24,7 @@ export function IncompleteFieldsDialog({
 }: IncompleteFieldsDialogProps) {
   const emptyFieldsCount = emptyFields.length;
 
-  console.log("Empty fields:", emptyFields); // Debugging log to see which fields are empty
+  console.log("Empty fields:", emptyFields); 
 
   return (
     <AlertDialog open={open} onOpenChange={onCancel}>

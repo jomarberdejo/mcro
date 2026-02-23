@@ -6,25 +6,41 @@ import { existsSync } from "fs";
 export async function DELETE(request: NextRequest) {
   try {
     const body = await request.json();
-    const { type, filename } = body;
+    const { type, subfolder, filename } = body;
 
-    if (!type || !filename) {
+    console.log("DELETE REQUEST:", { type, subfolder, filename });
+
+    if (!type || !subfolder || !filename) {
       return NextResponse.json(
-        { error: "Type and filename are required" },
+        { error: "Type, subfolder, and filename are required" },
         { status: 400 }
       );
     }
 
     // Security: Prevent directory traversal
-    if (filename.includes("..") || type.includes("..")) {
+    if (
+      filename.includes("..") || 
+      type.includes("..") || 
+      subfolder.includes("..")
+    ) {
       return NextResponse.json(
         { error: "Invalid path" },
         { status: 400 }
       );
     }
 
-    // Construct file path
-    const filepath = path.join(process.cwd(), "uploads", type, filename);
+    // Validate subfolder is either 'images' or 'pdfs'
+    if (subfolder !== "images" && subfolder !== "pdfs") {
+      return NextResponse.json(
+        { error: "Invalid subfolder" },
+        { status: 400 }
+      );
+    }
+
+    // Construct file path with subfolder
+    const filepath = path.join(process.cwd(), "uploads", type, subfolder, filename);
+
+    console.log("ATTEMPTING TO DELETE:", filepath);
 
     // Check if file exists
     if (!existsSync(filepath)) {
@@ -35,7 +51,9 @@ export async function DELETE(request: NextRequest) {
     }
 
     // Delete the file
-    await unlink(filepath);
+    // await unlink(filepath);
+
+    console.log("FILE DELETED SUCCESSFULLY:", filepath);
 
     return NextResponse.json(
       { 

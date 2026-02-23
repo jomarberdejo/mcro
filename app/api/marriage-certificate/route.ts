@@ -20,8 +20,8 @@ export async function GET(request: NextRequest) {
             ],
           }
         : undefined,
-      include: {
-        supportingDocuments: true, 
+       include: {
+        supportingDocuments: true
       },
       orderBy: { createdAt: "desc" },
     });

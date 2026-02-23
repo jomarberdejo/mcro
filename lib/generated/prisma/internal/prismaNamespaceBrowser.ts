@@ -52,6 +52,7 @@ export const AnyNull = runtime.AnyNull
 
 export const ModelName = {
   User: 'User',
+  AuditTrail: 'AuditTrail',
   SupportingDocument: 'SupportingDocument',
   SignatureFields: 'SignatureFields',
   BirthRecord: 'BirthRecord',
@@ -89,6 +90,18 @@ export const UserScalarFieldEnum = {
 } as const
 
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
+
+
+export const AuditTrailScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  action: 'action',
+  module: 'module',
+  description: 'description',
+  createdAt: 'createdAt'
+} as const
+
+export type AuditTrailScalarFieldEnum = (typeof AuditTrailScalarFieldEnum)[keyof typeof AuditTrailScalarFieldEnum]
 
 
 export const SupportingDocumentScalarFieldEnum = {
@@ -301,6 +314,17 @@ export const UserOrderByRelevanceFieldEnum = {
 } as const
 
 export type UserOrderByRelevanceFieldEnum = (typeof UserOrderByRelevanceFieldEnum)[keyof typeof UserOrderByRelevanceFieldEnum]
+
+
+export const AuditTrailOrderByRelevanceFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  action: 'action',
+  module: 'module',
+  description: 'description'
+} as const
+
+export type AuditTrailOrderByRelevanceFieldEnum = (typeof AuditTrailOrderByRelevanceFieldEnum)[keyof typeof AuditTrailOrderByRelevanceFieldEnum]
 
 
 export const SupportingDocumentOrderByRelevanceFieldEnum = {

@@ -293,6 +293,7 @@ const BirthCertificatePDF: React.FC<BirthCertificatePDFProps> = ({
       </Page>
 
       <SupportingDocumentsPages documents={documents} pageSize={pageSize} />
+      
     </Document>
   );
 };

@@ -34,12 +34,12 @@ export function RecordsModal({
   const [searchQuery, setSearchQuery] = useState("");
 
   const formatName = (
-    firstName: string,
+    firstName: string | null,
     middleName: string | null,
-    lastName: string
+    lastName: string | null
   ) => {
     const middle = middleName ? ` ${middleName} ` : " ";
-    return `${firstName}${middle}${lastName}`;
+    return `${firstName || ""}${middle}${lastName || ""}`.trim();
   };
 
   const filteredRecords = useMemo(() => {

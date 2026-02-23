@@ -7,42 +7,70 @@ export async function POST(request: NextRequest) {
       deceasedFirstName,
       deceasedLastName,
       deceasedMiddleName,
-      registryNo,
       excludeId,
+      registryNo,
     } = await request.json();
 
-    console.log(deceasedFirstName, deceasedLastName, deceasedMiddleName, registryNo, excludeId)
+    console.log("Checking duplicates for:", {
+      deceasedFirstName,
+      deceasedLastName,
+      deceasedMiddleName,
+      excludeId,
+      registryNo,
+    });
+
+    const orConditions = [];
+
+    const hasValidNameFields = 
+      deceasedFirstName?.trim() && 
+      deceasedLastName?.trim();
+
+    if (hasValidNameFields) {
+      orConditions.push({
+        AND: [
+          {
+            deceasedFirstName: {
+              equals: deceasedFirstName.trim(),
+            },
+          },
+          {
+            deceasedLastName: {
+              equals: deceasedLastName.trim(),
+            },
+          },
+          ...(deceasedMiddleName?.trim()
+            ? [
+                {
+                  deceasedMiddleName: {
+                    equals: deceasedMiddleName.trim(),
+                  },
+                },
+              ]
+            : []),
+        ],
+      });
+    }
+
+    if (registryNo?.trim()) {
+      orConditions.push({
+        registryNo: {
+          equals: registryNo.trim(),
+        },
+      });
+    }
+
+    if (orConditions.length === 0) {
+      return NextResponse.json({
+        hasDuplicates: false,
+        duplicates: [],
+      });
+    }
 
     const existingRecords = await prisma.deathRecord.findMany({
       where: {
         AND: [
           {
-            OR: [
-              {
-                AND: [
-                  {
-                    deceasedFirstName: {
-                      equals: deceasedFirstName,
-                    },
-                  },
-                  {
-                    deceasedLastName: {
-                      equals: deceasedLastName,
-                    },
-                  },
-                  {
-                    deceasedMiddleName: {
-                      equals: deceasedMiddleName || undefined,
-                    },
-                  },
-                ],
-              },
-              {
-                registryNo: {
-                  equals: registryNo,
-                },
-              },
-            ],
+            OR: orConditions,
           },
           ...(excludeId ? [{ id: { not: excludeId } }] : []),
         ],
@@ -52,8 +80,8 @@ export async function POST(request: NextRequest) {
         deceasedFirstName: true,
         deceasedLastName: true,
         deceasedMiddleName: true,
-        registryNo: true,
         dateOfDeath: true,
+        registryNo: true,
       },
     });
 

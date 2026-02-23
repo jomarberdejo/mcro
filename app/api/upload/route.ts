@@ -18,15 +18,26 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    
-    if (!file.type.startsWith("image/")) {
+    const allowedTypes = [
+      "image/jpeg",
+      "image/jpg",
+      "image/png",
+      "image/gif",
+      "image/webp",
+      "application/pdf"
+    ];
+
+    if (!allowedTypes.includes(file.type)) {
       return NextResponse.json(
-        { error: "Only image files are allowed" },
+        { error: "Only image files (JPG, PNG, GIF, WEBP) and PDF files are allowed" },
         { status: 400 }
       );
     }
 
-    const maxSize = type === "signature" ? 2 * 1024 * 1024 : 5 * 1024 * 1024;
+    const maxSize = type === "signature" 
+      ? 2 * 1024 * 1024 
+      : 10 * 1024 * 1024; 
+    
     if (file.size > maxSize) {
       return NextResponse.json(
         { error: `File size should be less than ${maxSize / (1024 * 1024)}MB` },
@@ -34,13 +45,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Create uploads directory at project root (not in public)
-    const uploadDir = path.join(process.cwd(), "uploads", type);
+    const isPDF = file.type === "application/pdf";
+    const subFolder = isPDF ? "pdfs" : "images";
+    
+    const uploadDir = path.join(process.cwd(), "uploads", type, subFolder);
     if (!existsSync(uploadDir)) {
       await mkdir(uploadDir, { recursive: true });
     }
 
-    // Generate unique filename
     const timestamp = Date.now();
     const randomString = Math.random().toString(36).substring(2, 15);
     const extension = path.extname(file.name);
@@ -51,13 +63,14 @@ export async function POST(request: NextRequest) {
     const buffer = Buffer.from(bytes);
     await writeFile(filepath, buffer);
 
-    const apiPath = `/api/files/${type}/${filename}`;
+    const apiPath = `/api/files/${type}/${subFolder}/${filename}`;
 
     return NextResponse.json(
       { 
         success: true, 
         path: apiPath,
-        filename 
+        filename,
+        mimeType: file.type 
       },
       { status: 200 }
     );

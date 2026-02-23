@@ -5,19 +5,20 @@ import { existsSync } from "fs";
 
 export async function GET(
   request: NextRequest,
-  context: { params: Promise<{ type: string; filename: string }> }
+  context: { params: Promise<{ type: string; subfolder: string; filename: string }> }
 ) {
   try {
-    const { type, filename } = await context.params;
+    const { type, subfolder, filename } = await context.params;
+    console.log("CONTEXT PARAMS:", { type, subfolder, filename });
     
-    if (filename.includes("..") || type.includes("..")) {
+    if (filename.includes("..") || type.includes("..") || subfolder.includes("..")) {
       return NextResponse.json(
         { error: "Invalid path" },
         { status: 400 }
       );
     }
 
-    const filepath = path.join(process.cwd(), "uploads", type, filename);
+    const filepath = path.join(process.cwd(), "uploads", type, subfolder, filename);
     
     if (!existsSync(filepath)) {
       return NextResponse.json(
@@ -36,14 +37,20 @@ export async function GET(
       ".gif": "image/gif",
       ".webp": "image/webp",
       ".svg": "image/svg+xml",
+      ".pdf": "application/pdf",
     };
     
     const contentType = contentTypes[ext] || "application/octet-stream";
+
+    console.log(`Serving file: ${filepath} with content type: ${contentType}`);
+    console.log("CURRENT WORKING DIRECTORY:", process.cwd());
+    console.log("SUB FOLDER:", subfolder);
     
     return new NextResponse(file, {
       headers: {
         "Content-Type": contentType,
         "Cache-Control": "public, max-age=31536000, immutable",
+        ...(ext === ".pdf" && { "Content-Disposition": "inline" }),
       },
     });
   } catch (error) {

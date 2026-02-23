@@ -8,6 +8,8 @@ export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams;
     const search = searchParams.get("search");
 
+    console.log("Fetching marriage certificate applications with search:", search);
+
     const applications = await prisma.marriageCertificateApplication.findMany({
       where: search
         ? {
@@ -21,8 +23,8 @@ export async function GET(request: NextRequest) {
           }
         : undefined,
       orderBy: { createdAt: "desc" },
-      include: {
-        supportingDocuments: true, 
+       include: {
+        supportingDocuments: true
       },
     });
 
@@ -31,7 +33,7 @@ export async function GET(request: NextRequest) {
     console.error("Error fetching marriage certificate applications:", error);
     return NextResponse.json(
       { error: "Failed to fetch applications" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -52,7 +54,7 @@ export async function POST(request: NextRequest) {
             fileName: doc.fileName,
             fileSize: doc.fileSize,
             mimeType: doc.mimeType,
-            type: 'MARRIAGE_CERTIFICATE_APPLICATION',
+            type: "MARRIAGE_CERTIFICATE_APPLICATION",
           })),
         },
       },
@@ -64,27 +66,24 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(application, { status: 201 });
   } catch (error) {
     console.error("Error creating marriage certificate application:", error);
-    
+
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { 
-          error: "Validation failed", 
-          details: error.issues 
+        {
+          error: "Validation failed",
+          details: error.issues,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
-    
+
     if (error instanceof Error) {
-      return NextResponse.json(
-        { error: error.message },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: error.message }, { status: 500 });
     }
-    
+
     return NextResponse.json(
       { error: "Failed to create application" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

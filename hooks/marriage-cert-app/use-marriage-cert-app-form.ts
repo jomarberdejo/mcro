@@ -107,12 +107,18 @@ export function useMarriageCertificateApplicationForm({
     const files = Array.from(e.target.files || []);
     if (files.length === 0) return;
 
-    const invalidFiles = files.filter(
-      (file) => !file.type.startsWith("image/") || file.size > 5 * 1024 * 1024
-    );
+    const invalidFiles = files.filter((file) => {
+      const isImage = file.type.startsWith("image/");
+      const isPDF = file.type === "application/pdf";
+
+      if (!isImage && !isPDF) return true; 
+
+      const maxSize = isPDF ? 10 * 1024 * 1024 : 5 * 1024 * 1024; 
+      return file.size > maxSize;
+    });
 
     if (invalidFiles.length > 0) {
-      toast.error("All files must be images under 5MB");
+      toast.error("Only images (max 5MB) and PDFs (max 10MB) are allowed");
       return;
     }
 
@@ -159,7 +165,6 @@ export function useMarriageCertificateApplicationForm({
       );
     } finally {
       setIsUploadingDoc(false);
-      // Reset file input
       const fileInput = document.getElementById("documentsUpload") as HTMLInputElement;
       if (fileInput) fileInput.value = "";
     }
@@ -170,19 +175,16 @@ export function useMarriageCertificateApplicationForm({
     if (!doc) return;
 
     try {
-      // Only delete from storage if it's a newly uploaded file (has blob URL)
       if (doc.preview.startsWith('blob:')) {
         await deleteFile(doc.path);
         URL.revokeObjectURL(doc.preview);
       } else {
-        // For existing files, just delete from storage
         await deleteFile(doc.path);
       }
 
       setSupportingDocuments((prev) => {
         const updatedDocs = prev.filter((d) => d.id !== docId);
         
-        // Update form value
         form.setValue(
           "supportingDocuments",
           updatedDocs.map((d) => ({

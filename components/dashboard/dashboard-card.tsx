@@ -16,42 +16,42 @@ type RecordType = "birth" | "death" | "marriage" | "application";
 
 export type BirthRecord = {
   id: string;
-  childFirstName: string;
+  childFirstName:  string | null;
   childMiddleName: string | null;
-  childLastName: string;
+  childLastName:  string | null;
   registryNo: string;
-  dateOfBirth: string;
+  dateOfBirth:  string | null;
 };
 
 export type DeathRecord = {
   id: string;
-  deceasedFirstName: string;
+  deceasedFirstName:  string | null;
   deceasedMiddleName: string | null;
-  deceasedLastName: string;
+  deceasedLastName:  string | null;
   registryNo: string;
   dateOfDeath: string | null;
 };
 
 export type MarriageRecord = {
   id: string;
-  husbandFirstName: string;
+  husbandFirstName:  string | null;
   husbandMiddleName: string | null;
-  husbandLastName: string;
-  wifeFirstName: string;
+  husbandLastName:  string | null;
+  wifeFirstName:  string | null;
   wifeMiddleName: string | null;
-  wifeLastName: string;
+  wifeLastName: string | null;
   registryNo: string;
-  dateOfMarriage: string;
+  dateOfMarriage: string | null;
 };
 
 export type ApplicationRecord = {
   id: string;
-  groomFirstName: string;
+  groomFirstName: string | null;
   groomMiddleName: string | null;
-  groomLastName: string;
-  brideFirstName: string;
+  groomLastName: string | null;
+  brideFirstName: string | null;
   brideMiddleName: string | null;
-  brideLastName: string;
+  brideLastName: string | null;
   registryNo: string;
 };
 

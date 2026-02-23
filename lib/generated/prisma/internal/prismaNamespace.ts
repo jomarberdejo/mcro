@@ -385,6 +385,7 @@ type FieldRefInputType<Model, FieldType> = Model extends never ? never : FieldRe
 
 export const ModelName = {
   User: 'User',
+  AuditTrail: 'AuditTrail',
   SupportingDocument: 'SupportingDocument',
   SignatureFields: 'SignatureFields',
   BirthRecord: 'BirthRecord',
@@ -406,7 +407,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "supportingDocument" | "signatureFields" | "birthRecord" | "deathRecord" | "marriageRecord" | "marriageCertificateApplication"
+    modelProps: "user" | "auditTrail" | "supportingDocument" | "signatureFields" | "birthRecord" | "deathRecord" | "marriageRecord" | "marriageCertificateApplication"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -473,6 +474,72 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.UserCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.UserCountAggregateOutputType> | number
+        }
+      }
+    }
+    AuditTrail: {
+      payload: Prisma.$AuditTrailPayload<ExtArgs>
+      fields: Prisma.AuditTrailFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.AuditTrailFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AuditTrailPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.AuditTrailFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AuditTrailPayload>
+        }
+        findFirst: {
+          args: Prisma.AuditTrailFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AuditTrailPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.AuditTrailFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AuditTrailPayload>
+        }
+        findMany: {
+          args: Prisma.AuditTrailFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AuditTrailPayload>[]
+        }
+        create: {
+          args: Prisma.AuditTrailCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AuditTrailPayload>
+        }
+        createMany: {
+          args: Prisma.AuditTrailCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        delete: {
+          args: Prisma.AuditTrailDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AuditTrailPayload>
+        }
+        update: {
+          args: Prisma.AuditTrailUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AuditTrailPayload>
+        }
+        deleteMany: {
+          args: Prisma.AuditTrailDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.AuditTrailUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        upsert: {
+          args: Prisma.AuditTrailUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AuditTrailPayload>
+        }
+        aggregate: {
+          args: Prisma.AuditTrailAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateAuditTrail>
+        }
+        groupBy: {
+          args: Prisma.AuditTrailGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AuditTrailGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.AuditTrailCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AuditTrailCountAggregateOutputType> | number
         }
       }
     }
@@ -926,6 +993,18 @@ export const UserScalarFieldEnum = {
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
 
 
+export const AuditTrailScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  action: 'action',
+  module: 'module',
+  description: 'description',
+  createdAt: 'createdAt'
+} as const
+
+export type AuditTrailScalarFieldEnum = (typeof AuditTrailScalarFieldEnum)[keyof typeof AuditTrailScalarFieldEnum]
+
+
 export const SupportingDocumentScalarFieldEnum = {
   id: 'id',
   filePath: 'filePath',
@@ -1136,6 +1215,17 @@ export const UserOrderByRelevanceFieldEnum = {
 } as const
 
 export type UserOrderByRelevanceFieldEnum = (typeof UserOrderByRelevanceFieldEnum)[keyof typeof UserOrderByRelevanceFieldEnum]
+
+
+export const AuditTrailOrderByRelevanceFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  action: 'action',
+  module: 'module',
+  description: 'description'
+} as const
+
+export type AuditTrailOrderByRelevanceFieldEnum = (typeof AuditTrailOrderByRelevanceFieldEnum)[keyof typeof AuditTrailOrderByRelevanceFieldEnum]
 
 
 export const SupportingDocumentOrderByRelevanceFieldEnum = {
@@ -1469,6 +1559,7 @@ export type PrismaClientOptions = ({
 }
 export type GlobalOmitConfig = {
   user?: Prisma.UserOmit
+  auditTrail?: Prisma.AuditTrailOmit
   supportingDocument?: Prisma.SupportingDocumentOmit
   signatureFields?: Prisma.SignatureFieldsOmit
   birthRecord?: Prisma.BirthRecordOmit

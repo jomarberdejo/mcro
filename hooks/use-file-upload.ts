@@ -1,5 +1,3 @@
-
-
 export function useFileUpload() {
   const uploadFile = async (file: File, type: "signature" | "documents") => {
     try {
@@ -18,8 +16,6 @@ export function useFileUpload() {
         throw new Error(data.error || "Failed to upload file");
       }
 
-      // Return the data which includes:
-      // { success: true, path: "/api/files/signature/123-abc.jpg", filename: "123-abc.jpg" }
       return data;
     } catch (error) {
       console.error("Upload error:", error);
@@ -29,15 +25,18 @@ export function useFileUpload() {
 
   const deleteFile = async (filePath: string) => {
     try {
-      // filePath format: /api/files/signature/123-abc.jpg
+      // Parse the new path structure: /api/files/documents/images/123-abc.jpg
       const pathParts = filePath.split("/");
-      const type = pathParts[3]; // signature or documents
-      const filename = pathParts[4]; // 123-abc.jpg
+      const type = pathParts[3]; // "signature" or "documents"
+      const subfolder = pathParts[4]; // "images" or "pdfs"
+      const filename = pathParts[5]; // "123-abc.jpg"
+
+      console.log("DELETE FILE PATH PARTS:", { pathParts, type, subfolder, filename });
 
       const response = await fetch("/api/upload/delete", {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ type, filename }),
+        body: JSON.stringify({ type, subfolder, filename }),
       });
 
       if (!response.ok) {

@@ -16,6 +16,7 @@ import { MarriageCertificateApplicationFilterState } from "@/app/admin/(pages)/m
 import { useAuth } from "@/hooks/auth/use-auth";
 import { UserRole } from "@/lib/generated/prisma/enums";
 import { MarriageCertificateApplication } from "@/lib/generated/prisma/client";
+import { getFullName } from "@/utils";
 
 interface MarriageCertificateApplicationListProps {
   applications: MarriageCertificateApplication[];
@@ -95,15 +96,7 @@ export const MarriageCertificateApplicationList: React.FC<
     return pageNumbers;
   };
 
-  const getFullName = (
-    firstName: string,
-    middleName: string | null,
-    lastName: string,
-  ) => {
-    const parts = [firstName, middleName, lastName].filter(Boolean);
-    return parts.join(" ");
-  };
-
+ 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-7xl mx-auto">
@@ -257,7 +250,7 @@ export const MarriageCertificateApplicationList: React.FC<
               applications
             </div>
 
-            <div className="border rounded-lg overflow-hidden shadow-sm bg-white">
+            <div className="border rounded-lg overflow-auto shadow-sm bg-white">
               <table className="w-full text-sm">
                 <thead className="bg-gray-100 border-b">
                   <tr>

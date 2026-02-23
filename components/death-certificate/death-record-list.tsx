@@ -167,8 +167,8 @@ export const DeathRecordList: React.FC<DeathRecordListProps> = ({
               records
             </div>
 
-            <div className="border rounded-lg overflow-hidden shadow-sm bg-white">
-              <table className="w-full text-sm">
+            <div className="border rounded-lg overflow-auto shadow-sm bg-white">
+              <table className="w-full text-sm ">
                 <thead className="bg-gray-100 border-b">
                   <tr>
                     <th className="px-4 py-3 text-left font-semibold">

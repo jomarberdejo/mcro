@@ -17,12 +17,10 @@ export default async function ViewBirthRecordPage({ params }: ViewPageProps) {
     }
   });
 
-  console.log(record)
 
   if (!record) {
     notFound();
   }
-
 
 
   return <BirthRecordView record={record} />

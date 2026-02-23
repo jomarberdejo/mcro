@@ -27,8 +27,8 @@ export interface SupportingDocument {
 }
 
 interface BirthCertificateCheckData {
-  childFirstName: string;
-  childLastName: string;
+  childFirstName?: string;
+  childLastName?: string;
   childMiddleName?: string;
   registryNo: string;
   recordId?: string;
@@ -63,7 +63,8 @@ export function useBirthRecordForm({
   >([]);
   const [isUploadingDoc, setIsUploadingDoc] = useState(false);
   const [showIncompleteWarning, setShowIncompleteWarning] = useState(false);
-  const [pendingFormData, setPendingFormData] = useState<BirthRecordFormInput | null>(null);
+  const [pendingFormData, setPendingFormData] =
+    useState<BirthRecordFormInput | null>(null);
   const [emptyFields, setEmptyFields] = useState<string[]>([]);
 
   const [registrarSignature, setRegistrarSignature] =
@@ -77,7 +78,6 @@ export function useBirthRecordForm({
   const [isUploadingVerifierSig, setIsUploadingVerifierSig] = useState(false);
   const [isUploadingCertifyingOfficerSig, setIsUploadingCertifyingOfficerSig] =
     useState(false);
-
 
   const form = useForm<BirthRecordFormInput>({
     resolver: zodResolver(birthRecordSchema),
@@ -131,10 +131,6 @@ Doc. Authentication Fee: Ph10.00 doc. Stamp tax: Ph30.00`,
   });
 
   const dateOfMarriage = form.watch("dateOfMarriage");
-
- 
-
-
 
   useEffect(() => {
     if (defaultValues?.registrarSignaturePath) {
@@ -200,7 +196,7 @@ Doc. Authentication Fee: Ph10.00 doc. Stamp tax: Ph30.00`,
   }, [dateOfMarriage, form]);
   const checkEmptyFields = (data: BirthRecordFormInput): string[] => {
     const emptyFields: string[] = [];
-    
+
     const requiredFields: { [key: string]: string } = {
       registryNo: "Registry Number",
       bookNo: "Book Number",
@@ -225,7 +221,10 @@ Doc. Authentication Fee: Ph10.00 doc. Stamp tax: Ph30.00`,
       }
     });
 
-    if (!data.registrarSignaturePath || data.registrarSignaturePath.trim() === "") {
+    if (
+      !data.registrarSignaturePath ||
+      data.registrarSignaturePath.trim() === ""
+    ) {
       emptyFields.push("Registrar Signature");
     }
 
@@ -448,21 +447,29 @@ Doc. Authentication Fee: Ph10.00 doc. Stamp tax: Ph30.00`,
     const files = Array.from(e.target.files || []);
     if (files.length === 0) return;
 
-    const invalidFiles = files.filter(
-      (file) => !file.type.startsWith("image/") || file.size > 5 * 1024 * 1024,
-    );
+    const invalidFiles = files.filter((file) => {
+      const isImage = file.type.startsWith("image/");
+      const isPDF = file.type === "application/pdf";
+
+      if (!isImage && !isPDF) return true; 
+
+      const maxSize = isPDF ? 10 * 1024 * 1024 : 5 * 1024 * 1024; 
+      return file.size > maxSize;
+    });
 
     if (invalidFiles.length > 0) {
-      toast.error("All files must be images under 5MB");
+      toast.error("Only images (max 5MB) and PDFs (max 10MB) are allowed");
       return;
     }
-
+    
     setIsUploadingDoc(true);
 
     try {
       const uploadPromises = files.map(async (file) => {
         const result = await uploadFile(file, "documents");
         const previewUrl = URL.createObjectURL(file);
+
+        console.log("Uploaded file result:", previewUrl);
 
         return {
           id: result.path,
@@ -543,9 +550,7 @@ Doc. Authentication Fee: Ph10.00 doc. Stamp tax: Ph30.00`,
   };
 
   const saveRecord = async (data: BirthRecordFormInput) => {
-
     try {
-
       console.log("data ===", data);
 
       const url = isEditing
@@ -569,6 +574,7 @@ Doc. Authentication Fee: Ph10.00 doc. Stamp tax: Ph30.00`,
           ? "Birth record updated successfully"
           : "Birth record created successfully",
       );
+
       router.push("/admin/birth-certificate");
       router.refresh();
     } catch (error) {
@@ -584,7 +590,6 @@ Doc. Authentication Fee: Ph10.00 doc. Stamp tax: Ph30.00`,
 
     setShowIncompleteWarning(false);
 
-    
     const checkData: BirthCertificateCheckData = {
       childFirstName: pendingFormData.childFirstName,
       childLastName: pendingFormData.childLastName,
@@ -611,14 +616,14 @@ Doc. Authentication Fee: Ph10.00 doc. Stamp tax: Ph30.00`,
       setEmptyFields(foundEmptyFields);
       setPendingFormData(data);
       setShowIncompleteWarning(true);
-      
+
       // toast.warning(
       //   `Some field${foundEmptyFields.length > 1 ? "s are" : " is"} missing`,
       //   {
       //     duration: 3000,
       //   }
       // );f
-      
+
       return;
     }
 

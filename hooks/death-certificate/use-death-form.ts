@@ -33,8 +33,8 @@ export interface SignatureDocument {
 }
 
 interface DeathCertificateCheckData {
-  deceasedFirstName: string;
-  deceasedLastName: string;
+  deceasedFirstName?: string;
+  deceasedLastName?: string;
   deceasedMiddleName?: string;
   registryNo?: string;
   recordId?: string;
@@ -233,7 +233,6 @@ Doc. Authentication Fee: Ph10.00 doc. Stamp tax: Ph30.00`,
     setIsUploadingRegistrarSig(true);
 
     try {
-      // Delete old signature if exists
       if (registrarSignature) {
         await deleteFile(registrarSignature.path);
         if (registrarSignature.preview.startsWith("blob:")) {
@@ -432,12 +431,18 @@ Doc. Authentication Fee: Ph10.00 doc. Stamp tax: Ph30.00`,
     const files = Array.from(e.target.files || []);
     if (files.length === 0) return;
 
-    const invalidFiles = files.filter(
-      (file) => !file.type.startsWith("image/") || file.size > 5 * 1024 * 1024,
-    );
+    const invalidFiles = files.filter((file) => {
+      const isImage = file.type.startsWith("image/");
+      const isPDF = file.type === "application/pdf";
+
+      if (!isImage && !isPDF) return true;
+
+      const maxSize = isPDF ? 10 * 1024 * 1024 : 5 * 1024 * 1024;
+      return file.size > maxSize;
+    });
 
     if (invalidFiles.length > 0) {
-      toast.error("All files must be images under 5MB");
+      toast.error("Only images (max 5MB) and PDFs (max 10MB) are allowed");
       return;
     }
 

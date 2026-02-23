@@ -106,7 +106,6 @@ export const BirthRecordList: React.FC<BirthRecordListProps> = ({
 
           <CardContent>
             <div className="mb-6 flex flex-col gap-4">
-              {/* Child Information */}
               <div>
                 <label className="text-sm font-semibold text-gray-900 mb-2 block">
                   Child Information
@@ -152,7 +151,6 @@ export const BirthRecordList: React.FC<BirthRecordListProps> = ({
                 </div>
               </div>
 
-              {/* Father Information */}
               <div>
                 <label className="text-sm font-semibold text-gray-900 mb-2 block">
                   Father Information
@@ -191,7 +189,6 @@ export const BirthRecordList: React.FC<BirthRecordListProps> = ({
                 </div>
               </div>
 
-              {/* Mother Information */}
               <div>
                 <label className="text-sm font-semibold text-gray-900 mb-2 block">
                   Mother Information
@@ -249,7 +246,7 @@ export const BirthRecordList: React.FC<BirthRecordListProps> = ({
               records
             </div>
 
-            <div className="border rounded-lg overflow-hidden shadow-sm bg-white">
+            <div className="border rounded-lg overflow-auto shadow-sm bg-white">
               <table className="w-full text-sm">
                 <thead className="bg-gray-100 border-b">
                   <tr>

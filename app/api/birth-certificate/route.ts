@@ -3,11 +3,13 @@ import { prisma } from "@/lib/prisma";
 import { birthRecordSchema } from "@/lib/validations/birth-record.schema";
 import { z } from "zod";
 import { getCurrentUser } from "@/lib/user";
+import { logActivity } from "@/lib/audit";
 
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
     const search = searchParams.get("search");
+
 
     const records = await prisma.birthRecord.findMany({
       where: search
@@ -20,7 +22,7 @@ export async function GET(request: NextRequest) {
           }
         : undefined,
       include: {
-        supportingDocuments: true,
+        supportingDocuments: true
       },
       orderBy: { createdAt: "desc" },
     });
@@ -66,6 +68,13 @@ export async function POST(request: NextRequest) {
       include: {
         supportingDocuments: true,
       },
+    });
+
+    await logActivity({
+      userId: user.userId,
+      action: "CREATE",
+      module: "BIRTH_CERTIFICATE",
+      description: `Created birth certificate for ${recordData.childFirstName} ${recordData.childLastName}`,
     });
 
     return NextResponse.json(record, { status: 201 });

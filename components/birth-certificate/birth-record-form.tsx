@@ -26,6 +26,8 @@ import { cn } from "@/lib/utils";
 import { useBirthRecordForm } from "@/hooks/birth-certificate/use-birth-record-form";
 import { DuplicateDialog } from "../duplicate-dialog";
 import { IncompleteFieldsDialog } from "../incomplete-fields-dialog";
+import Link from "next/link";
+import DocumentsUploadForm from "../documents-upload";
 
 interface BirthRecordFormProps {
   recordId?: string;
@@ -77,7 +79,6 @@ export const BirthRecordForm: React.FC<BirthRecordFormProps> = ({
   } = form;
   const isTwinValue = watch("isTwin");
 
-
   return (
     <div className="min-h-screen bg-gray-50 p-8">
       <div className="max-w-5xl mx-auto">
@@ -96,94 +97,12 @@ export const BirthRecordForm: React.FC<BirthRecordFormProps> = ({
 
           <CardContent>
             <div className="mb-6 p-4 border-2 border-dashed border-blue-300 rounded-lg bg-blue-50">
-              <div className="flex items-start gap-4">
-                <FileImage className="w-8 h-8 text-blue-600 mt-1" />
-                <div className="flex-1">
-                  <h4 className="font-semibold text-blue-900 mb-2">
-                    Supporting Documents
-                  </h4>
-                  <p className="text-sm text-blue-700 mb-3">
-                    Upload supporting documents such as birth certificates, IDs,
-                    or other relevant files. You can upload multiple images at
-                    once.
-                  </p>
-
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-3">
-                      <Input
-                        id="documentsUpload"
-                        type="file"
-                        accept="image/png,image/jpeg,image/jpg"
-                        multiple
-                        onChange={handleSupportingDocumentsUpload}
-                        className="hidden"
-                        disabled={isUploadingDoc}
-                      />
-                      <Button
-                        type="button"
-                        variant="default"
-                        onClick={() =>
-                          document.getElementById("documentsUpload")?.click()
-                        }
-                        disabled={isUploadingDoc}
-                      >
-                        {isUploadingDoc ? (
-                          <>
-                            <Loader2 className="w-4 h-4 animate-spin mr-2" />
-                            Uploading...
-                          </>
-                        ) : (
-                          <>
-                            <Upload className="w-4 h-4 mr-2" />
-                            Upload Documents
-                          </>
-                        )}
-                      </Button>
-                      <span className="text-sm text-gray-600">
-                        PNG, JPG up to 5MB each
-                      </span>
-                    </div>
-
-                    {supportingDocuments.length > 0 && (
-                      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 mt-4">
-                        {supportingDocuments.map((doc) => (
-                          <div
-                            key={doc.id}
-                            className="relative border rounded-lg p-2 bg-white group"
-                          >
-                            <Button
-                              type="button"
-                              variant="destructive"
-                              size="sm"
-                              onClick={() => removeSupportingDocument(doc.id)}
-                              className="absolute -top-2 -right-2 h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity z-10"
-                            >
-                              <X className="w-3 h-3" />
-                            </Button>
-                            <div className="relative w-full h-24 bg-gray-100 border rounded overflow-hidden">
-                              <Image
-                                src={doc.preview}
-                                alt={doc.name}
-                                fill
-                                className="object-cover"
-                              />
-                            </div>
-                            <p className="text-xs text-gray-600 mt-1 truncate">
-                              {doc.name}
-                            </p>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-
-                    {supportingDocuments.length > 0 && (
-                      <p className="text-sm text-green-700 font-medium">
-                        ✓ {supportingDocuments.length} document(s) uploaded
-                      </p>
-                    )}
-                  </div>
-                </div>
-              </div>
+              <DocumentsUploadForm 
+                handleSupportingDocumentsUpload={handleSupportingDocumentsUpload}
+                supportingDocuments={supportingDocuments}
+                isUploadingDoc={isUploadingDoc}
+                removeSupportingDocument={removeSupportingDocument}
+              />
             </div>
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
