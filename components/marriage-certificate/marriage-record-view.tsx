@@ -39,12 +39,12 @@ export const marriageStyles = StyleSheet.create({
     flexDirection: "row",
     marginTop: 15,
     marginBottom: 15,
-    paddingLeft: 30,
-    paddingRight: 30,
+    paddingLeft: 15,
+    paddingRight: 15,
   },
   marriageColumn: {
     width: "50%",
-    paddingHorizontal: 10,
+    paddingHorizontal: 5,
   },
   marriageColumnTitle: {
     fontSize: 11,
@@ -63,23 +63,23 @@ export const marriageStyles = StyleSheet.create({
     alignItems: "flex-start",
   },
   marriageFieldLabel: {
-    width: "45%",
+    width: "32%",
     fontSize: 10,
     color: "#333",
   },
   marriageFieldColon: {
-    width: "5%",
+    width: "3%",
     fontSize: 10,
   },
   marriageFieldValue: {
-    width: "50%",
+    width: "53%",
     fontSize: 10,
   },
   marriageFieldValueBold: {
-    width: "50%",
     fontSize: 10,
     fontWeight: "bold",
     textTransform: "uppercase",
+    width: "65%",
   },
   registryInfoContainer: {
     display: "flex",
@@ -91,17 +91,17 @@ export const marriageStyles = StyleSheet.create({
     marginBottom: 4,
   },
   registryInfoFieldLabel: {
-    width: "22%",
+    width: "20%",
     fontSize: 10,
     color: "#333",
   },
   registryInfoFieldColon: {
     fontSize: 10,
-    width: "5%",
+    width: "3%",
   },
   registryInfoFieldValue: {
     fontSize: 10,
-    width: "25%",
+    width: "20%",
   },
 });
 
@@ -156,12 +156,13 @@ const MarriageCertificatePDF: React.FC<MarriageCertificatePDFProps> = ({
                 src="/logos/bagong-pilipinas.png"
                 style={styles.logoSingle}
               />
-
             </View>
           </View>
 
           <View style={styles.headerTitleLargeCont}>
-            <Text style={styles.headerTitleLarge}>OFFICE OF THE MUNICIPAL CIVIL REGISTRAR</Text>
+            <Text style={styles.headerTitleLarge}>
+              OFFICE OF THE MUNICIPAL CIVIL REGISTRAR
+            </Text>
           </View>
         </View>
 
