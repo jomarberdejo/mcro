@@ -285,33 +285,7 @@ export const MarriageCertificateApplicationForm: React.FC<
                       Groom Information
                     </h3>
                     <div className="grid grid-cols-3 gap-4">
-                      <Controller
-                        name="groomLastName"
-                        control={control}
-                        render={({ field, fieldState }) => (
-                          <Field>
-                            <FieldLabel
-                              htmlFor="groomLastName"
-                              className="text-sm font-semibold text-gray-700"
-                            >
-                              Last Name *
-                            </FieldLabel>
-                            <Input
-                              id="groomLastName"
-                              {...field}
-                              className={cn(
-                                "h-11 text-base transition-all",
-                                fieldState.invalid &&
-                                  "border-red-500 focus-visible:ring-red-500",
-                              )}
-                              aria-invalid={fieldState.invalid}
-                            />
-                            {fieldState.error && (
-                              <FieldError errors={[fieldState.error]} />
-                            )}
-                          </Field>
-                        )}
-                      />
+                     
                       <Controller
                         name="groomFirstName"
                         control={control}
@@ -321,7 +295,7 @@ export const MarriageCertificateApplicationForm: React.FC<
                               htmlFor="groomFirstName"
                               className="text-sm font-semibold text-gray-700"
                             >
-                              First Name *
+                              First Name 
                             </FieldLabel>
                             <Input
                               id="groomFirstName"
@@ -358,6 +332,34 @@ export const MarriageCertificateApplicationForm: React.FC<
                           </Field>
                         )}
                       />
+
+                       <Controller
+                        name="groomLastName"
+                        control={control}
+                        render={({ field, fieldState }) => (
+                          <Field>
+                            <FieldLabel
+                              htmlFor="groomLastName"
+                              className="text-sm font-semibold text-gray-700"
+                            >
+                              Last Name 
+                            </FieldLabel>
+                            <Input
+                              id="groomLastName"
+                              {...field}
+                              className={cn(
+                                "h-11 text-base transition-all",
+                                fieldState.invalid &&
+                                  "border-red-500 focus-visible:ring-red-500",
+                              )}
+                              aria-invalid={fieldState.invalid}
+                            />
+                            {fieldState.error && (
+                              <FieldError errors={[fieldState.error]} />
+                            )}
+                          </Field>
+                        )}
+                      />
                     </div>
 
                     <div className="mt-4">
@@ -370,7 +372,7 @@ export const MarriageCertificateApplicationForm: React.FC<
                               htmlFor="groomDateOfBirth"
                               className="text-sm font-semibold text-gray-700"
                             >
-                              Date of Birth *
+                              Date of Birth 
                             </FieldLabel>
                             <Input
                               id="groomDateOfBirth"
@@ -397,33 +399,7 @@ export const MarriageCertificateApplicationForm: React.FC<
                       Bride Information
                     </h3>
                     <div className="grid grid-cols-3 gap-4">
-                      <Controller
-                        name="brideLastName"
-                        control={control}
-                        render={({ field, fieldState }) => (
-                          <Field>
-                            <FieldLabel
-                              htmlFor="brideLastName"
-                              className="text-sm font-semibold text-gray-700"
-                            >
-                              Last Name *
-                            </FieldLabel>
-                            <Input
-                              id="brideLastName"
-                              {...field}
-                              className={cn(
-                                "h-11 text-base transition-all",
-                                fieldState.invalid &&
-                                  "border-red-500 focus-visible:ring-red-500",
-                              )}
-                              aria-invalid={fieldState.invalid}
-                            />
-                            {fieldState.error && (
-                              <FieldError errors={[fieldState.error]} />
-                            )}
-                          </Field>
-                        )}
-                      />
+                     
                       <Controller
                         name="brideFirstName"
                         control={control}
@@ -433,7 +409,7 @@ export const MarriageCertificateApplicationForm: React.FC<
                               htmlFor="brideFirstName"
                               className="text-sm font-semibold text-gray-700"
                             >
-                              First Name *
+                              First Name 
                             </FieldLabel>
                             <Input
                               id="brideFirstName"
@@ -470,6 +446,34 @@ export const MarriageCertificateApplicationForm: React.FC<
                           </Field>
                         )}
                       />
+
+                       <Controller
+                        name="brideLastName"
+                        control={control}
+                        render={({ field, fieldState }) => (
+                          <Field>
+                            <FieldLabel
+                              htmlFor="brideLastName"
+                              className="text-sm font-semibold text-gray-700"
+                            >
+                              Last Name 
+                            </FieldLabel>
+                            <Input
+                              id="brideLastName"
+                              {...field}
+                              className={cn(
+                                "h-11 text-base transition-all",
+                                fieldState.invalid &&
+                                  "border-red-500 focus-visible:ring-red-500",
+                              )}
+                              aria-invalid={fieldState.invalid}
+                            />
+                            {fieldState.error && (
+                              <FieldError errors={[fieldState.error]} />
+                            )}
+                          </Field>
+                        )}
+                      />
                     </div>
 
                     <div className="mt-4">
@@ -482,7 +486,7 @@ export const MarriageCertificateApplicationForm: React.FC<
                               htmlFor="brideDateOfBirth"
                               className="text-sm font-semibold text-gray-700"
                             >
-                              Date of Birth *
+                              Date of Birth 
                             </FieldLabel>
                             <Input
                               id="brideDateOfBirth"

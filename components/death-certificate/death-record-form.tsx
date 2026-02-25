@@ -211,7 +211,7 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
                             htmlFor="dateOfRegistration"
                             className="text-sm font-semibold text-gray-700"
                           >
-                            Date of Registration *
+                            Date of Registration 
                           </FieldLabel>
                           <Input
                             id="dateOfRegistration"
@@ -241,7 +241,7 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
                             htmlFor="certificateDate"
                             className="text-sm font-semibold text-gray-700"
                           >
-                            Certificate Date *
+                            Certificate Date 
                           </FieldLabel>
                           <Input
                             id="certificateDate"
@@ -267,33 +267,7 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
                       Deceased Information
                     </h3>
                     <div className="grid grid-cols-3 gap-4">
-                      <Controller
-                        name="deceasedLastName"
-                        control={control}
-                        render={({ field, fieldState }) => (
-                          <Field>
-                            <FieldLabel
-                              htmlFor="deceasedLastName"
-                              className="text-sm font-semibold text-gray-700"
-                            >
-                              Last Name *
-                            </FieldLabel>
-                            <Input
-                              id="deceasedLastName"
-                              {...field}
-                              className={cn(
-                                "h-11 text-base transition-all",
-                                fieldState.invalid &&
-                                  "border-red-500 focus-visible:ring-red-500",
-                              )}
-                              aria-invalid={fieldState.invalid}
-                            />
-                            {fieldState.error && (
-                              <FieldError errors={[fieldState.error]} />
-                            )}
-                          </Field>
-                        )}
-                      />
+                    
                       <Controller
                         name="deceasedFirstName"
                         control={control}
@@ -303,7 +277,7 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
                               htmlFor="deceasedFirstName"
                               className="text-sm font-semibold text-gray-700"
                             >
-                              First Name *
+                              First Name 
                             </FieldLabel>
                             <Input
                               id="deceasedFirstName"
@@ -337,6 +311,34 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
                               {...field}
                               className="h-11 text-base transition-all"
                             />
+                          </Field>
+                        )}
+                      />
+
+                        <Controller
+                        name="deceasedLastName"
+                        control={control}
+                        render={({ field, fieldState }) => (
+                          <Field>
+                            <FieldLabel
+                              htmlFor="deceasedLastName"
+                              className="text-sm font-semibold text-gray-700"
+                            >
+                              Last Name 
+                            </FieldLabel>
+                            <Input
+                              id="deceasedLastName"
+                              {...field}
+                              className={cn(
+                                "h-11 text-base transition-all",
+                                fieldState.invalid &&
+                                  "border-red-500 focus-visible:ring-red-500",
+                              )}
+                              aria-invalid={fieldState.invalid}
+                            />
+                            {fieldState.error && (
+                              <FieldError errors={[fieldState.error]} />
+                            )}
                           </Field>
                         )}
                       />

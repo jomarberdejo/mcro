@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { birthRecordSchema } from "@/lib/validations/birth-record.schema";
 import { z } from "zod";
 import { getCurrentUser } from "@/lib/user";
-import { logActivity } from "@/lib/audit";
+// import { logActivity } from "@/lib/audit";
 
 export async function GET(request: NextRequest) {
   try {
@@ -70,12 +70,12 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    await logActivity({
-      userId: user.userId,
-      action: "CREATE",
-      module: "BIRTH_CERTIFICATE",
-      description: `Created birth certificate for ${recordData.childFirstName} ${recordData.childLastName}`,
-    });
+    // await logActivity({
+    //   userId: user.userId,
+    //   action: "CREATE",
+    //   module: "BIRTH_CERTIFICATE",
+    //   description: `Created birth certificate for ${recordData.childFirstName} ${recordData.childLastName}`,
+    // });
 
     return NextResponse.json(record, { status: 201 });
   } catch (error) {
