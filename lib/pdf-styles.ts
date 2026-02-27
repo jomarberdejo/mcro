@@ -1,11 +1,12 @@
 import { StyleSheet } from "@react-pdf/renderer";
 
+
 export const styles = StyleSheet.create({
   page: {
     paddingLeft: 72,
     paddingRight: 72,
     paddingTop: 48,
-    fontFamily: "Times-Roman",
+    fontFamily: "Helvetica",
     fontSize: 11,
   },
   headerContainer: {
@@ -39,11 +40,15 @@ export const styles = StyleSheet.create({
     fontSize: 8,
     color: "#666",
     fontStyle: "italic",
+    fontFamily: "Times-Roman",
+
   },
   headerTitleCont: {},
   headerTitle: {
     fontSize: 12,
     textAlign: "left",
+    fontFamily: "Times-Roman",
+
   },
   headerTitleBold: {
     fontSize: 14,
@@ -51,12 +56,16 @@ export const styles = StyleSheet.create({
     marginBottom: 5,
     fontStyle: "italic",
     textAlign: "left",
+    fontFamily: "Times-Roman",
+
   },
   headerTitleLargeCont: {
     position: "absolute",
     bottom: 29,
     left: 60,
     right: 0,
+    fontFamily: "Times-Roman",
+
   },
 
   headerTitleLarge: {
