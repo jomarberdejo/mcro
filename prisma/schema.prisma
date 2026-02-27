@@ -213,6 +213,10 @@ model DeathRecord {
   requestorName      String?
   requestPurpose     String?
 
+  hasParentNames Boolean @default(false)
+  nameOfFather  String?
+  nameOfMother  String?
+
   // Administrative Info
   registrarName             String?
   verifiedBy                String?

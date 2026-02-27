@@ -22,6 +22,7 @@ import {
   SupportingDocument,
 } from "@/lib/generated/prisma/client";
 import { SupportingDocumentsPages } from "@/components/supporting-documents";
+import { useMounted } from "@/hooks/use-mounted";
 
 interface MarriageRecordWithDocuments extends MarriageRecord {
   supportingDocuments?: SupportingDocument[];
@@ -206,9 +207,7 @@ const MarriageCertificatePDF: React.FC<MarriageCertificatePDFProps> = ({
             </View>
 
             <View style={marriageStyles.marriageFieldRow}>
-              <Text style={marriageStyles.marriageFieldLabel}>
-                Civil Status
-              </Text>
+              <Text style={marriageStyles.marriageFieldLabel}>Civil Status</Text>
               <Text style={marriageStyles.marriageFieldColon}>:</Text>
               <Text style={marriageStyles.marriageFieldValue}>
                 {record.husbandCivilStatus}
@@ -268,9 +267,7 @@ const MarriageCertificatePDF: React.FC<MarriageCertificatePDFProps> = ({
             </View>
 
             <View style={marriageStyles.marriageFieldRow}>
-              <Text style={marriageStyles.marriageFieldLabel}>
-                Civil Status
-              </Text>
+              <Text style={marriageStyles.marriageFieldLabel}>Civil Status</Text>
               <Text style={marriageStyles.marriageFieldColon}>:</Text>
               <Text style={marriageStyles.marriageFieldValue}>
                 {record.wifeCivilStatus}
@@ -439,10 +436,12 @@ const MarriageCertificatePDF: React.FC<MarriageCertificatePDFProps> = ({
     </Document>
   );
 };
+
 export const MarriageRecordView: React.FC<{
   record: MarriageRecordWithDocuments;
 }> = ({ record }) => {
   const router = useRouter();
+  const mounted = useMounted();
   const [showPDF, setShowPDF] = useState(true);
   const [isDeleting, setIsDeleting] = useState(false);
   const [pageSize, setPageSize] = useState<"A4" | "LEGAL" | "LETTER">("A4");
@@ -486,7 +485,7 @@ export const MarriageRecordView: React.FC<{
   return (
     <div className="min-h-screen bg-gray-50 p-8">
       <div className="max-w-6xl mx-auto">
-        <div className="mb-4 flex gap-2 items-center">
+        <div className="mb-4 flex gap-2 items-center flex-wrap">
           <Button variant="ghost" onClick={handleBack}>
             <ArrowLeft className="w-4 h-4 mr-2" /> Back to Records
           </Button>
@@ -516,19 +515,22 @@ export const MarriageRecordView: React.FC<{
             </select>
           </div>
 
-          <PDFDownloadLink
-            document={
-              <MarriageCertificatePDF record={record} pageSize={pageSize} />
-            }
-            fileName={`marriage-certificate-${record.registryNo}.pdf`}
-          >
-            {({ loading }) => (
-              <Button disabled={loading}>
-                <Download className="w-4 h-4 mr-2" />
-                {loading ? "Generating..." : "Download PDF"}
-              </Button>
-            )}
-          </PDFDownloadLink>
+          {mounted && (
+            <PDFDownloadLink
+              key={`download-${pageSize}`}
+              document={
+                <MarriageCertificatePDF record={record} pageSize={pageSize} />
+              }
+              fileName={`marriage-certificate-${record.registryNo}.pdf`}
+            >
+              {({ loading }) => (
+                <Button disabled={loading}>
+                  <Download className="w-4 h-4 mr-2" />
+                  {loading ? "Generating..." : "Download PDF"}
+                </Button>
+              )}
+            </PDFDownloadLink>
+          )}
 
           <Button variant="outline" onClick={handleEdit}>
             <Edit2 className="w-4 h-4 mr-2" /> Edit
@@ -543,30 +545,44 @@ export const MarriageRecordView: React.FC<{
             {isDeleting ? "Deleting..." : "Delete"}
           </Button>
 
-          <Button variant="outline" onClick={() => setShowPDF(!showPDF)}>
+          {/* <Button variant="outline" onClick={() => setShowPDF(!showPDF)}>
             <FileText className="w-4 h-4 mr-2" />
             {showPDF ? "Hide" : "Show"} Preview
-          </Button>
+          </Button> */}
         </div>
 
-        {showPDF && (
+        {mounted && showPDF && (
           <div
             className="bg-white shadow-lg rounded-lg overflow-hidden"
             style={{ height: "800px" }}
           >
-            <PDFViewer width="100%" height="100%">
+            <PDFViewer
+              key={`viewer-${pageSize}`}
+              width="100%"
+              height="100%"
+            >
               <MarriageCertificatePDF record={record} pageSize={pageSize} />
             </PDFViewer>
           </div>
         )}
 
-        {!showPDF && (
+        {!mounted && (
+          <div
+            className="bg-white shadow-lg rounded-lg overflow-hidden flex flex-col items-center justify-center gap-3"
+            style={{ height: "800px" }}
+          >
+            <div className="w-10 h-10 border-4 border-gray-200 border-t-blue-500 rounded-full animate-spin" />
+            <p className="text-gray-400 text-sm">Loading PDF preview...</p>
+          </div>
+        )}
+
+        {/* {mounted && !showPDF && (
           <div className="bg-white shadow-lg rounded-lg p-8 text-center">
             <FileText className="w-16 h-16 mx-auto mb-4 text-gray-400" />
             <p className="text-gray-600 mb-4">PDF preview is hidden</p>
             <Button onClick={() => setShowPDF(true)}>Show Preview</Button>
           </div>
-        )}
+        )} */}
       </div>
     </div>
   );
