@@ -80,6 +80,8 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
     formState: { isSubmitting },
   } = form;
 
+  const hasParentNamesValue = form.watch("hasParentNames");
+
   return (
     <div className="min-h-screen bg-gray-50 p-8">
       <div className="max-w-5xl mx-auto">
@@ -98,8 +100,10 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
 
           <CardContent>
             <div className="mb-6 p-4 border-2 border-dashed border-blue-300 rounded-lg bg-blue-50">
-               <DocumentsUploadForm 
-                handleSupportingDocumentsUpload={handleSupportingDocumentsUpload}
+              <DocumentsUploadForm
+                handleSupportingDocumentsUpload={
+                  handleSupportingDocumentsUpload
+                }
                 supportingDocuments={supportingDocuments}
                 isUploadingDoc={isUploadingDoc}
                 removeSupportingDocument={removeSupportingDocument}
@@ -267,7 +271,7 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
                       Deceased Information
                     </h3>
                     <div className="grid grid-cols-3 gap-4">
-                    
+                      
                       <Controller
                         name="deceasedFirstName"
                         control={control}
@@ -314,8 +318,7 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
                           </Field>
                         )}
                       />
-
-                        <Controller
+                      <Controller
                         name="deceasedLastName"
                         control={control}
                         render={({ field, fieldState }) => (
@@ -397,7 +400,7 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
                               htmlFor="age"
                               className="text-sm font-semibold text-gray-700"
                             >
-                              Age 
+                              Age
                             </FieldLabel>
                             <Input
                               id="age"
@@ -470,7 +473,7 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
                               htmlFor="citizenship"
                               className="text-sm font-semibold text-gray-700"
                             >
-                              Citizenship 
+                              Citizenship
                             </FieldLabel>
                             <Input
                               id="citizenship"
@@ -488,6 +491,93 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
                           </Field>
                         )}
                       />
+                    </div>
+
+                    <div className="mt-4">
+                      <Controller
+                        name="hasParentNames"
+                        control={control}
+                        render={({ field }) => (
+                          <div className="flex items-center gap-2">
+                            <input
+                              type="checkbox"
+                              id="hasParentNames"
+                              checked={field.value}
+                              onChange={field.onChange}
+                              className="w-4 h-4 rounded border-gray-300"
+                            />
+                            <FieldLabel
+                              htmlFor="hasParentNames"
+                              className="cursor-pointer text-sm font-medium text-gray-700"
+                            >
+                              Include Parent Names
+                            </FieldLabel>
+                          </div>
+                        )}
+                      />
+                      {hasParentNamesValue && (
+                        <div className="ml-6 mt-3">
+                          <Controller
+                            name="nameOfFather"
+                            control={control}
+                            render={({ field, fieldState }) => (
+                              <Field>
+                                <FieldLabel
+                                  htmlFor="nameOfFather"
+                                  className="text-sm font-semibold text-gray-700"
+                                >
+                                  Name of Father
+                                </FieldLabel>
+                                <Input
+                                  id="nameOfFather"
+                                  placeholder="Enter name of father"
+                                  className={cn(
+                                    "h-11 text-base transition-all",
+                                    fieldState.invalid &&
+                                      "border-red-500 focus-visible:ring-red-500",
+                                  )}
+                                  {...field}
+                                  value={field.value ?? ""}
+                                  aria-invalid={fieldState.invalid}
+                                />
+                                {fieldState.error && (
+                                  <FieldError errors={[fieldState.error]} />
+                                )}
+                              </Field>
+                            )}
+                          />
+
+                          <Controller
+                            name="nameOfMother"
+                            control={control}
+                            render={({ field, fieldState }) => (
+                              <Field>
+                                <FieldLabel
+                                  htmlFor="nameOfMother"
+                                  className="text-sm font-semibold text-gray-700 mt-4"
+                                >
+                                  Name of Mother
+                                </FieldLabel>
+                                <Input
+                                  id="nameOfMother"
+                                  placeholder="Enter name of mother"
+                                  className={cn(
+                                    "h-11 text-base transition-all",
+                                    fieldState.invalid &&
+                                      "border-red-500 focus-visible:ring-red-500",
+                                  )}
+                                  {...field}
+                                  value={field.value ?? ""}
+                                  aria-invalid={fieldState.invalid}
+                                />
+                                {fieldState.error && (
+                                  <FieldError errors={[fieldState.error]} />
+                                )}
+                              </Field>
+                            )}
+                          />
+                        </div>
+                      )}
                     </div>
                   </div>
 
@@ -535,7 +625,7 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
                               htmlFor="placeOfDeath"
                               className="text-sm font-semibold text-gray-700"
                             >
-                              Place of Death 
+                              Place of Death
                             </FieldLabel>
                             <Input
                               id="placeOfDeath"
@@ -565,7 +655,7 @@ export const DeathRecordForm: React.FC<DeathRecordFormProps> = ({
                               htmlFor="causeOfDeath"
                               className="text-sm font-semibold text-gray-700"
                             >
-                              Cause of Death 
+                              Cause of Death
                             </FieldLabel>
                             <Textarea
                               id="causeOfDeath"

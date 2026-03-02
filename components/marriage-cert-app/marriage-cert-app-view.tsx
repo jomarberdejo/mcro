@@ -8,7 +8,6 @@ import {
   Edit2,
   Trash2,
   FileText,
-  Image as ImageIcon,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -19,14 +18,14 @@ import {
   View,
   PDFViewer,
   PDFDownloadLink,
-  Image,
-  StyleSheet,
 } from "@react-pdf/renderer";
 import {
   MarriageCertificateApplication,
   SupportingDocument,
 } from "@/lib/generated/prisma/client";
 import { documentStyles } from "@/lib/pdf-styles";
+import { SupportingDocumentsPages } from "../supporting-documents";
+import { useMounted } from "@/hooks/use-mounted";
 
 interface MarriageCertificateApplicationWithDocuments extends MarriageCertificateApplication {
   supportingDocuments?: SupportingDocument[];
@@ -59,20 +58,7 @@ const SupportingDocumentsPDF: React.FC<SupportingDocumentsPDFProps> = ({
 
   return (
     <Document>
-      {documents.map((doc, index) => (
-        <Page key={doc.id} size={pageSize}>
-          <View style={documentStyles.documentImageContainer}>
-            {doc.mimeType?.startsWith("image/") ? (
-              <Image src={doc.filePath} style={documentStyles.documentImage} />
-            ) : (
-              <Text style={documentStyles.noDocumentsText}>
-                Document preview not available for this file type.
-                {"\n"}File: {doc.fileName}
-              </Text>
-            )}
-          </View>
-        </Page>
-      ))}
+      <SupportingDocumentsPages documents={documents} pageSize={pageSize} />
     </Document>
   );
 };
@@ -81,6 +67,7 @@ export const MarriageCertificateApplicationView: React.FC<{
   application: MarriageCertificateApplicationWithDocuments;
 }> = ({ application }) => {
   const router = useRouter();
+  const mounted = useMounted();
   const [showPDF, setShowPDF] = useState(true);
   const [pageSize, setPageSize] = useState<"A4" | "LEGAL" | "LETTER">("A4");
   const [isDeleting, setIsDeleting] = useState(false);
@@ -138,12 +125,14 @@ export const MarriageCertificateApplicationView: React.FC<{
 
           <div className="flex-1" />
 
-          <div className="flex items-center gap-2 px-4 py-2 bg-blue-100 text-blue-800 rounded-lg">
-            <FileText className="w-4 h-4" />
-            <span className="text-sm font-medium">
-              {documents.length} Document{documents.length !== 1 ? "s" : ""}
-            </span>
-          </div>
+          {documents.length > 0 && (
+            <div className="flex items-center gap-2 px-4 py-2 bg-blue-100 text-blue-800 rounded-lg">
+              <FileText className="w-4 h-4" />
+              <span className="text-sm font-medium">
+                {documents.length} Document{documents.length !== 1 ? "s" : ""}
+              </span>
+            </div>
+          )}
 
           <div className="flex items-center gap-2">
             <label className="text-sm font-medium">Paper Size:</label>
@@ -160,22 +149,25 @@ export const MarriageCertificateApplicationView: React.FC<{
             </select>
           </div>
 
-          <PDFDownloadLink
-            document={
-              <SupportingDocumentsPDF
-                application={application}
-                pageSize={pageSize}
-              />
-            }
-            fileName={`supporting-documents-${application.registryNo}.pdf`}
-          >
-            {({ loading }) => (
-              <Button disabled={loading}>
-                <Download className="w-4 h-4 mr-2" />
-                {loading ? "Generating..." : "Download PDF"}
-              </Button>
-            )}
-          </PDFDownloadLink>
+          {mounted && (
+            <PDFDownloadLink
+              key={`download-${pageSize}`}
+              document={
+                <SupportingDocumentsPDF
+                  application={application}
+                  pageSize={pageSize}
+                />
+              }
+              fileName={`supporting-documents-${application.registryNo}.pdf`}
+            >
+              {({ loading }) => (
+                <Button disabled={loading}>
+                  <Download className="w-4 h-4 mr-2" />
+                  {loading ? "Generating..." : "Download PDF"}
+                </Button>
+              )}
+            </PDFDownloadLink>
+          )}
 
           <Button variant="outline" onClick={handleEdit}>
             <Edit2 className="w-4 h-4 mr-2" /> Edit
@@ -196,12 +188,16 @@ export const MarriageCertificateApplicationView: React.FC<{
           </Button>
         </div>
 
-        {showPDF && (
+        {mounted && showPDF && (
           <div
             className="bg-white shadow-lg rounded-lg overflow-hidden"
             style={{ height: "800px" }}
           >
-            <PDFViewer width="100%" height="100%">
+            <PDFViewer
+              key={`viewer-${pageSize}`}
+              width="100%"
+              height="100%"
+            >
               <SupportingDocumentsPDF
                 application={application}
                 pageSize={pageSize}
@@ -210,7 +206,17 @@ export const MarriageCertificateApplicationView: React.FC<{
           </div>
         )}
 
-        {!showPDF && (
+        {!mounted && (
+          <div
+            className="bg-white shadow-lg rounded-lg overflow-hidden flex flex-col items-center justify-center gap-3"
+            style={{ height: "800px" }}
+          >
+            <div className="w-10 h-10 border-4 border-gray-200 border-t-blue-500 rounded-full animate-spin" />
+            <p className="text-gray-400 text-sm">Loading PDF preview...</p>
+          </div>
+        )}
+
+        {/* {mounted && !showPDF && (
           <div className="bg-white shadow-lg rounded-lg p-8">
             <div className="text-center">
               <Button onClick={() => setShowPDF(true)}>
@@ -219,7 +225,7 @@ export const MarriageCertificateApplicationView: React.FC<{
               </Button>
             </div>
           </div>
-        )}
+        )} */}
       </div>
     </div>
   );

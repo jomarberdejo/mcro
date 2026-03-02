@@ -1,8 +1,15 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Download, Edit2, Trash2, FileText } from "lucide-react";
+import {
+  ArrowLeft,
+  Download,
+  Edit2,
+  Trash2,
+  FileText,
+  Users,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { getFullName } from "@/utils";
@@ -26,11 +33,13 @@ interface DeathRecordWithDocuments extends DeathRecord {
 interface DeathCertificatePDFProps {
   record: DeathRecordWithDocuments;
   pageSize?: "A4" | "LEGAL" | "LETTER";
+  showParentNames?: boolean;
 }
 
 const DeathCertificatePDF: React.FC<DeathCertificatePDFProps> = ({
   record,
   pageSize = "A4",
+  showParentNames = false,
 }) => {
   const deceasedFullName = getFullName(
     record.deceasedLastName,
@@ -43,7 +52,7 @@ const DeathCertificatePDF: React.FC<DeathCertificatePDFProps> = ({
   return (
     <Document>
       <Page size={pageSize} style={styles.page}>
-         <View style={styles.headerContainer}>
+        <View style={styles.headerContainer}>
           <View wrap={false} style={styles.headerRow}>
             <View style={styles.leftColumn}>
               <Image src="/logos/datu-gara-3.png" style={styles.logoDatuGara} />
@@ -74,12 +83,13 @@ const DeathCertificatePDF: React.FC<DeathCertificatePDFProps> = ({
                 src="/logos/bagong-pilipinas.png"
                 style={styles.logoSingle}
               />
-
             </View>
           </View>
 
           <View style={styles.headerTitleLargeCont}>
-            <Text style={styles.headerTitleLarge}>OFFICE OF THE MUNICIPAL CIVIL REGISTRAR</Text>
+            <Text style={styles.headerTitleLarge}>
+              OFFICE OF THE MUNICIPAL CIVIL REGISTRAR
+            </Text>
           </View>
         </View>
 
@@ -153,6 +163,25 @@ const DeathCertificatePDF: React.FC<DeathCertificatePDFProps> = ({
           <Text style={styles.fieldColon}>:</Text>
           <Text style={styles.fieldValue}>{record.causeOfDeath}</Text>
         </View>
+
+        {showParentNames && record.hasParentNames && (
+          <>
+            {record.nameOfFather && (
+              <View style={styles.fieldRow}>
+                <Text style={styles.fieldLabel}>Name of Father</Text>
+                <Text style={styles.fieldColon}>:</Text>
+                <Text style={styles.fieldValue}>{record.nameOfFather}</Text>
+              </View>
+            )}
+            {record.nameOfMother && (
+              <View style={styles.fieldRow}>
+                <Text style={styles.fieldLabel}>Name of Mother</Text>
+                <Text style={styles.fieldColon}>:</Text>
+                <Text style={styles.fieldValue}>{record.nameOfMother}</Text>
+              </View>
+            )}
+          </>
+        )}
 
         {record.remarks && (
           <View style={styles.remarksSection}>
@@ -251,9 +280,15 @@ export const DeathRecordView: React.FC<{
   record: DeathRecordWithDocuments;
 }> = ({ record }) => {
   const router = useRouter();
-  const [showPDF, setShowPDF] = useState(true);
+  const [mounted, setMounted] = useState(false);
+  // const [showPDF, setShowPDF] = useState(true);
   const [isDeleting, setIsDeleting] = useState(false);
   const [pageSize, setPageSize] = useState<"A4" | "LEGAL" | "LETTER">("A4");
+  const [showParentNames, setShowParentNames] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const handleBack = () => {
     router.push("/admin/death-certificate");
@@ -294,13 +329,12 @@ export const DeathRecordView: React.FC<{
   return (
     <div className="min-h-screen bg-gray-50 p-8">
       <div className="max-w-6xl mx-auto">
-        <div className="mb-4 flex gap-2 items-center">
+        <div className="mb-4 flex gap-2 items-center flex-wrap">
           <Button variant="ghost" onClick={handleBack}>
             <ArrowLeft className="w-4 h-4 mr-2" /> Back to Records
           </Button>
 
-          {/* Document Count Badge */}
-          {documents.length > 0 && (
+          {/* {documents.length > 0 && (
             <div className="flex items-center gap-2 px-4 py-2 bg-blue-100 text-blue-800 rounded-lg">
               <FileText className="w-4 h-4" />
               <span className="text-sm font-medium">
@@ -308,7 +342,7 @@ export const DeathRecordView: React.FC<{
                 {documents.length !== 1 ? "s" : ""}
               </span>
             </div>
-          )}
+          )} */}
 
           <div className="flex items-center gap-2">
             <label className="text-sm font-medium">Paper Size:</label>
@@ -325,19 +359,36 @@ export const DeathRecordView: React.FC<{
             </select>
           </div>
 
-          <PDFDownloadLink
-            document={
-              <DeathCertificatePDF record={record} pageSize={pageSize} />
-            }
-            fileName={`death-certificate-${record.registryNo}.pdf`}
-          >
-            {({ loading }) => (
-              <Button disabled={loading}>
-                <Download className="w-4 h-4 mr-2" />
-                {loading ? "Generating..." : "Download PDF"}
-              </Button>
-            )}
-          </PDFDownloadLink>
+          {record.hasParentNames && (
+            <Button
+              variant={showParentNames ? "default" : "outline"}
+              onClick={() => setShowParentNames((prev) => !prev)}
+            >
+              <Users className="w-4 h-4 mr-2" />
+              {showParentNames ? "Hide Parent Names" : "Show Parent Names"}
+            </Button>
+          )}
+
+          {mounted && (
+            <PDFDownloadLink
+              key={`download-${showParentNames}`} 
+              document={
+                <DeathCertificatePDF
+                  record={record}
+                  pageSize={pageSize}
+                  showParentNames={showParentNames}
+                />
+              }
+              fileName={`death-certificate-${record.registryNo}.pdf`}
+            >
+              {({ loading }) => (
+                <Button disabled={loading}>
+                  <Download className="w-4 h-4 mr-2" />
+                  {loading ? "Generating..." : "Download PDF"}
+                </Button>
+              )}
+            </PDFDownloadLink>
+          )}
 
           <Button variant="outline" onClick={handleEdit}>
             <Edit2 className="w-4 h-4 mr-2" /> Edit
@@ -351,31 +402,35 @@ export const DeathRecordView: React.FC<{
             <Trash2 className="w-4 h-4 mr-2" />
             {isDeleting ? "Deleting..." : "Delete"}
           </Button>
-
-          {/* <Button variant="outline" onClick={() => setShowPDF(!showPDF)}>
-            <FileText className="w-4 h-4 mr-2" />
-            {showPDF ? "Hide" : "Show"} Preview
-          </Button> */}
         </div>
 
-        {showPDF && (
+        {mounted && (
           <div
             className="bg-white shadow-lg rounded-lg overflow-hidden"
             style={{ height: "800px" }}
           >
-            <PDFViewer width="100%" height="100%">
-              <DeathCertificatePDF record={record} pageSize={pageSize} />
+            <PDFViewer
+              key={`viewer-${showParentNames}-${pageSize}`}  // <-- forces full remount on toggle or page size change
+              width="100%"
+              height="100%"
+            >
+              <DeathCertificatePDF
+                record={record}
+                pageSize={pageSize}
+                showParentNames={showParentNames}
+              />
             </PDFViewer>
           </div>
         )}
 
-        {/* {!showPDF && (
-          <div className="bg-white shadow-lg rounded-lg p-8 text-center">
-            <FileText className="w-16 h-16 mx-auto mb-4 text-gray-400" />
-            <p className="text-gray-600 mb-4">PDF preview is hidden</p>
-            <Button onClick={() => setShowPDF(true)}>Show Preview</Button>
+        {!mounted && (
+          <div
+            className="bg-white shadow-lg rounded-lg overflow-hidden flex items-center justify-center"
+            style={{ height: "800px" }}
+          >
+            <p className="text-gray-400 text-sm">Loading preview...</p>
           </div>
-        )} */}
+        )}
       </div>
     </div>
   );

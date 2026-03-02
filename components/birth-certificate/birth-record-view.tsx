@@ -18,6 +18,7 @@ import {
 import { styles } from "@/lib/pdf-styles";
 import { BirthRecord, SupportingDocument } from "@/lib/generated/prisma/client";
 import { SupportingDocumentsPages } from "@/components/supporting-documents";
+import { useMounted } from "@/hooks/use-mounted";
 
 interface BirthRecordWithDocuments extends BirthRecord {
   supportingDocuments?: SupportingDocument[];
@@ -293,7 +294,6 @@ const BirthCertificatePDF: React.FC<BirthCertificatePDFProps> = ({
       </Page>
 
       <SupportingDocumentsPages documents={documents} pageSize={pageSize} />
-      
     </Document>
   );
 };
@@ -302,6 +302,7 @@ export const BirthRecordView: React.FC<{
   record: BirthRecordWithDocuments;
 }> = ({ record }) => {
   const router = useRouter();
+  const mounted = useMounted(); // <-- replaces useState + useEffect
   const [showPDF, setShowPDF] = useState(true);
   const [isDeleting, setIsDeleting] = useState(false);
   const [pageSize, setPageSize] = useState<"A4" | "LEGAL" | "LETTER">("A4");
@@ -345,12 +346,12 @@ export const BirthRecordView: React.FC<{
   return (
     <div className="min-h-screen bg-gray-50 p-8">
       <div className="max-w-6xl mx-auto">
-        <div className="mb-4 flex gap-2 items-center">
+        <div className="mb-4 flex gap-2 items-center flex-wrap">
           <Button variant="ghost" onClick={handleBack}>
             <ArrowLeft className="w-4 h-4 mr-2" /> Back to Records
           </Button>
 
-          {documents.length > 0 && (
+          {/* {documents.length > 0 && (
             <div className="flex items-center gap-2 px-4 py-2 bg-blue-100 text-blue-800 rounded-lg">
               <FileText className="w-4 h-4" />
               <span className="text-sm font-medium">
@@ -358,7 +359,7 @@ export const BirthRecordView: React.FC<{
                 {documents.length !== 1 ? "s" : ""}
               </span>
             </div>
-          )}
+          )} */}
 
           <div className="flex items-center gap-2">
             <label className="text-sm font-medium">Paper Size:</label>
@@ -375,19 +376,22 @@ export const BirthRecordView: React.FC<{
             </select>
           </div>
 
-          <PDFDownloadLink
-            document={
-              <BirthCertificatePDF record={record} pageSize={pageSize} />
-            }
-            fileName={`birth-certificate-${record.registryNo}.pdf`}
-          >
-            {({ loading }) => (
-              <Button disabled={loading}>
-                <Download className="w-4 h-4 mr-2" />
-                {loading ? "Generating..." : "Download PDF"}
-              </Button>
-            )}
-          </PDFDownloadLink>
+          {mounted && (
+            <PDFDownloadLink
+              key={`download-${pageSize}`}
+              document={
+                <BirthCertificatePDF record={record} pageSize={pageSize} />
+              }
+              fileName={`birth-certificate-${record.registryNo}.pdf`}
+            >
+              {({ loading }) => (
+                <Button disabled={loading}>
+                  <Download className="w-4 h-4 mr-2" />
+                  {loading ? "Generating..." : "Download PDF"}
+                </Button>
+              )}
+            </PDFDownloadLink>
+          )}
 
           <Button variant="outline" onClick={handleEdit}>
             <Edit2 className="w-4 h-4 mr-2" /> Edit
@@ -401,29 +405,30 @@ export const BirthRecordView: React.FC<{
             <Trash2 className="w-4 h-4 mr-2" />
             {isDeleting ? "Deleting..." : "Delete"}
           </Button>
-
-          {/* <Button variant="outline" onClick={() => setShowPDF(!showPDF)}>
-            <FileText className="w-4 h-4 mr-2" />
-            {showPDF ? "Hide" : "Show"} Preview
-          </Button> */}
         </div>
 
-        {showPDF && (
+        {mounted && showPDF && (
           <div
             className="bg-white shadow-lg rounded-lg overflow-hidden"
             style={{ height: "800px" }}
           >
-            <PDFViewer width="100%" height="100%">
+            <PDFViewer
+              key={`viewer-${pageSize}`}
+              width="100%"
+              height="100%"
+            >
               <BirthCertificatePDF record={record} pageSize={pageSize} />
             </PDFViewer>
           </div>
         )}
 
-        {!showPDF && (
-          <div className="bg-white shadow-lg rounded-lg p-8 text-center">
-            <FileText className="w-16 h-16 mx-auto mb-4 text-gray-400" />
-            <p className="text-gray-600 mb-4">PDF preview is hidden</p>
-            <Button onClick={() => setShowPDF(true)}>Show Preview</Button>
+        {!mounted && (
+          <div
+            className="bg-white shadow-lg rounded-lg overflow-hidden flex flex-col items-center justify-center gap-3"
+            style={{ height: "800px" }}
+          >
+            <div className="w-10 h-10 border-4 border-gray-200 border-t-blue-500 rounded-full animate-spin" />
+            <p className="text-gray-400 text-sm">Loading PDF preview...</p>
           </div>
         )}
       </div>

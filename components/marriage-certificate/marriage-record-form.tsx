@@ -288,7 +288,7 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                               htmlFor="dateOfMarriage"
                               className="text-sm font-semibold text-gray-700"
                             >
-                              Date of Marriage 
+                              Date of Marriage
                             </FieldLabel>
                             <Input
                               id="dateOfMarriage"
@@ -317,7 +317,7 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                               htmlFor="placeOfMarriage"
                               className="text-sm font-semibold text-gray-700"
                             >
-                              Place of Marriage 
+                              Place of Marriage
                             </FieldLabel>
                             <Input
                               id="placeOfMarriage"
@@ -368,7 +368,7 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                             htmlFor="certificateDate"
                             className="text-sm font-semibold text-gray-700"
                           >
-                            Certificate Date 
+                            Certificate Date
                           </FieldLabel>
                           <Input
                             id="certificateDate"
@@ -404,7 +404,7 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                               htmlFor="husbandFirstName"
                               className="text-sm font-semibold text-gray-700"
                             >
-                              First Name 
+                              First Name
                             </FieldLabel>
                             <Input
                               id="husbandFirstName"
@@ -441,7 +441,7 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                           </Field>
                         )}
                       />
-                       <Controller
+                      <Controller
                         name="husbandLastName"
                         control={control}
                         render={({ field, fieldState }) => (
@@ -450,7 +450,7 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                               htmlFor="husbandLastName"
                               className="text-sm font-semibold text-gray-700"
                             >
-                              Last Name 
+                              Last Name
                             </FieldLabel>
                             <Input
                               id="husbandLastName"
@@ -631,7 +631,7 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                               htmlFor="wifeFirstName"
                               className="text-sm font-semibold text-gray-700"
                             >
-                              First Name 
+                              First Name
                             </FieldLabel>
                             <Input
                               id="wifeFirstName"
@@ -668,8 +668,7 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                           </Field>
                         )}
                       />
-
-                       <Controller
+                      <Controller
                         name="wifeLastName"
                         control={control}
                         render={({ field, fieldState }) => (
@@ -678,7 +677,7 @@ export const MarriageRecordForm: React.FC<MarriageRecordFormProps> = ({
                               htmlFor="wifeLastName"
                               className="text-sm font-semibold text-gray-700"
                             >
-                              Last Name 
+                              Last Name
                             </FieldLabel>
                             <Input
                               id="wifeLastName"

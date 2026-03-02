@@ -25,6 +25,9 @@ export const deathRecordSchema = z.object({
 
   // Registration Details
   dateOfRegistration: z.string().optional().default(""),
+  hasParentNames: z.boolean().optional().default(false),
+  nameOfFather: z.string().optional().default(""),
+  nameOfMother: z.string().optional().default(""),
 
   // Request Information
   requestorName: z.string().optional().default(""),

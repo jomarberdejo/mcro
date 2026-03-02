@@ -154,6 +154,9 @@ export function transformDeathRecord(
     dateOfDeath: record.dateOfDeath ?? "",
     placeOfDeath: record.placeOfDeath ?? "",
     causeOfDeath: record.causeOfDeath ?? "",
+    hasParentNames: record.hasParentNames ?? false,
+    nameOfFather: record.nameOfFather ?? "",
+    nameOfMother: record.nameOfMother ?? "",
 
     requestorName: record.requestorName ?? "",
     requestPurpose: record.requestPurpose ?? "",
