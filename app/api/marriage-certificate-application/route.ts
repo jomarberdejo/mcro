@@ -2,13 +2,18 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { marriageCertificateApplicationSchema } from "@/lib/validations/marriage-cert-app.schema";
 import { z } from "zod";
+import { logActivity } from "@/lib/audit";
+import { getCurrentUser } from "@/lib/user";
 
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
     const search = searchParams.get("search");
 
-    console.log("Fetching marriage certificate applications with search:", search);
+    console.log(
+      "Fetching marriage certificate applications with search:",
+      search,
+    );
 
     const applications = await prisma.marriageCertificateApplication.findMany({
       where: search
@@ -23,8 +28,8 @@ export async function GET(request: NextRequest) {
           }
         : undefined,
       orderBy: { createdAt: "desc" },
-       include: {
-        supportingDocuments: true
+      include: {
+        supportingDocuments: true,
       },
     });
 
@@ -40,6 +45,10 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    const user = await getCurrentUser();
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
     const body = await request.json();
     const validatedData = marriageCertificateApplicationSchema.parse(body);
 
@@ -61,6 +70,13 @@ export async function POST(request: NextRequest) {
       include: {
         supportingDocuments: true,
       },
+    });
+
+    await logActivity({
+      userId: user.userId,
+      action: "CREATE",
+      module: "AML",
+      description: `Created marr certificate for ${applicationData.groomFirstName}  ${applicationData.groomLastName} and ${applicationData.brideFirstName} ${applicationData.brideLastName}`,
     });
 
     return NextResponse.json(application, { status: 201 });

@@ -6,6 +6,7 @@ export interface JWTPayload extends JoseJWTPayload {
   userId: string;
   username: string;
   office: string | null;
+  role: "ADMIN" | "STAFF";
 }
 
 export async function verifyAuth(token: string): Promise<JWTPayload | null> {
@@ -16,7 +17,8 @@ export async function verifyAuth(token: string): Promise<JWTPayload | null> {
     if (
       typeof payload.userId === "string" &&
       typeof payload.username === "string" &&
-      (typeof payload.office === "string" || payload.office === null)
+      (typeof payload.office === "string" || payload.office === null) &&
+      (payload.role === "ADMIN" || payload.role === "STAFF")
     ) {
       return payload as JWTPayload;
     }

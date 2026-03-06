@@ -1,4 +1,30 @@
-import { StyleSheet } from "@react-pdf/renderer";
+import { StyleSheet, Font } from "@react-pdf/renderer";
+
+Font.register({
+  family: "Arial Narrow",
+  fonts: [
+    {
+      src: "/fonts/arialnarrow.ttf",
+      fontWeight: "normal",
+      fontStyle: "normal",
+    },
+    {
+      src: "/fonts/arialnarrow_bold.ttf",
+      fontWeight: "bold",
+      fontStyle: "normal",
+    },
+    {
+      src: "/fonts/arialnarrow_italic.ttf",
+      fontWeight: "normal",
+      fontStyle: "italic",
+    },
+    {
+      src: "/fonts/arialnarrow_bolditalic.ttf",
+      fontWeight: "bold",
+      fontStyle: "italic",
+    },
+  ],
+});
 
 
 export const styles = StyleSheet.create({
@@ -6,7 +32,7 @@ export const styles = StyleSheet.create({
     paddingLeft: 72,
     paddingRight: 72,
     paddingTop: 48,
-    fontFamily: "Helvetica",
+    fontFamily: "Arial Narrow",
     fontSize: 11,
   },
   headerContainer: {

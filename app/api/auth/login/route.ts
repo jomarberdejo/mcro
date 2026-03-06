@@ -28,6 +28,7 @@ export async function POST(request: NextRequest) {
         name: true,
         email: true,
         office: true,
+        role: true,
       },
     });
 
@@ -51,6 +52,7 @@ export async function POST(request: NextRequest) {
       userId: user.id,
       username: user.username,
       office: user.office,
+      role: user.role,
     })
       .setProtectedHeader({ alg: "HS256" })
       .setJti(nanoid())

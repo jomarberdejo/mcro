@@ -7,6 +7,7 @@ import {
   Cross,
   ClipboardList,
   LayoutDashboard,
+  ShieldCheck,
 } from "lucide-react";
 
 import { NavMain } from "@/components/navigation/nav-main";
@@ -24,83 +25,69 @@ import Image from "next/image";
 import Link from "next/link";
 import { useAuth } from "@/hooks/auth/use-auth";
 
-const data = {
-  navMain: [
-    {
-      title: "Dashboard",
-      url: "/admin/dashboard",
-      icon: LayoutDashboard,
-      color: "text-blue-600",
-    },
-    {
-      title: "Birth Certificate",
-      url: "/admin/birth-certificate",
-      icon: FileText,
-      color: "text-green-600",
-      items: [
-        {
-          title: "View Records",
-          url: "/admin/birth-certificate",
-        },
-        {
-          title: "Add New Record",
-          url: "/admin/birth-certificate/new",
-        },
-      ],
-    },
-    {
-      title: "Death Certificate",
-      url: "/admin/death-certificate",
-      icon: Cross,
-      color: "text-black",
-      items: [
-        {
-          title: "View Records",
-          url: "/admin/death-certificate",
-        },
-        {
-          title: "Add New Record",
-          url: "/admin/death-certificate/new",
-        },
-      ],
-    },
-    {
-      title: "Marriage Certificate",
-      url: "/admin/marriage-certificate",
-      icon: Heart,
-      color: "text-red-600",
-      items: [
-        {
-          title: "View Records",
-          url: "/admin/marriage-certificate",
-        },
-        {
-          title: "Add New Record",
-          url: "/admin/marriage-certificate/new",
-        },
-      ],
-    },
-    {
-      title: "AML",
-      url: "/admin/marriage-cert-app",
-      icon: ClipboardList,
-      color: "text-violet-600",
-      items: [
-        {
-          title: "View Applications",
-          url: "/admin/marriage-cert-app",
-        },
-        {
-          title: "Add New Application",
-          url: "/admin/marriage-cert-app/new",
-        },
-      ],
-    },
-  ],
-};
+const baseNav = [
+  {
+    title: "Dashboard",
+    url: "/admin/dashboard",
+    icon: LayoutDashboard,
+    color: "text-blue-600",
+  },
+  {
+    title: "Birth Certificate",
+    url: "/admin/birth-certificate",
+    icon: FileText,
+    color: "text-green-600",
+    items: [
+      { title: "View Records",   url: "/admin/birth-certificate" },
+      { title: "Add New Record", url: "/admin/birth-certificate/new" },
+    ],
+  },
+  {
+    title: "Death Certificate",
+    url: "/admin/death-certificate",
+    icon: Cross,
+    color: "text-black",
+    items: [
+      { title: "View Records",   url: "/admin/death-certificate" },
+      { title: "Add New Record", url: "/admin/death-certificate/new" },
+    ],
+  },
+  {
+    title: "Marriage Certificate",
+    url: "/admin/marriage-certificate",
+    icon: Heart,
+    color: "text-red-600",
+    items: [
+      { title: "View Records",   url: "/admin/marriage-certificate" },
+      { title: "Add New Record", url: "/admin/marriage-certificate/new" },
+    ],
+  },
+  {
+    title: "AML",
+    url: "/admin/marriage-cert-app",
+    icon: ClipboardList,
+    color: "text-violet-600",
+    items: [
+      { title: "View Applications", url: "/admin/marriage-cert-app" },
+      { title: "Add New Application", url: "/admin/marriage-cert-app/new" },
+    ],
+  },
+];
+
+const adminOnlyNav = [
+  {
+    title: "Audit Trail",
+    url: "/admin/audit-trail",
+    icon: ShieldCheck,
+    color: "text-amber-600",
+  },
+];
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { user } = useAuth();
+
+  const navItems =
+    user?.role === "ADMIN" ? [...baseNav, ...adminOnlyNav] : baseNav;
 
   return (
     <Sidebar variant="inset" {...props}>
@@ -129,7 +116,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
 
       <SidebarContent>
-        <NavMain items={data.navMain} />
+        <NavMain items={navItems} />
       </SidebarContent>
 
       <SidebarFooter>

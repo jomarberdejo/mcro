@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { marriageRecordSchema } from "@/lib/validations/marriage-record.schema";
 import { z } from "zod";
+import { getCurrentUser } from "@/lib/user";
+import { logActivity } from "@/lib/audit";
 
 export async function GET(request: NextRequest) {
   try {
@@ -20,8 +22,8 @@ export async function GET(request: NextRequest) {
             ],
           }
         : undefined,
-       include: {
-        supportingDocuments: true
+      include: {
+        supportingDocuments: true,
       },
       orderBy: { createdAt: "desc" },
     });
@@ -31,20 +33,22 @@ export async function GET(request: NextRequest) {
     console.error("Error fetching marriage records:", error);
     return NextResponse.json(
       { error: "Failed to fetch marriage records" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
 export async function POST(request: NextRequest) {
   try {
+    const user = await getCurrentUser();
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
     const body = await request.json();
     const validatedData = marriageRecordSchema.parse(body);
 
-    // Destructure to separate supportingDocuments
     const { supportingDocuments, ...recordData } = validatedData;
 
-    // Create record with nested document creation
     const record = await prisma.marriageRecord.create({
       data: {
         ...recordData,
@@ -54,7 +58,7 @@ export async function POST(request: NextRequest) {
             fileName: doc.fileName,
             fileSize: doc.fileSize,
             mimeType: doc.mimeType,
-            type: 'MARRIAGE_CERTIFICATE',
+            type: "MARRIAGE_CERTIFICATE",
           })),
         },
       },
@@ -63,27 +67,30 @@ export async function POST(request: NextRequest) {
       },
     });
 
+    await logActivity({
+      userId: user.userId,
+      action: "CREATE",
+      module: "Marriage Certificate",
+      description: `Created marr certificate for ${recordData.husbandFirstName}  ${recordData.husbandLastName} and ${recordData.wifeFirstName} ${recordData.wifeLastName}`,
+    });
+
     return NextResponse.json(record, { status: 201 });
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: "Validation failed", details: error.issues },
-        { status: 400 }
+        { status: 400 },
       );
     }
-    
+
     if (error instanceof Error) {
-      return NextResponse.json(
-        { error: error.message },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: error.message }, { status: 500 });
     }
-    
+
     console.error("Error creating marriage record:", error);
     return NextResponse.json(
       { error: "Failed to create marriage record" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
-

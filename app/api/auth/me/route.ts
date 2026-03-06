@@ -23,7 +23,6 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Get fresh user data
     const user = await prisma.user.findUnique({
       where: { id: payload.userId },
       select: {
