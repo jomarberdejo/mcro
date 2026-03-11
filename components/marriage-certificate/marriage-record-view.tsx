@@ -40,12 +40,9 @@ export const marriageStyles = StyleSheet.create({
     flexDirection: "row",
     marginTop: 15,
     marginBottom: 15,
-    paddingLeft: 15,
-    paddingRight: 15,
   },
   marriageColumn: {
     width: "50%",
-    paddingHorizontal: 5,
   },
   marriageColumnTitle: {
     fontSize: 11,
@@ -432,7 +429,7 @@ const MarriageCertificatePDF: React.FC<MarriageCertificatePDFProps> = ({
         </View>
       </Page>
 
-      <SupportingDocumentsPages documents={documents} pageSize={pageSize} />
+      {/* <SupportingDocumentsPages documents={documents} pageSize={pageSize} /> */}
     </Document>
   );
 };
