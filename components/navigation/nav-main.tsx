@@ -65,11 +65,22 @@ export function NavMain({
                   asChild
                   tooltip={item.title}
                   isActive={isActive}
-                  className="text-base py-6"
+                  className="
+                    group text-base py-6 rounded-lg origin-left
+                    transition-all duration-200
+                    hover:scale-105 hover:translate-x-1
+                    hover:shadow-md hover:font-bold
+                  "
                   onClick={() => setOpenItem(null)}
                 >
                   <Link href={item.url}>
-                    <item.icon className={`shrink-0 ${item.color}`} />
+                    <item.icon
+                      className={`
+                        shrink-0 transition-transform duration-200
+                        group-hover:scale-125
+                        ${item.color}
+                      `}
+                    />
                     <span className={item.color}>{item.title}</span>
                   </Link>
                 </SidebarMenuButton>
@@ -90,9 +101,20 @@ export function NavMain({
                 <CollapsibleTrigger asChild>
                   <SidebarMenuButton
                     tooltip={item.title}
-                    className="text-base py-6"
+                    className="
+                      group text-base py-6 rounded-lg origin-left
+                      transition-all duration-200
+                      hover:scale-105 hover:translate-x-1
+                      hover:shadow-md hover:font-bold
+                    "
                   >
-                    <item.icon className={`shrink-0 ${item.color}`} />
+                    <item.icon
+                      className={`
+                        shrink-0 transition-transform duration-200
+                        group-hover:scale-125
+                        ${item.color}
+                      `}
+                    />
                     <span className={item.color}>{item.title}</span>
                     <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
                   </SidebarMenuButton>
@@ -108,7 +130,12 @@ export function NavMain({
                           <SidebarMenuSubButton
                             asChild
                             isActive={isSubActive}
-                            className="text-base py-5"
+                            className="
+                              group text-base py-5 rounded-lg origin-left
+                              transition-all duration-200
+                              hover:scale-105 hover:translate-x-1
+                              hover:shadow-sm hover:font-semibold
+                            "
                           >
                             <Link href={subItem.url}>
                               <span>{subItem.title}</span>

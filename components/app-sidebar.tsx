@@ -69,7 +69,7 @@ const baseNav = [
     icon: ClipboardList,
     color: "text-violet-600",
     items: [
-      { title: "View Applications", url: "/admin/marriage-cert-app" },
+      { title: "View Applications",   url: "/admin/marriage-cert-app" },
       { title: "Add New Application", url: "/admin/marriage-cert-app/new" },
     ],
   },
@@ -102,8 +102,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   // Only add admin items after client mount to avoid Radix ID mismatch.
   const navItems =
     mounted && user?.role === "ADMIN" ? [...baseNav, ...adminOnlyNav] : baseNav;
-
-    // mounted && user?.role === "ADMIN" ? [...baseNav] : baseNav;
 
   return (
     <Sidebar variant="inset" {...props}>
