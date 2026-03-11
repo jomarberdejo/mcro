@@ -1,9 +1,11 @@
-import { MarriageCertificateApplication } from "@/lib/generated/prisma/client";
+import {
+  MarriageCertificateApplication,
+  SupportingDocument,
+} from "@/lib/generated/prisma/client";
 
 export type PageMode = "list" | "form" | "view";
 
 // ==================== BIRTH RECORDS ====================
-
 
 export interface BirthRecord {
   id: string;
@@ -18,9 +20,9 @@ export interface BirthRecord {
   dateOfBirth: string;
   placeOfBirth?: string | null;
   isTwin: boolean;
-  typeOfBirth?: string | null,
+  typeOfBirth?: string | null;
   birthOrder?: string | null;
-  timeOfBirth?: string | null,
+  timeOfBirth?: string | null;
   motherLastName?: string | null;
   motherFirstName?: string | null;
   motherMiddleName?: string | null;
@@ -43,6 +45,7 @@ export interface BirthRecord {
   signatureImagePath?: string | null;
   userId?: string | null;
   createdAt?: string | null;
+  supportingDocuments?: SupportingDocument[];
 }
 
 export interface BirthRecordViewProps {
@@ -74,12 +77,12 @@ export interface BirthRecordFormProps {
 }
 
 export type BirthOnChangeHandler = (
-  name: keyof BirthRecord
+  name: keyof BirthRecord,
 ) => (
   value:
     | string
     | React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-    | boolean
+    | boolean,
 ) => void;
 
 export interface BirthFilterState {
@@ -161,6 +164,7 @@ export interface DeathRecord {
   processFeeInfo: string;
   remarks: string;
   signatureImage: string;
+  supportingDocuments?: SupportingDocument[];
 }
 
 export interface DeathRecordViewProps {
@@ -192,12 +196,12 @@ export interface DeathRecordFormProps {
 }
 
 export type DeathOnChangeHandler = (
-  name: keyof DeathRecord
+  name: keyof DeathRecord,
 ) => (
   value:
     | string
     | React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-    | number
+    | number,
 ) => void;
 
 export interface DeathFilterState {
@@ -205,6 +209,8 @@ export interface DeathFilterState {
   deceasedFirstName: string;
   deceasedMiddleName?: string;
   dateOfDeath: string;
+  nameOfFather?: string;
+  nameOfMother?: string;
 }
 
 export const DEATH_PREFIX = "death_record:";
@@ -275,6 +281,7 @@ export interface MarriageRecord {
   processFeeInfo: string;
   remarks: string;
   signatureImage: string;
+  supportingDocuments?: SupportingDocument[];
 }
 
 export interface MarriageRecordViewProps {
@@ -306,12 +313,12 @@ export interface MarriageRecordFormProps {
 }
 
 export type MarriageOnChangeHandler = (
-  name: keyof MarriageRecord
+  name: keyof MarriageRecord,
 ) => (
   value:
     | string
     | React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-    | number
+    | number,
 ) => void;
 
 export interface MarriageFilterState {
@@ -363,10 +370,6 @@ export const emptyMarriageRecord = (): MarriageRecord => ({
   remarks: "",
   signatureImage: "",
 });
-
-
-
-
 
 // ==================== SHARED TYPES ====================
 

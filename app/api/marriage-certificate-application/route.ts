@@ -76,7 +76,7 @@ export async function POST(request: NextRequest) {
       userId: user.userId,
       action: "CREATE",
       module: "AML",
-      description: `Created marr certificate for ${applicationData.groomFirstName}  ${applicationData.groomLastName} and ${applicationData.brideFirstName} ${applicationData.brideLastName}`,
+      description: `Created marriage certificate for ${applicationData.groomFirstName}  ${applicationData.groomLastName} and ${applicationData.brideFirstName} ${applicationData.brideLastName}`,
     });
 
     return NextResponse.json(application, { status: 201 });

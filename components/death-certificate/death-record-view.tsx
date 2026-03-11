@@ -271,7 +271,7 @@ const DeathCertificatePDF: React.FC<DeathCertificatePDFProps> = ({
         </View>
       </Page>
 
-      <SupportingDocumentsPages documents={documents} pageSize={pageSize} />
+      {/* <SupportingDocumentsPages documents={documents} pageSize={pageSize} /> */}
     </Document>
   );
 };
@@ -377,6 +377,7 @@ export const DeathRecordView: React.FC<{
                   record={record}
                   pageSize={pageSize}
                   showParentNames={showParentNames}
+                  
                 />
               }
               fileName={`death-certificate-${record.registryNo}.pdf`}
@@ -410,7 +411,7 @@ export const DeathRecordView: React.FC<{
             style={{ height: "800px" }}
           >
             <PDFViewer
-              key={`viewer-${showParentNames}-${pageSize}`}  // <-- forces full remount on toggle or page size change
+              key={`viewer-${showParentNames}-${pageSize}`}  
               width="100%"
               height="100%"
             >

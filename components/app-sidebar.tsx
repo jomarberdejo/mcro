@@ -8,6 +8,7 @@ import {
   ClipboardList,
   LayoutDashboard,
   ShieldCheck,
+  Users,
 } from "lucide-react";
 
 import { NavMain } from "@/components/navigation/nav-main";
@@ -74,20 +75,35 @@ const baseNav = [
   },
 ];
 
-const adminOnlyNav = [
-  {
-    title: "Audit Trail",
-    url: "/admin/audit-trail",
-    icon: ShieldCheck,
-    color: "text-amber-600",
-  },
-];
+// const adminOnlyNav = [
+//   {
+//     title: "User Accounts",
+//     url: "/admin/users",
+//     icon: Users,
+//     color: "text-sky-600",
+//   },
+//   {
+//     title: "Audit Trail",
+//     url: "/admin/audit-trail",
+//     icon: ShieldCheck,
+//     color: "text-amber-600",
+//   },
+// ];
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { user } = useAuth();
+  const [mounted, setMounted] = React.useState(false);
 
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Always render baseNav on SSR so the collapsible count is stable.
+  // Only add admin items after client mount to avoid Radix ID mismatch.
   const navItems =
-    user?.role === "ADMIN" ? [...baseNav, ...adminOnlyNav] : baseNav;
+    // mounted && user?.role === "ADMIN" ? [...baseNav, ...adminOnlyNav] : baseNav;
+
+    mounted && user?.role === "ADMIN" ? [...baseNav] : baseNav;
 
   return (
     <Sidebar variant="inset" {...props}>

@@ -1,12 +1,13 @@
-// services/marriage-certificate-applications.ts
 
+
+import { MarriageCertificateApplicationWithDocs } from "@/components/marriage-cert-app/marriage-cert-app-list";
 import { MarriageCertificateApplication } from "@/lib/generated/prisma/client";
 
 
 /**
  * Fetch all marriage certificate applications
  */
-export async function fetchMarriageCertificateApplications(): Promise<MarriageCertificateApplication[]> {
+export async function fetchMarriageCertificateApplications(): Promise<MarriageCertificateApplicationWithDocs[]> {
   const response = await fetch("/api/marriage-certificate-application");
   
   if (!response.ok) {

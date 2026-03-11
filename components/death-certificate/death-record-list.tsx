@@ -1,12 +1,25 @@
+"use client";
+
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Eye, Edit2, Trash2, ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  Eye,
+  Edit2,
+  Trash2,
+  ChevronLeft,
+  ChevronRight,
+  FileText,
+  Image as ImageIcon,
+  X,
+} from "lucide-react";
 import { DeathRecordListProps } from "@/types";
 import { getFullName } from "@/utils";
 import { UserRole } from "@/lib/generated/prisma/enums";
 import { useAuth } from "@/hooks/auth/use-auth";
+import { SupportingDocument } from "@/lib/generated/prisma/client";
+import { SupportingDocsPopover } from "../supporting-docs-popover";
 
 export const DeathRecordList: React.FC<DeathRecordListProps> = ({
   records,
@@ -33,16 +46,13 @@ export const DeathRecordList: React.FC<DeathRecordListProps> = ({
   }, [filters, records]);
 
   const goToPage = (page: number) => {
-    if (page >= 1 && page <= totalPages) {
-      setCurrentPage(page);
-    }
+    if (page >= 1 && page <= totalPages) setCurrentPage(page);
   };
 
   const handleRecordsPerPageChange = (
     e: React.ChangeEvent<HTMLSelectElement>,
   ) => {
-    const value = parseInt(e.target.value);
-    setRecordsPerPage(value);
+    setRecordsPerPage(parseInt(e.target.value));
     setCurrentPage(1);
   };
 
@@ -51,20 +61,12 @@ export const DeathRecordList: React.FC<DeathRecordListProps> = ({
     const maxVisiblePages = 5;
 
     if (totalPages <= maxVisiblePages) {
-      for (let i = 1; i <= totalPages; i++) {
-        pageNumbers.push(i);
-      }
+      for (let i = 1; i <= totalPages; i++) pageNumbers.push(i);
     } else {
       let start = Math.max(1, currentPage - 2);
       const end = Math.min(totalPages, start + maxVisiblePages - 1);
-
-      if (end - start + 1 < maxVisiblePages) {
-        start = end - maxVisiblePages + 1;
-      }
-
-      for (let i = start; i <= end; i++) {
-        pageNumbers.push(i);
-      }
+      if (end - start + 1 < maxVisiblePages) start = end - maxVisiblePages + 1;
+      for (let i = start; i <= end; i++) pageNumbers.push(i);
     }
 
     return pageNumbers;
@@ -79,7 +81,6 @@ export const DeathRecordList: React.FC<DeathRecordListProps> = ({
               <CardTitle className="text-xl font-semibold">
                 Death Records
               </CardTitle>
-
               <div className="flex items-center gap-2">
                 <span className="text-sm text-gray-600">Show:</span>
                 <select
@@ -99,7 +100,6 @@ export const DeathRecordList: React.FC<DeathRecordListProps> = ({
 
           <CardContent>
             <div className="mb-6 flex flex-col gap-4">
-              {/* Deceased Information */}
               <div>
                 <label className="text-sm font-semibold text-gray-900 mb-2 block">
                   Deceased Information
@@ -148,6 +148,34 @@ export const DeathRecordList: React.FC<DeathRecordListProps> = ({
                 </div>
               </div>
 
+              <div>
+                <label className="text-sm font-semibold text-gray-900 mb-2 block">
+                  Parent Information
+                </label>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <Input
+                    placeholder="Father's Name"
+                    value={filters.nameOfFather}
+                    onChange={(e) =>
+                      onFilterChange({
+                        ...filters,
+                        nameOfFather: e.target.value,
+                      })
+                    }
+                  />
+                  <Input
+                    placeholder="Mother's Name"
+                    value={filters.nameOfMother}
+                    onChange={(e) =>
+                      onFilterChange({
+                        ...filters,
+                        nameOfMother: e.target.value,
+                      })
+                    }
+                  />
+                </div>
+              </div>
+
               <div className="flex justify-between items-center pt-2">
                 <Button variant="outline" onClick={onClearFilters}>
                   Clear Filters
@@ -168,7 +196,7 @@ export const DeathRecordList: React.FC<DeathRecordListProps> = ({
             </div>
 
             <div className="border rounded-lg overflow-auto shadow-sm bg-white">
-              <table className="w-full text-sm ">
+              <table className="w-full text-sm">
                 <thead className="bg-gray-100 border-b">
                   <tr>
                     <th className="px-4 py-3 text-left font-semibold">
@@ -181,7 +209,7 @@ export const DeathRecordList: React.FC<DeathRecordListProps> = ({
                       Date of Death
                     </th>
                     <th className="px-4 py-3 text-left font-semibold">Age</th>
-                    <th className="px-4 py-3 text-left font-semibold w-40">
+                    <th className="px-4 py-3 text-left font-semibold w-52">
                       Actions
                     </th>
                   </tr>
@@ -215,12 +243,12 @@ export const DeathRecordList: React.FC<DeathRecordListProps> = ({
                         <td className="px-4 py-3">{record.age}</td>
 
                         <td className="px-4 py-3">
-                          <div className="flex gap-2">
+                          <div className="flex gap-2 items-center">
                             <Button
                               variant="outline"
                               size="sm"
                               onClick={() => onView(record)}
-                              className="flex items-center gap-1"
+                              title="View record"
                             >
                               <Eye className="w-4 h-4" />
                             </Button>
@@ -228,7 +256,7 @@ export const DeathRecordList: React.FC<DeathRecordListProps> = ({
                               variant="outline"
                               size="sm"
                               onClick={() => onEdit(record)}
-                              className="flex items-center gap-1"
+                              title="Edit record"
                             >
                               <Edit2 className="w-4 h-4" />
                             </Button>
@@ -237,11 +265,14 @@ export const DeathRecordList: React.FC<DeathRecordListProps> = ({
                                 variant="destructive"
                                 size="sm"
                                 onClick={() => onDelete(record.id)}
-                                className="flex items-center gap-1"
+                                title="Delete record"
                               >
                                 <Trash2 className="w-4 h-4" />
                               </Button>
                             )}
+                            <SupportingDocsPopover
+                              documents={record.supportingDocuments ?? []}
+                            />
                           </div>
                         </td>
                       </tr>
@@ -256,7 +287,6 @@ export const DeathRecordList: React.FC<DeathRecordListProps> = ({
                 <div className="text-sm text-gray-600">
                   Page {currentPage} of {totalPages}
                 </div>
-
                 <div className="flex items-center gap-2">
                   <Button
                     variant="outline"
@@ -268,7 +298,6 @@ export const DeathRecordList: React.FC<DeathRecordListProps> = ({
                     <ChevronLeft className="w-4 h-4" />
                     Previous
                   </Button>
-
                   <div className="flex items-center gap-1">
                     {getPageNumbers().map((page) => (
                       <Button
@@ -282,7 +311,6 @@ export const DeathRecordList: React.FC<DeathRecordListProps> = ({
                       </Button>
                     ))}
                   </div>
-
                   <Button
                     variant="outline"
                     size="sm"

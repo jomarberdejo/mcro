@@ -71,7 +71,7 @@ export async function POST(request: NextRequest) {
       userId: user.userId,
       action: "CREATE",
       module: "Marriage Certificate",
-      description: `Created marr certificate for ${recordData.husbandFirstName}  ${recordData.husbandLastName} and ${recordData.wifeFirstName} ${recordData.wifeLastName}`,
+      description: `Created marriage certificate for ${recordData.husbandFirstName}  ${recordData.husbandLastName} and ${recordData.wifeFirstName} ${recordData.wifeLastName}`,
     });
 
     return NextResponse.json(record, { status: 201 });

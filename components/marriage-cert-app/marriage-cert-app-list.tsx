@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -15,11 +14,20 @@ import {
 import { MarriageCertificateApplicationFilterState } from "@/app/admin/(pages)/marriage-cert-app/page";
 import { useAuth } from "@/hooks/auth/use-auth";
 import { UserRole } from "@/lib/generated/prisma/enums";
-import { MarriageCertificateApplication } from "@/lib/generated/prisma/client";
+import {
+  MarriageCertificateApplication,
+  Prisma,
+} from "@/lib/generated/prisma/client";
 import { getFullName } from "@/utils";
+import { SupportingDocsPopover } from "../supporting-docs-popover";
+
+export type MarriageCertificateApplicationWithDocs =
+  Prisma.MarriageCertificateApplicationGetPayload<{
+    include: { supportingDocuments: true };
+  }>;
 
 interface MarriageCertificateApplicationListProps {
-  applications: MarriageCertificateApplication[];
+  applications: MarriageCertificateApplicationWithDocs[];
   filters: MarriageCertificateApplicationFilterState;
   storageAvailable: boolean;
   onFilterChange: (filters: MarriageCertificateApplicationFilterState) => void;
@@ -96,7 +104,6 @@ export const MarriageCertificateApplicationList: React.FC<
     return pageNumbers;
   };
 
- 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-7xl mx-auto">
@@ -333,6 +340,9 @@ export const MarriageCertificateApplicationList: React.FC<
                                 <Trash2 className="w-4 h-4" />
                               </Button>
                             )}
+                            <SupportingDocsPopover
+                              documents={app.supportingDocuments ?? []}
+                            />
                           </div>
                         </td>
                       </tr>

@@ -12,6 +12,8 @@ const EMPTY_FILTERS: DeathFilterState = {
   deceasedFirstName: "",
   deceasedMiddleName: "",
   dateOfDeath: "",
+  nameOfFather: "",
+  nameOfMother: "",
 };
 
 const DeathCertificates: React.FC = () => {
@@ -20,6 +22,8 @@ const DeathCertificates: React.FC = () => {
   const [filters, setFilters] = useState<DeathFilterState>(EMPTY_FILTERS);
 
   const filteredRecords = filterDeathRecords(records, filters);
+
+  // console.log("RECORDS", records)
 
   return (
     <DeathRecordList

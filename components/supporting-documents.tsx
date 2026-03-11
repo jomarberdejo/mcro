@@ -12,7 +12,7 @@ interface SupportingDocumentsPagesProps {
 
 export const SupportingDocumentsPages: React.FC<
   SupportingDocumentsPagesProps
-> = ({ documents, pageSize = "A4" }) => {
+> = ({ documents, pageSize = "A4"}) => {
 
   
   const baseUrl =

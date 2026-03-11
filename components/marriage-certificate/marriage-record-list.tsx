@@ -14,6 +14,7 @@ import { MarriageRecordListProps } from "@/types";
 import { getFullName } from "@/utils";
 import { useAuth } from "@/hooks/auth/use-auth";
 import { UserRole } from "@/lib/generated/prisma/enums";
+import { SupportingDocsPopover } from "../supporting-docs-popover";
 
 export const MarriageRecordList: React.FC<MarriageRecordListProps> = ({
   records,
@@ -314,6 +315,10 @@ export const MarriageRecordList: React.FC<MarriageRecordListProps> = ({
                                 <Trash2 className="w-4 h-4" />
                               </Button>
                             )}
+
+                            <SupportingDocsPopover
+                              documents={record.supportingDocuments ?? []}
+                            />
                           </div>
                         </td>
                       </tr>

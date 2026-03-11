@@ -165,11 +165,10 @@ export const styles = StyleSheet.create({
     fontSize: 11,
     fontWeight: "bold",
     marginBottom: 8,
-    color: "#666",
+    color: "#000",
   },
   remarksText: {
     fontSize: 11,
-    lineHeight: 1.4,
     textAlign: "justify",
     marginBottom: 6,
     textTransform: "uppercase",

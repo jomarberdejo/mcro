@@ -46,17 +46,17 @@ const actionColors: Record<string, string> = {
   CREATE: "bg-green-100 text-green-700 border-green-200",
   UPDATE: "bg-blue-100 text-blue-700 border-blue-200",
   DELETE: "bg-red-100 text-red-700 border-red-200",
-  VIEW:   "bg-gray-100 text-gray-700 border-gray-200",
-  LOGIN:  "bg-violet-100 text-violet-700 border-violet-200",
+  VIEW: "bg-gray-100 text-gray-700 border-gray-200",
+  LOGIN: "bg-violet-100 text-violet-700 border-violet-200",
   LOGOUT: "bg-orange-100 text-orange-700 border-orange-200",
 };
 
 const moduleColors: Record<string, string> = {
-  "Birth Certificate":    "bg-emerald-50 text-emerald-700",
-  "Death Certificate":    "bg-slate-100 text-slate-700",
+  "Birth Certificate": "bg-emerald-50 text-emerald-700",
+  "Death Certificate": "bg-slate-100 text-slate-700",
   "Marriage Certificate": "bg-rose-50 text-rose-700",
-  "AML":                  "bg-violet-50 text-violet-700",
-  "Auth":                 "bg-amber-50 text-amber-700",
+  AML: "bg-violet-50 text-violet-700",
+  Auth: "bg-amber-50 text-amber-700",
 };
 
 const roleColors: Record<string, string> = {
@@ -92,9 +92,13 @@ const columns: ColumnDef<AuditTrailEntry>[] = [
       const { user } = row.original;
       return (
         <div className="flex flex-col gap-0.5">
-          <span className="text-sm font-medium">{user.name ?? user.username}</span>
+          <span className="text-sm font-medium">
+            {user.name ?? user.username}
+          </span>
           <div className="flex items-center gap-1.5">
-            <span className="text-muted-foreground text-xs">@{user.username}</span>
+            <span className="text-muted-foreground text-xs">
+              {user.username}
+            </span>
             <Badge
               variant="outline"
               className={`px-1.5 py-0 text-[10px] font-semibold ${roleColors[user.role] ?? ""}`}
@@ -164,7 +168,7 @@ export function AuditTrailTable({ logs }: { logs: AuditTrailEntry[] }) {
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    initialState: { pagination: { pageSize: 20 } },
+    initialState: { pagination: { pageSize: 8 } },
   });
 
   const { pageIndex, pageSize } = table.getState().pagination;
@@ -172,68 +176,6 @@ export function AuditTrailTable({ logs }: { logs: AuditTrailEntry[] }) {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between gap-4">
-        <div className="relative max-w-sm flex-1">
-          <Search className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
-          <Input
-            placeholder="Search by user, action, module, description..."
-            value={globalFilter}
-            onChange={(e) => setGlobalFilter(e.target.value)}
-            className="pl-9"
-          />
-        </div>
-        <span className="text-muted-foreground shrink-0 text-sm">
-          {totalFiltered} {totalFiltered === 1 ? "entry" : "entries"}
-        </span>
-      </div>
-
-      <div className="rounded-lg border">
-        <Table>
-          <TableHeader>
-            {table.getHeaderGroups().map((hg) => (
-              <TableRow key={hg.id} className="bg-muted/50">
-                {hg.headers.map((header) => (
-                  <TableHead
-                    key={header.id}
-                    className="text-xs font-semibold uppercase tracking-wide"
-                  >
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(header.column.columnDef.header, header.getContext())}
-                  </TableHead>
-                ))}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {table.getRowModel().rows.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  className="hover:bg-muted/30 transition-colors"
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id} className="py-3">
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="text-muted-foreground h-32 text-center"
-                >
-                  No audit logs found.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </div>
-
-      {/* Pagination */}
       <div className="flex items-center justify-between text-sm">
         <span className="text-muted-foreground">
           Showing{" "}
@@ -264,6 +206,57 @@ export function AuditTrailTable({ logs }: { logs: AuditTrailEntry[] }) {
             <ChevronRight className="h-4 w-4" />
           </Button>
         </div>
+      </div>
+      <div className="rounded-lg border">
+        <Table>
+          <TableHeader>
+            {table.getHeaderGroups().map((hg) => (
+              <TableRow key={hg.id} className="bg-muted/50">
+                {hg.headers.map((header) => (
+                  <TableHead
+                    key={header.id}
+                    className="text-xs font-semibold uppercase tracking-wide"
+                  >
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext(),
+                        )}
+                  </TableHead>
+                ))}
+              </TableRow>
+            ))}
+          </TableHeader>
+          <TableBody>
+            {table.getRowModel().rows.length ? (
+              table.getRowModel().rows.map((row) => (
+                <TableRow
+                  key={row.id}
+                  className="hover:bg-muted/30 transition-colors"
+                >
+                  {row.getVisibleCells().map((cell) => (
+                    <TableCell key={cell.id} className="py-3">
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext(),
+                      )}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell
+                  colSpan={columns.length}
+                  className="text-muted-foreground h-32 text-center"
+                >
+                  No audit logs found.
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
       </div>
     </div>
   );
