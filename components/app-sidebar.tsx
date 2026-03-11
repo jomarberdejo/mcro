@@ -75,20 +75,20 @@ const baseNav = [
   },
 ];
 
-// const adminOnlyNav = [
-//   {
-//     title: "User Accounts",
-//     url: "/admin/users",
-//     icon: Users,
-//     color: "text-sky-600",
-//   },
-//   {
-//     title: "Audit Trail",
-//     url: "/admin/audit-trail",
-//     icon: ShieldCheck,
-//     color: "text-amber-600",
-//   },
-// ];
+const adminOnlyNav = [
+  {
+    title: "User Accounts",
+    url: "/admin/users",
+    icon: Users,
+    color: "text-sky-600",
+  },
+  // {
+  //   title: "Audit Trail",
+  //   url: "/admin/audit-trail",
+  //   icon: ShieldCheck,
+  //   color: "text-amber-600",
+  // },
+];
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { user } = useAuth();
@@ -101,9 +101,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   // Always render baseNav on SSR so the collapsible count is stable.
   // Only add admin items after client mount to avoid Radix ID mismatch.
   const navItems =
-    // mounted && user?.role === "ADMIN" ? [...baseNav, ...adminOnlyNav] : baseNav;
+    mounted && user?.role === "ADMIN" ? [...baseNav, ...adminOnlyNav] : baseNav;
 
-    mounted && user?.role === "ADMIN" ? [...baseNav] : baseNav;
+    // mounted && user?.role === "ADMIN" ? [...baseNav] : baseNav;
 
   return (
     <Sidebar variant="inset" {...props}>

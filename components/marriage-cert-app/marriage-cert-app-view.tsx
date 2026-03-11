@@ -58,7 +58,7 @@ const SupportingDocumentsPDF: React.FC<SupportingDocumentsPDFProps> = ({
 
   return (
     <Document>
-      <SupportingDocumentsPages documents={documents} pageSize={pageSize} />
+      {/* <SupportingDocumentsPages documents={documents} pageSize={pageSize} /> */}
     </Document>
   );
 };

@@ -257,7 +257,7 @@ export const MarriageCertificateApplicationList: React.FC<
               applications
             </div>
 
-            <div className="border rounded-lg overflow-auto shadow-sm bg-white">
+            <div className="border rounded-lg overflow-auto shadow-sm bg-white min-h-[300px]">
               <table className="w-full text-sm">
                 <thead className="bg-gray-100 border-b">
                   <tr>
@@ -314,14 +314,14 @@ export const MarriageCertificateApplicationList: React.FC<
 
                         <td className="px-4 py-3">
                           <div className="flex gap-2">
-                            <Button
+                            {/* <Button
                               variant="outline"
                               size="sm"
                               onClick={() => onView(app)}
                               className="flex items-center gap-1"
                             >
                               <Eye className="w-4 h-4" />
-                            </Button>
+                            </Button> */}
                             <Button
                               variant="outline"
                               size="sm"

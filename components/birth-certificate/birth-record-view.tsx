@@ -186,21 +186,17 @@ const BirthCertificatePDF: React.FC<BirthCertificatePDFProps> = ({
           <Text style={styles.fieldValue}>{record.fatherCitizenship}</Text>
         </View>
 
-        {record.dateOfMarriage && (
           <View style={styles.fieldRow}>
             <Text style={styles.fieldLabel}>Date of Marriage of Parents</Text>
             <Text style={styles.fieldColon}>:</Text>
-            <Text style={styles.fieldValue}>{record.dateOfMarriage}</Text>
+            <Text style={styles.fieldValue}>{record.dateOfMarriage ?? ""}</Text>
           </View>
-        )}
 
-        {record.placeOfMarriage && (
           <View style={styles.fieldRow}>
             <Text style={styles.fieldLabel}>Place of Marriage of Parents</Text>
             <Text style={styles.fieldColon}>:</Text>
-            <Text style={styles.fieldValue}>{record.placeOfMarriage}</Text>
+            <Text style={styles.fieldValue}>{record.placeOfMarriage ?? ""}</Text>
           </View>
-        )}
 
         {record.remarks && (
           <View style={styles.remarksSection}>
