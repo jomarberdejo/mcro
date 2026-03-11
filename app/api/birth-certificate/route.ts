@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
       include: {
         supportingDocuments: true
       },
-      orderBy: { createdAt: "desc" },
+      orderBy: { updatedAt: "desc" },
     });
 
     return NextResponse.json(records, { status: 200 });

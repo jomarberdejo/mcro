@@ -27,7 +27,7 @@ export async function GET(request: NextRequest) {
             ],
           }
         : undefined,
-      orderBy: { createdAt: "desc" },
+      orderBy: { updatedAt: "desc" },
       include: {
         supportingDocuments: true,
       },

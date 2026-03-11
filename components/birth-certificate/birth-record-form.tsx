@@ -26,7 +26,6 @@ import { cn } from "@/lib/utils";
 import { useBirthRecordForm } from "@/hooks/birth-certificate/use-birth-record-form";
 import { DuplicateDialog } from "../duplicate-dialog";
 import { IncompleteFieldsDialog } from "../incomplete-fields-dialog";
-import Link from "next/link";
 import DocumentsUploadForm from "../documents-upload";
 
 interface BirthRecordFormProps {
