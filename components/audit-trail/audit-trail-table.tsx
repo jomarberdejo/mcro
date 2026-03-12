@@ -32,14 +32,14 @@ type AuditTrailEntry = {
   module: string;
   description: string | null;
   createdAt: Date;
-  userId: string;
+  userId: string | null;
   user: {
     id: string;
     name: string | null;
     username: string;
     office: string | null;
     role: UserRole;
-  };
+  } | null;
 };
 
 const actionColors: Record<string, string> = {
@@ -72,7 +72,7 @@ const columns: ColumnDef<AuditTrailEntry>[] = [
         variant="ghost"
         size="sm"
         className="-ml-3 h-8"
-        // onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+      // onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
       >
         Date & Time
         {/* <ArrowUpDown className="ml-2 h-3.5 w-3.5" /> */}
@@ -87,23 +87,24 @@ const columns: ColumnDef<AuditTrailEntry>[] = [
   {
     id: "user",
     header: "User",
-    accessorFn: (row) => row.user.name ?? row.user.username,
+    accessorFn: (row) => row?.user?.name ?? row?.user?.username,
     cell: ({ row }) => {
       const { user } = row.original;
       return (
         <div className="flex flex-col gap-0.5">
           <span className="text-sm font-medium">
-            {user.name ?? user.username}
+            {user?.name ?? user?.username}
           </span>
           <div className="flex items-center gap-1.5">
             <span className="text-muted-foreground text-xs">
-              {user.username}
+              {user?.username}
             </span>
             <Badge
               variant="outline"
-              className={`px-1.5 py-0 text-[10px] font-semibold ${roleColors[user.role] ?? ""}`}
+              className={`px-1.5 py-0 text-[10px] font-semibold ${user ? roleColors[user.role] ?? "" : "bg-gray-100 text-gray-600 border-gray-200"
+                }`}
             >
-              {user.role}
+              {user?.role ?? "DELETED"}
             </Badge>
           </div>
         </div>
@@ -132,9 +133,8 @@ const columns: ColumnDef<AuditTrailEntry>[] = [
       const moduleName: string = row.getValue("module");
       return (
         <span
-          className={`inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium ${
-            moduleColors[moduleName] ?? "bg-gray-50 text-gray-600"
-          }`}
+          className={`inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium ${moduleColors[moduleName] ?? "bg-gray-50 text-gray-600"
+            }`}
         >
           {moduleName}
         </span>
@@ -220,9 +220,9 @@ export function AuditTrailTable({ logs }: { logs: AuditTrailEntry[] }) {
                     {header.isPlaceholder
                       ? null
                       : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext(),
-                        )}
+                        header.column.columnDef.header,
+                        header.getContext(),
+                      )}
                   </TableHead>
                 ))}
               </TableRow>

@@ -9,6 +9,7 @@ export default async function AuditTrailPage() {
   const user = await getCurrentUser();
   console.log("USER", user)
 
+ 
   if (user?.role !== "ADMIN") {
     redirect("/admin/dashboard");
   }
