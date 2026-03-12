@@ -1,5 +1,10 @@
 import { StyleSheet, Font } from "@react-pdf/renderer";
 
+Font.registerHyphenationCallback((word) => {
+  return [word]; 
+});
+
+
 Font.register({
   family: "Arial Narrow",
   fonts: [
