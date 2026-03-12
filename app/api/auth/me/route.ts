@@ -1,4 +1,4 @@
-// app/api/auth/me/route.ts
+
 import { NextRequest, NextResponse } from "next/server";
 import { verifyAuth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";

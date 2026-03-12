@@ -25,7 +25,7 @@ async function getCurrentUserInfo(userId: string) {
 export default async function ProfilePage() {
   const user = await getCurrentUser();
 
-  console.log(user)
+  // console.log(user)
 
   if (!user) redirect("/login");
 

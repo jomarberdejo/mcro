@@ -72,10 +72,10 @@ const columns: ColumnDef<AuditTrailEntry>[] = [
         variant="ghost"
         size="sm"
         className="-ml-3 h-8"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        // onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
       >
         Date & Time
-        <ArrowUpDown className="ml-2 h-3.5 w-3.5" />
+        {/* <ArrowUpDown className="ml-2 h-3.5 w-3.5" /> */}
       </Button>
     ),
     cell: ({ row }) => (
