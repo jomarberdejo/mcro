@@ -82,12 +82,12 @@ const adminOnlyNav = [
     icon: Users,
     color: "text-sky-600",
   },
-  // {
-  //   title: "Audit Trail",
-  //   url: "/admin/audit-trail",
-  //   icon: ShieldCheck,
-  //   color: "text-amber-600",
-  // },
+  {
+    title: "Audit Trail",
+    url: "/admin/audit-trail",
+    icon: ShieldCheck,
+    color: "text-amber-600",
+  },
 ];
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {

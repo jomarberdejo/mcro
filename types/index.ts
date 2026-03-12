@@ -3,6 +3,7 @@ import {
   SupportingDocument,
 } from "@/lib/generated/prisma/client";
 
+
 export type PageMode = "list" | "form" | "view";
 
 // ==================== BIRTH RECORDS ====================
@@ -375,3 +376,13 @@ export const emptyMarriageRecord = (): MarriageRecord => ({
 
 export type CivilStatus = "Single" | "Married" | "Widowed" | "Divorced";
 export type Sex = "Male" | "Female";
+export type ProfileUser = {
+  id: string;
+  name: string | null;
+  username: string;
+  email: string | null;
+  office: string | null;
+  role: "ADMIN" | "STAFF";
+  createdAt: Date;
+  _count: { auditTrails: number };
+};

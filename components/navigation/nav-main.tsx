@@ -51,7 +51,7 @@ export function NavMain({
 
   return (
     <SidebarGroup>
-      <SidebarGroupLabel className="text-base">Main</SidebarGroupLabel>
+      <SidebarGroupLabel className="text-[1rem]">Main</SidebarGroupLabel>
 
       <SidebarMenu>
         {items.map((item) => {
@@ -66,7 +66,7 @@ export function NavMain({
                   tooltip={item.title}
                   isActive={isActive}
                   className="
-                    group text-base py-6 rounded-lg origin-left
+                    group text-[1rem] py-6 rounded-lg origin-left
                     transition-all duration-200
                     hover:scale-105 hover:translate-x-1
                     hover:shadow-md hover:font-bold
@@ -102,7 +102,7 @@ export function NavMain({
                   <SidebarMenuButton
                     tooltip={item.title}
                     className="
-                      group text-base py-6 rounded-lg origin-left
+                      group text-[1rem] py-6 rounded-lg origin-left
                       transition-all duration-200
                       hover:scale-105 hover:translate-x-1
                       hover:shadow-md hover:font-bold
@@ -131,7 +131,7 @@ export function NavMain({
                             asChild
                             isActive={isSubActive}
                             className="
-                              group text-base py-5 rounded-lg origin-left
+                              group text-[1rem] py-5 rounded-lg origin-left
                               transition-all duration-200
                               hover:scale-105 hover:translate-x-1
                               hover:shadow-sm hover:font-semibold
