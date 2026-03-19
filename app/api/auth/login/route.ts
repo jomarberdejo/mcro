@@ -3,10 +3,9 @@ import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { SignJWT } from "jose";
 import { nanoid } from "nanoid";
+import { logActivity } from "@/lib/audit";
 
-const JWT_SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET
-);
+const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET);
 
 export async function POST(request: NextRequest) {
   try {
@@ -15,7 +14,7 @@ export async function POST(request: NextRequest) {
     if (!username || !password) {
       return NextResponse.json(
         { error: "Username and password are required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -35,7 +34,7 @@ export async function POST(request: NextRequest) {
     if (!user) {
       return NextResponse.json(
         { error: "Invalid username or password" },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -44,7 +43,7 @@ export async function POST(request: NextRequest) {
     if (!isPasswordValid) {
       return NextResponse.json(
         { error: "Invalid username or password" },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -67,7 +66,7 @@ export async function POST(request: NextRequest) {
         success: true,
         user: userWithoutPassword,
       },
-      { status: 200 }
+      { status: 200 },
     );
 
     response.cookies.set({
@@ -81,12 +80,20 @@ export async function POST(request: NextRequest) {
       path: "/",
     });
 
+    await logActivity({
+      userId: user.id,
+      action: "LOGIN",
+      module: "Auth",
+      description: `Logged In for User ${user.name}`,
+    });
+
+
     return response;
   } catch (error) {
     console.error("Login error:", error);
     return NextResponse.json(
       { error: "An error occurred during login" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

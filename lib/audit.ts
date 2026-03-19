@@ -72,6 +72,9 @@ export const getAllAuditTrails = async ({
 }: GetAuditTrailsParams = {}) => {
   return prisma.auditTrail.findMany({
     where: {
+      NOT: {
+        module: "Auth",
+      },
       ...(userId && { userId }),
       ...(module && { module }),
       ...(action && { action }),
