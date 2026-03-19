@@ -42,14 +42,14 @@ type AuditTrailEntry = {
   module: string;
   description: string | null;
   createdAt: Date;
-  userId: string;
+  userId: string | null;
   user: {
-    id: string;
+    id: string | null;
     name: string | null;
     username: string;
     office: string | null;
     role: UserRole;
-  };
+  } | null
 };
 
 const actionColors: Record<string, string> = {
@@ -88,23 +88,23 @@ const columns: ColumnDef<AuditTrailEntry>[] = [
   {
     id: "user",
     header: "User",
-    accessorFn: (row) => row.user.name ?? row.user.username,
+    accessorFn: (row) => row.user?.name ?? row.user?.username,
     cell: ({ row }) => {
       const { user } = row.original;
       return (
         <div className="flex flex-col gap-0.5">
           <span className="text-sm font-medium">
-            {user.name ?? user.username}
+            {user?.name ?? user?.username}
           </span>
           <div className="flex items-center gap-1.5">
             <span className="text-muted-foreground text-xs">
-              {user.username}
+              {user?.username}
             </span>
             <Badge
               variant="outline"
-              className={`px-1.5 py-0 text-[10px] font-semibold ${roleColors[user.role] ?? ""}`}
+              className={`px-1.5 py-0 text-[10px] font-semibold ${roleColors[user?.role ?? "STAFF"]}`}
             >
-              {user.role}
+              {user?.role}
             </Badge>
           </div>
         </div>
@@ -203,7 +203,7 @@ export function AuditTrailTable({ logs }: { logs: AuditTrailEntry[] }) {
       const log = row.original;
       return {
         "Date & Time": format(new Date(log.createdAt), "MMM dd, yyyy hh:mm a"),
-        Name: log.user.name ?? log.user.username,
+        Name: log?.user?.name ?? log?.user?.username,
         Action: log.action,
         Module: log.module,
         Description: log.description ?? "",
@@ -230,7 +230,10 @@ export function AuditTrailTable({ logs }: { logs: AuditTrailEntry[] }) {
 
     table.getFilteredRowModel().rows.forEach((row) => {
       const log = row.original;
-      const key = log.user.username;
+
+      if (!log.user?.username) return;
+      
+      const key = log.user?.username;
 
       if (!userTotalsMap.has(key)) {
         userTotalsMap.set(key, {

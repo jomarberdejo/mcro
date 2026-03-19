@@ -37,7 +37,7 @@ export const styles = StyleSheet.create({
     paddingLeft: 72,
     paddingRight: 72,
     paddingTop: 48,
-    fontFamily: "Arial Narrow",
+    fontFamily: "Times-Roman",
     fontSize: 11,
   },
   headerContainer: {
@@ -178,6 +178,7 @@ export const styles = StyleSheet.create({
     marginBottom: 6,
     textTransform: "uppercase",
     textIndent: 30,
+    fontFamily: "Arial Narrow"
   },
   footerText: {
     fontSize: 11,

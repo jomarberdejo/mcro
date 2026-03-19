@@ -5,6 +5,8 @@ import { z } from "zod";
 import { unlink } from "fs/promises";
 import path from "path";
 import { existsSync } from "fs";
+import { logActivity } from "@/lib/audit";
+import { getCurrentUser } from "@/lib/user";
 
 export async function GET(
   request: NextRequest,
@@ -43,6 +45,10 @@ export async function PUT(
 ) {
   try {
     const { id } = await params;
+    const user = await getCurrentUser()
+     if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
     const body = await request.json();
     const validatedData = birthRecordSchema.parse(body);
 
@@ -144,6 +150,13 @@ export async function PUT(
       },
     });
 
+      await logActivity({
+          userId: user.userId,
+          action: "UPDATE",
+          module: "Birth Certificate",
+          description: `Updated birth certificate for ${record.childFirstName} ${record.childLastName}`,
+        });
+
     return NextResponse.json(record, { status: 200 });
   } catch (error) {
     if (error instanceof z.ZodError) {
@@ -159,6 +172,9 @@ export async function PUT(
         { status: 500 }
       );
     }
+
+
+    
     
     console.error("Error updating birth record:", error);
     return NextResponse.json(
@@ -174,6 +190,12 @@ export async function DELETE(
 ) {
   try {
     const { id } = await params;
+    const user = await getCurrentUser();
+
+     if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     
     const record = await prisma.birthRecord.findUnique({
       where: { id },
@@ -228,6 +250,15 @@ export async function DELETE(
     await prisma.birthRecord.delete({
       where: { id },
     });
+
+
+     await logActivity({
+          userId: user.userId,
+          action: "DELETE",
+          module: "Birth Certificate",
+          description: `Deleted birth certificate for ${record.childFirstName} ${record.childLastName}`,
+        });
+    
 
     return NextResponse.json(
       { 

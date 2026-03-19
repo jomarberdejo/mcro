@@ -5,6 +5,8 @@ import { z } from "zod";
 import { unlink } from "fs/promises";
 import path from "path";
 import { existsSync } from "fs";
+import { getCurrentUser } from "@/lib/user";
+import { logActivity } from "@/lib/audit";
 
 export async function GET(
   request: NextRequest,
@@ -12,7 +14,7 @@ export async function GET(
 ) {
   try {
     const { id } = await params;
-    
+   
     const record = await prisma.marriageRecord.findUnique({
       where: { id },
       include: {
@@ -26,6 +28,7 @@ export async function GET(
         { status: 404 }
       );
     }
+   
 
     return NextResponse.json(record, { status: 200 });
   } catch (error) {
@@ -43,6 +46,10 @@ export async function PUT(
 ) {
   try {
     const { id } = await params;
+    const user = await getCurrentUser();
+        if (!user) {
+          return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        }
     const body = await request.json();
     const validatedData = marriageRecordSchema.parse(body);
 
@@ -145,6 +152,13 @@ export async function PUT(
       },
     });
 
+     await logActivity({
+          userId: user.userId,
+          action: "UPDATE",
+          module: "Marriage Certificate",
+          description: `Updated marriage certificate for ${record.husbandFirstName}  ${record.husbandLastName} and ${record.wifeFirstName} ${record.wifeLastName}`,
+        });
+
     return NextResponse.json(record, { status: 200 });
   } catch (error) {
     if (error instanceof z.ZodError) {
@@ -175,6 +189,11 @@ export async function DELETE(
 ) {
   try {
     const { id } = await params;
+     const user = await getCurrentUser();
+        if (!user) {
+          return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        }
+    
     
     const record = await prisma.marriageRecord.findUnique({
       where: { id },
@@ -229,6 +248,13 @@ export async function DELETE(
     await prisma.marriageRecord.delete({
       where: { id },
     });
+
+      await logActivity({
+          userId: user.userId,
+          action: "DELETE",
+          module: "Marriage Certificate",
+          description: `Deleted marriage certificate for ${record.husbandFirstName}  ${record.husbandLastName} and ${record.wifeFirstName} ${record.wifeLastName}`,
+        });
 
     return NextResponse.json(
       { 

@@ -5,6 +5,8 @@ import { z } from "zod";
 import { unlink } from "fs/promises";
 import path from "path";
 import { existsSync } from "fs";
+import { getCurrentUser } from "@/lib/user";
+import { logActivity } from "@/lib/audit";
 
 export async function GET(
   request: NextRequest,
@@ -43,6 +45,10 @@ export async function PUT(
 ) {
   try {
     const { id } = await params;
+     const user = await getCurrentUser();
+        if (!user) {
+          return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        }
     const body = await request.json();
     const validatedData = marriageCertificateApplicationSchema.parse(body);
 
@@ -114,6 +120,13 @@ export async function PUT(
       },
     });
 
+     await logActivity({
+          userId: user.userId,
+          action: "CREATE",
+          module: "AML",
+          description: `Created marriage certificate for ${applicationData.groomFirstName}  ${applicationData.groomLastName} and ${applicationData.brideFirstName} ${applicationData.brideLastName}`,
+        });
+
     return NextResponse.json(application, { status: 200 });
   } catch (error) {
     if (error instanceof z.ZodError) {
@@ -144,7 +157,10 @@ export async function DELETE(
 ) {
   try {
     const { id } = await params;
-    
+     const user = await getCurrentUser();
+        if (!user) {
+          return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        }
     const application = await prisma.marriageCertificateApplication.findUnique({
       where: { id },
       include: {
@@ -179,6 +195,13 @@ export async function DELETE(
 
     await prisma.marriageCertificateApplication.delete({
       where: { id },
+    });
+
+     await logActivity({
+      userId: user.userId,
+      action: "CREATE",
+      module: "AML",
+      description: `Created marriage certificate for ${application.groomFirstName}  ${application.groomLastName} and ${application.brideFirstName} ${application.brideLastName}`,
     });
 
     return NextResponse.json(

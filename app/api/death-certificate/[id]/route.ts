@@ -5,6 +5,8 @@ import { z } from "zod";
 import { unlink } from "fs/promises";
 import path from "path";
 import { existsSync } from "fs";
+import { logActivity } from "@/lib/audit";
+import { getCurrentUser } from "@/lib/user";
 
 export async function GET(
   request: NextRequest,
@@ -43,6 +45,10 @@ export async function PUT(
 ) {
   try {
     const { id } = await params;
+     const user = await getCurrentUser();
+        if (!user) {
+          return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        }
     const body = await request.json();
     const validatedData = deathRecordSchema.parse(body);
 
@@ -145,6 +151,14 @@ export async function PUT(
       },
     });
 
+     await logActivity({
+          userId: user.userId,
+          action: "UPDATE",
+          module: "Death Certificate",
+          description: `Updated death certificate for ${recordData.deceasedFirstName} ${recordData.deceasedLastName}`,
+        });
+    
+
     return NextResponse.json(record, { status: 200 });
   } catch (error) {
     if (error instanceof z.ZodError) {
@@ -174,7 +188,11 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = await params;
+     const { id } = await params;
+     const user = await getCurrentUser();
+        if (!user) {
+          return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        }
     
     const record = await prisma.deathRecord.findUnique({
       where: { id },
@@ -229,6 +247,13 @@ export async function DELETE(
     await prisma.deathRecord.delete({
       where: { id },
     });
+
+     await logActivity({
+          userId: user.userId,
+          action: "DELETE",
+          module: "Death Certificate",
+          description: `Deleted death certificate for ${record.deceasedFirstName} ${record.deceasedLastName}`,
+        });
 
     return NextResponse.json(
       { 
