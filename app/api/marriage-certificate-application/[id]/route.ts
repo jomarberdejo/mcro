@@ -122,9 +122,9 @@ export async function PUT(
 
      await logActivity({
           userId: user.userId,
-          action: "CREATE",
+          action: "UPDATE",
           module: "AML",
-          description: `Created marriage certificate for ${applicationData.groomFirstName}  ${applicationData.groomLastName} and ${applicationData.brideFirstName} ${applicationData.brideLastName}`,
+          description: `Updated marriage certificate for ${applicationData.groomFirstName}  ${applicationData.groomLastName} and ${applicationData.brideFirstName} ${applicationData.brideLastName}`,
         });
 
     return NextResponse.json(application, { status: 200 });
@@ -199,9 +199,9 @@ export async function DELETE(
 
      await logActivity({
       userId: user.userId,
-      action: "CREATE",
+      action: "DELETE",
       module: "AML",
-      description: `Created marriage certificate for ${application.groomFirstName}  ${application.groomLastName} and ${application.brideFirstName} ${application.brideLastName}`,
+      description: `Deleted marriage certificate for ${application.groomFirstName}  ${application.groomLastName} and ${application.brideFirstName} ${application.brideLastName}`,
     });
 
     return NextResponse.json(
