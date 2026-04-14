@@ -100,6 +100,7 @@ export function useBirthRecordForm({
       motherFirstName: "",
       motherMiddleName: "",
       motherCitizenship: "",
+      motherAge: "",
       fatherLastName: "",
       fatherFirstName: "",
       fatherMiddleName: "",

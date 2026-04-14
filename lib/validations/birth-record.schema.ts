@@ -25,6 +25,7 @@ export const birthRecordSchema = z
     motherFirstName: z.string().optional().default(""),
     motherMiddleName: z.string().optional().default(""),
     motherCitizenship: z.string().optional().default(""),
+    motherAge: z.string().optional().default(""),
 
     // Father Information
     fatherLastName: z.string().optional().default(""),

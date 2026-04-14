@@ -66,6 +66,7 @@ export interface BirthRecordListProps {
   onView: (record: BirthRecord) => void;
   onEdit: (record: BirthRecord) => void;
   onDelete: (id: string) => void;
+  onGenerateStats: () => void;
 }
 
 export interface BirthRecordFormProps {

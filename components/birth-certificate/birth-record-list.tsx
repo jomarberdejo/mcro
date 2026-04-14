@@ -9,6 +9,7 @@ import {
   Trash2,
   ChevronLeft,
   ChevronRight,
+  BarChart2,
 } from "lucide-react";
 import { BirthRecordListProps } from "@/types";
 import { getFullName } from "@/utils";
@@ -25,6 +26,7 @@ export const BirthRecordList: React.FC<BirthRecordListProps> = ({
   onView,
   onEdit,
   onDelete,
+  onGenerateStats,
 }) => {
   const [currentPage, setCurrentPage] = React.useState(1);
   const [recordsPerPage, setRecordsPerPage] = React.useState(10);
@@ -101,6 +103,17 @@ export const BirthRecordList: React.FC<BirthRecordListProps> = ({
                   <option value={50}>50</option>
                 </select>
                 <span className="text-sm text-gray-600">records per page</span>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  onClick={onGenerateStats}
+                  className="flex items-center gap-2"
+                >
+                  <BarChart2 className="w-4 h-4" />
+                  Statistics Report
+                </Button>
               </div>
             </div>
           </CardHeader>

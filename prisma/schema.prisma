@@ -145,6 +145,7 @@ model BirthRecord {
   motherFirstName   String?
   motherMiddleName  String?
   motherCitizenship String?
+  motherAge         String?
 
   // Father Info
   fatherLastName    String?

@@ -96,8 +96,10 @@ export const BirthRecordForm: React.FC<BirthRecordFormProps> = ({
 
           <CardContent>
             <div className="mb-6 p-4 border-2 border-dashed border-blue-300 rounded-lg bg-blue-50">
-              <DocumentsUploadForm 
-                handleSupportingDocumentsUpload={handleSupportingDocumentsUpload}
+              <DocumentsUploadForm
+                handleSupportingDocumentsUpload={
+                  handleSupportingDocumentsUpload
+                }
                 supportingDocuments={supportingDocuments}
                 isUploadingDoc={isUploadingDoc}
                 removeSupportingDocument={removeSupportingDocument}
@@ -214,7 +216,7 @@ export const BirthRecordForm: React.FC<BirthRecordFormProps> = ({
                             htmlFor="dateOfRegistration"
                             className="text-sm font-semibold text-gray-700"
                           >
-                            Date of Registration 
+                            Date of Registration
                           </FieldLabel>
                           <Input
                             id="dateOfRegistration"
@@ -244,7 +246,7 @@ export const BirthRecordForm: React.FC<BirthRecordFormProps> = ({
                             htmlFor="certificateDate"
                             className="text-sm font-semibold text-gray-700"
                           >
-                            Certificate Date 
+                            Certificate Date
                           </FieldLabel>
                           <Input
                             id="certificateDate"
@@ -270,7 +272,6 @@ export const BirthRecordForm: React.FC<BirthRecordFormProps> = ({
                       Child&apos;s Information
                     </h3>
                     <div className="grid grid-cols-3 gap-4">
-                      
                       <Controller
                         name="childFirstName"
                         control={control}
@@ -280,7 +281,7 @@ export const BirthRecordForm: React.FC<BirthRecordFormProps> = ({
                               htmlFor="childFirstName"
                               className="text-sm font-semibold text-gray-700"
                             >
-                              First Name 
+                              First Name
                             </FieldLabel>
                             <Input
                               id="childFirstName"
@@ -327,7 +328,7 @@ export const BirthRecordForm: React.FC<BirthRecordFormProps> = ({
                               htmlFor="childLastName"
                               className="text-sm font-semibold text-gray-700"
                             >
-                              Last Name 
+                              Last Name
                             </FieldLabel>
                             <Input
                               id="childLastName"
@@ -400,7 +401,7 @@ export const BirthRecordForm: React.FC<BirthRecordFormProps> = ({
                               htmlFor="dateOfBirth"
                               className="text-sm font-semibold text-gray-700"
                             >
-                              Date of Birth 
+                              Date of Birth
                             </FieldLabel>
                             <Input
                               id="dateOfBirth"
@@ -561,7 +562,6 @@ export const BirthRecordForm: React.FC<BirthRecordFormProps> = ({
                       Mother&apos;s Information
                     </h3>
                     <div className="grid grid-cols-3 gap-4">
-                     
                       <Controller
                         name="motherFirstName"
                         control={control}
@@ -600,7 +600,7 @@ export const BirthRecordForm: React.FC<BirthRecordFormProps> = ({
                           </Field>
                         )}
                       />
-                       <Controller
+                      <Controller
                         name="motherLastName"
                         control={control}
                         render={({ field }) => (
@@ -620,7 +620,8 @@ export const BirthRecordForm: React.FC<BirthRecordFormProps> = ({
                         )}
                       />
                     </div>
-                    <div className="mt-4">
+
+                    <div className="grid grid-cols-2 gap-4 pt-4">
                       <Controller
                         name="motherCitizenship"
                         control={control}
@@ -640,6 +641,34 @@ export const BirthRecordForm: React.FC<BirthRecordFormProps> = ({
                           </Field>
                         )}
                       />
+                      <Controller
+                        name="motherAge"
+                        control={control}
+                        render={({ field, fieldState }) => (
+                          <Field>
+                            <FieldLabel
+                              htmlFor="motherAge"
+                              className="text-sm font-semibold text-gray-700"
+                            >
+                              Age
+                            </FieldLabel>
+                            <Input
+                              id="age"
+                              type="number"
+                              {...field}
+                              className={cn(
+                                "h-11 text-base transition-all",
+                                fieldState.invalid &&
+                                  "border-red-500 focus-visible:ring-red-500",
+                              )}
+                              aria-invalid={fieldState.invalid}
+                            />
+                            {fieldState.error && (
+                              <FieldError errors={[fieldState.error]} />
+                            )}
+                          </Field>
+                        )}
+                      />
                     </div>
                   </div>
 
@@ -648,7 +677,6 @@ export const BirthRecordForm: React.FC<BirthRecordFormProps> = ({
                       Father&apos;s Information
                     </h3>
                     <div className="grid grid-cols-3 gap-4">
-                      
                       <Controller
                         name="fatherFirstName"
                         control={control}

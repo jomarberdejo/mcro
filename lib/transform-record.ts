@@ -42,6 +42,7 @@ export function transformBirthRecord(
     motherFirstName: record.motherFirstName ?? "",
     motherMiddleName: record.motherMiddleName ?? "",
     motherCitizenship: record.motherCitizenship ?? "",
+    motherAge: record.motherAge ?? "",
 
     fatherLastName: record.fatherLastName ?? "",
     fatherFirstName: record.fatherFirstName ?? "",
