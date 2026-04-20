@@ -14,8 +14,8 @@ export default async function ViewMarriageCertAppPage({ params }: ViewPageProps)
     include: {
       supportingDocuments: true,
     }
-
   });
+  
   if (!record) {
     notFound();
   }

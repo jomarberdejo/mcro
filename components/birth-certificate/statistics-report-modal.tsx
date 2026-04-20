@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { X, BarChart2, Loader2 } from "lucide-react";
 
-type SexCount = { Male: number; Female: number; Unknown: number };
+type SexCount = { Male: number; Female: number };
 type StatsResult = Record<"10-14" | "15-19" | "20-49", SexCount>;
 
 interface Props {
@@ -67,10 +67,9 @@ export const StatisticsReportModal: React.FC<Props> = ({ onClose }) => {
     ? AGE_GROUPS.reduce(
         (acc, g) => ({
           Male: acc.Male + result[g].Male,
-          Female: acc.Female + result[g].Female,
-          Unknown: acc.Unknown + result[g].Unknown,
+          Female: acc.Female + result[g].Female
         }),
-        { Male: 0, Female: 0, Unknown: 0 },
+        { Male: 0, Female: 0 },
       )
     : null;
 
@@ -206,9 +205,7 @@ export const StatisticsReportModal: React.FC<Props> = ({ onClose }) => {
                       <th className="px-4 py-2 text-center font-semibold text-pink-600">
                         Female
                       </th>
-                      <th className="px-4 py-2 text-center font-semibold text-gray-500">
-                        Unknown
-                      </th>
+                     
                       <th className="px-4 py-2 text-center font-semibold">
                         Total
                       </th>
@@ -217,7 +214,7 @@ export const StatisticsReportModal: React.FC<Props> = ({ onClose }) => {
                   <tbody>
                     {AGE_GROUPS.map((group) => {
                       const row = result[group];
-                      const total = row.Male + row.Female + row.Unknown;
+                      const total = row.Male + row.Female;
                       return (
                         <tr key={group} className="border-b hover:bg-gray-50">
                           <td className="px-4 py-2 font-medium">{group}</td>
@@ -227,9 +224,7 @@ export const StatisticsReportModal: React.FC<Props> = ({ onClose }) => {
                           <td className="px-4 py-2 text-center text-pink-600">
                             {row.Female}
                           </td>
-                          <td className="px-4 py-2 text-center text-gray-400">
-                            {row.Unknown}
-                          </td>
+                          
                           <td className="px-4 py-2 text-center font-semibold">
                             {total}
                           </td>
@@ -248,13 +243,10 @@ export const StatisticsReportModal: React.FC<Props> = ({ onClose }) => {
                         <td className="px-4 py-2 text-center font-bold text-pink-600">
                           {grandTotal.Female}
                         </td>
-                        <td className="px-4 py-2 text-center font-bold text-gray-400">
-                          {grandTotal.Unknown}
-                        </td>
+                      
                         <td className="px-4 py-2 text-center font-bold">
                           {grandTotal.Male +
-                            grandTotal.Female +
-                            grandTotal.Unknown}
+                            grandTotal.Female}
                         </td>
                       </tr>
                     </tfoot>
